@@ -6,5 +6,27 @@
         mc:Ignorable="d"
         Title="Game Studio Clicker" Height="450" Width="800">
     <Grid>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Welcome to Game Studio Clicker!"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,20,0,0" />
+
+            <TextBlock Text="{Binding LinesOfCode}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       FontSize="16"
+                       Margin="0,60,0,30" />
+
+            <Button Content="Write Code"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="150"
+                    Height="50"
+                    FontSize="16"
+                    Command="{Binding WriteCodeCommand}" />
+        </StackPanel>
     </Grid>
 </Window>
