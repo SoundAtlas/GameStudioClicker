@@ -7,6 +7,12 @@ namespace GameStudioClicker.Tests;
 [TestClass]
 public class MainViewModelTests
 {
+    private string? _changedPropertyName;
+    private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        _changedPropertyName = e.PropertyName;
+    }
+
     [TestMethod]
     public void NewMainViewModel_StartsWithZeroLinesOfCode()
     {
@@ -34,11 +40,6 @@ public class MainViewModelTests
         Assert.AreEqual(1L, viewModel.LinesOfCode);
     }
 
-    private string? _changedPropertyName;
-    private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        _changedPropertyName = e.PropertyName;
-    }
     [TestMethod]
     public void WriteCodeCommand_WhenExecuted_RaisesPropertyChangedForLinesOfCode()
     {
@@ -54,5 +55,44 @@ public class MainViewModelTests
 
         // Assert
         Assert.AreEqual(nameof(MainViewModel.LinesOfCode), _changedPropertyName);
+    }
+
+    [TestMethod]
+    public void NewMainViewModel_ExposesInitialLinesPerClick()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.AreEqual(1L, viewModel.LinesPerClick);
+    }
+
+    [TestMethod]
+    public void NewMainViewModel_ExposesMechanicalKeyboardCost()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.AreEqual(10L, viewModel.MechanicalKeyboardCost);
+    }
+
+    [TestMethod]
+    public void NewMainViewModel_ReportsMechanicalKeyboardAsNotOwned()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.IsFalse(viewModel.IsMechanicalKeyboardOwned);
     }
 }

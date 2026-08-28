@@ -12,6 +12,21 @@ namespace GameStudioClicker.Wpf.ViewModels
             get { return _gameState.LinesOfCode; }
         }
 
+        public long LinesPerClick
+        {
+            get { return _gameState.LinesPerClick; }
+        }
+
+        public long MechanicalKeyboardCost
+        {
+            get { return _gameState.MechanicalKeyboardCost; }
+        }
+
+        public bool IsMechanicalKeyboardOwned
+        {
+            get { return _gameState.IsMechanicalKeyboardOwned; }
+        }
+
         public RelayCommand WriteCodeCommand { get; }
 
         public MainViewModel(GameState gameState)
