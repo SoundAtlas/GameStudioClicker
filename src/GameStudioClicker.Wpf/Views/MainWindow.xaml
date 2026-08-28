@@ -18,7 +18,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        FontSize="16"
-                       Margin="0,60,0,30" />
+                       Margin="0,60,0,40" />
 
             <Button Content="Write Code"
                     HorizontalAlignment="Center"
