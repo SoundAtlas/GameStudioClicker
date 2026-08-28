@@ -20,5 +20,16 @@
             LinesOfCode += LinesPerClick;
         }
 
+        public bool TryPurchaseMechanicalKeyboard()
+        {
+            if (CanPurchaseMechanicalKeyboard)
+            {
+                LinesOfCode -= MechanicalKeyboardCost;
+                IsMechanicalKeyboardOwned = true;
+                LinesPerClick += 1;
+                return true;
+            }
+            return false;
+        }
     }
 }
