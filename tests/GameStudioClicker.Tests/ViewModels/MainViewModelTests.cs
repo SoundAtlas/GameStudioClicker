@@ -95,4 +95,76 @@ public class MainViewModelTests
         // Assert
         Assert.IsFalse(viewModel.IsMechanicalKeyboardOwned);
     }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_NewGame_CannotExecute()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        // Act
+        bool canExecute =
+            viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null);
+
+        // Assert
+        Assert.IsFalse(canExecute);
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_WithEnoughLines_CanExecute()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 10; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        bool canExecute =
+            viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null);
+
+        // Assert
+        Assert.IsTrue(canExecute);
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_UpdatesExposedGameState()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 15; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(5L, viewModel.LinesOfCode);
+        Assert.AreEqual(2L, viewModel.LinesPerClick);
+        Assert.IsTrue(viewModel.IsMechanicalKeyboardOwned);
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_AfterPurchase_CannotExecute()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 10; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
+
+        // Assert
+        Assert.IsFalse(viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null));
+    }
 }
