@@ -4,14 +4,13 @@
     {
         public long LinesOfCode { get; private set; }
         public long LinesPerClick { get; private set; } = 1;
-        public long MechanicalKeyboardCost { get; } = 10;
-        public bool IsMechanicalKeyboardOwned { get; private set; }
+        public long MechanicalKeyboardCost { get; private set; } = 10;
+        public int MechanicalKeyboardCount { get; private set; } = 0;
         public bool CanPurchaseMechanicalKeyboard
         {
             get
             {
-                return !IsMechanicalKeyboardOwned &&
-                    LinesOfCode >= MechanicalKeyboardCost;
+                return LinesOfCode >= MechanicalKeyboardCost;
             }
         }
 
@@ -25,8 +24,9 @@
             if (CanPurchaseMechanicalKeyboard)
             {
                 LinesOfCode -= MechanicalKeyboardCost;
-                IsMechanicalKeyboardOwned = true;
+                MechanicalKeyboardCount += 1;
                 LinesPerClick += 1;
+                MechanicalKeyboardCost *= 2;
                 return true;
             }
             return false;

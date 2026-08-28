@@ -18,34 +18,6 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void WriteCode_OneLine_IncrementsLinesOfCode()
-    {
-        // Arrange
-        var gameState = new GameState();
-
-        // Act
-        gameState.WriteCode();
-
-        // Assert
-        Assert.AreEqual(1L, gameState.LinesOfCode);
-    }
-
-    [TestMethod]
-    public void WriteCode_MultipleLines_IncrementsLinesOfCode()
-    {
-        // Arrange
-        var gameState = new GameState();
-
-        // Act
-        gameState.WriteCode();
-        gameState.WriteCode();
-        gameState.WriteCode();
-
-        // Assert
-        Assert.AreEqual(3L, gameState.LinesOfCode);
-    }
-
-    [TestMethod]
     public void GameState_StartsWithOneLinePerClick()
     {
         // Arrange
@@ -67,30 +39,6 @@ public class GameStateTests
 
         // Assert
         Assert.AreEqual(10L, gameState.MechanicalKeyboardCost);
-    }
-
-    [TestMethod]
-    public void NewGameState_DoesNotOwnMechanicalKeyboard()
-    {
-        // Arrange
-        var gameState = new GameState();
-
-        // Act: No action needed, we are testing the initial state
-
-        // Assert
-        Assert.IsFalse(gameState.IsMechanicalKeyboardOwned);
-    }
-
-    [TestMethod]
-    public void NewGameState_CannotPurchaseMechanicalKeyboard()
-    {
-        // Arrange
-        var gameState = new GameState();
-
-        // Act: No action needed, we are testing the initial state
-
-        // Assert
-        Assert.IsFalse(gameState.CanPurchaseMechanicalKeyboard);
     }
 
     [TestMethod]
@@ -126,6 +74,30 @@ public class GameStateTests
     }
 
     [TestMethod]
+    public void NewGameState_StartsWithZeroMechanicalKeyboards()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.AreEqual(0, gameState.MechanicalKeyboardCount);
+    }
+
+    [TestMethod]
+    public void NewGameState_CannotPurchaseMechanicalKeyboard()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.IsFalse(gameState.CanPurchaseMechanicalKeyboard);
+    }
+
+    [TestMethod]
     public void TryPurchaseMechanicalKeyboard_WithoutEnoughLines_ReturnsFalse()
     {
         // Arrange
@@ -148,7 +120,7 @@ public class GameStateTests
         gameState.TryPurchaseMechanicalKeyboard();
 
         // Assert
-        Assert.IsFalse(gameState.IsMechanicalKeyboardOwned);
+        Assert.AreEqual(0, gameState.MechanicalKeyboardCount);
         Assert.AreEqual(0L, gameState.LinesOfCode);
         Assert.AreEqual(1L, gameState.LinesPerClick);
     }
@@ -183,25 +155,8 @@ public class GameStateTests
         }
         gameState.TryPurchaseMechanicalKeyboard();
 
-        // Assert   
+        // Assert
         Assert.AreEqual(5L, gameState.LinesOfCode);
-    }
-
-    [TestMethod]
-    public void TryPurchaseMechanicalKeyboard_WithEnoughLines_MarksKeyboardAsOwned()
-    {
-        // Arrange
-        var gameState = new GameState();
-
-        // Act
-        for (int i = 0; i < 10; i++)
-        {
-            gameState.WriteCode();
-        }
-        gameState.TryPurchaseMechanicalKeyboard();
-
-        // Assert   
-        Assert.IsTrue(gameState.IsMechanicalKeyboardOwned);
     }
 
     [TestMethod]
@@ -217,26 +172,100 @@ public class GameStateTests
         }
         gameState.TryPurchaseMechanicalKeyboard();
 
-        // Assert   
+        // Assert
         Assert.AreEqual(2L, gameState.LinesPerClick);
     }
 
     [TestMethod]
-    public void TryPurchaseMechanicalKeyboard_WhenAlreadyOwned_ReturnsFalse()
+    public void TryPurchaseMechanicalKeyboard_WhenSuccessful_IncrementsKeyboardCount()
     {
         // Arrange
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 10; i++)
         {
             gameState.WriteCode();
         }
         gameState.TryPurchaseMechanicalKeyboard();
-        var secondResult = gameState.TryPurchaseMechanicalKeyboard();
+
+
+        // Assert
+        Assert.AreEqual(1, gameState.MechanicalKeyboardCount);
+    }
+
+    [TestMethod]
+    public void TryPurchaseMechanicalKeyboard_WhenSuccessful_DoublesNextKeyboardCost()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        for (int i = 0; i < 10; i++)
+        {
+            gameState.WriteCode();
+        }
+        gameState.TryPurchaseMechanicalKeyboard();
+
 
         // Assert   
-        Assert.IsFalse(secondResult);
+        Assert.AreEqual(20L, gameState.MechanicalKeyboardCost);
+    }
+
+    [TestMethod]
+    public void TryPurchaseMechanicalKeyboard_AfterFirstPurchase_CanPurchaseAnotherKeyboard()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        for (int i = 0; i < 30; i++)
+        {
+            gameState.WriteCode();
+        }
+        gameState.TryPurchaseMechanicalKeyboard();
+        var canPurchaseSecondKeyboard = gameState.CanPurchaseMechanicalKeyboard;
+
+        // Assert   
+        Assert.IsTrue(canPurchaseSecondKeyboard);
+    }
+
+    [TestMethod]
+    public void TryPurchaseMechanicalKeyboard_Twice_IncreasesLinesPerClickToThree()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        for (int i = 0; i < 30; i++)
+        {
+            gameState.WriteCode();
+        }
+        gameState.TryPurchaseMechanicalKeyboard();
+        gameState.TryPurchaseMechanicalKeyboard();
+
+
+        // Assert   
+        Assert.AreEqual(3L, gameState.LinesPerClick);
+    }
+
+    [TestMethod]
+    public void TryPurchaseMechanicalKeyboard_Twice_IncreasesKeyboardCountToTwo()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        for (int i = 0; i < 30; i++)
+        {
+            gameState.WriteCode();
+        }
+        gameState.TryPurchaseMechanicalKeyboard();
+        gameState.TryPurchaseMechanicalKeyboard();
+
+
+        // Assert   
+        Assert.AreEqual(2, gameState.MechanicalKeyboardCount);
     }
 
     [TestMethod]
@@ -253,7 +282,35 @@ public class GameStateTests
         gameState.TryPurchaseMechanicalKeyboard();
         gameState.WriteCode();
 
-        // Assert   
+        // Assert
         Assert.AreEqual(2L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void WriteCode_OneLine_IncrementsLinesOfCode()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        gameState.WriteCode();
+
+        // Assert
+        Assert.AreEqual(1L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void WriteCode_MultipleLines_IncrementsLinesOfCode()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        gameState.WriteCode();
+        gameState.WriteCode();
+        gameState.WriteCode();
+
+        // Assert
+        Assert.AreEqual(3L, gameState.LinesOfCode);
     }
 }

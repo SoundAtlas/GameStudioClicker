@@ -22,9 +22,9 @@ namespace GameStudioClicker.Wpf.ViewModels
             get { return _gameState.MechanicalKeyboardCost; }
         }
 
-        public bool IsMechanicalKeyboardOwned
+        public int MechanicalKeyboardCount
         {
-            get { return _gameState.IsMechanicalKeyboardOwned; }
+            get { return _gameState.MechanicalKeyboardCount; }
         }
 
         public RelayCommand WriteCodeCommand { get; }
@@ -61,7 +61,8 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             OnPropertyChanged(nameof(LinesOfCode));
             OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(IsMechanicalKeyboardOwned));
+            OnPropertyChanged(nameof(MechanicalKeyboardCount));
+            OnPropertyChanged(nameof(MechanicalKeyboardCost));
 
             // Makes WPF check if the command can be executed again, which will update the button's enabled state
             PurchaseMechanicalKeyboardCommand.RaiseCanExecuteChanged();

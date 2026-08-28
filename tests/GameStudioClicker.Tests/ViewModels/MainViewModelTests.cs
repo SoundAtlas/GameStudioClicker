@@ -8,6 +8,7 @@ namespace GameStudioClicker.Tests;
 public class MainViewModelTests
 {
     private string? _changedPropertyName;
+
     private void HandlePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         _changedPropertyName = e.PropertyName;
@@ -24,37 +25,6 @@ public class MainViewModelTests
 
         // Assert
         Assert.AreEqual(0L, viewModel.LinesOfCode);
-    }
-
-    [TestMethod]
-    public void WriteCodeCommand_WhenExecuted_IncreasesLinesOfCode()
-    {
-        // Arrange
-        var gameState = new GameState();
-        var viewModel = new MainViewModel(gameState);
-
-        // Act
-        viewModel.WriteCodeCommand.Execute(null);
-
-        // Assert
-        Assert.AreEqual(1L, viewModel.LinesOfCode);
-    }
-
-    [TestMethod]
-    public void WriteCodeCommand_WhenExecuted_RaisesPropertyChangedForLinesOfCode()
-    {
-        // Arrange
-        var gameState = new GameState();
-        var viewModel = new MainViewModel(gameState);
-
-        _changedPropertyName = null;
-        viewModel.PropertyChanged += HandlePropertyChanged;
-
-        // Act
-        viewModel.WriteCodeCommand.Execute(null);
-
-        // Assert
-        Assert.AreEqual(nameof(MainViewModel.LinesOfCode), _changedPropertyName);
     }
 
     [TestMethod]
@@ -93,7 +63,7 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.IsFalse(viewModel.IsMechanicalKeyboardOwned);
+        Assert.AreEqual(0, viewModel.MechanicalKeyboardCount);
     }
 
     [TestMethod]
@@ -147,11 +117,11 @@ public class MainViewModelTests
         // Assert
         Assert.AreEqual(5L, viewModel.LinesOfCode);
         Assert.AreEqual(2L, viewModel.LinesPerClick);
-        Assert.IsTrue(viewModel.IsMechanicalKeyboardOwned);
+        Assert.AreEqual(1, viewModel.MechanicalKeyboardCount);
     }
 
     [TestMethod]
-    public void PurchaseMechanicalKeyboardCommand_AfterPurchase_CannotExecute()
+    public void PurchaseMechanicalKeyboardCommand_AfterPurchaseWithoutEnoughLines_CannotExecute()
     {
         // Arrange
         var gameState = new GameState();
@@ -166,5 +136,94 @@ public class MainViewModelTests
 
         // Assert
         Assert.IsFalse(viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null));
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_UpdatesNextKeyboardCost()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 10; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(20L, viewModel.MechanicalKeyboardCost);
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_AfterFirstPurchaseWithEnoughLines_CanExecute()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 30; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
+
+        // Assert
+        Assert.IsTrue(viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null));
+    }
+
+    [TestMethod]
+    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_RaisesPropertyChangedForMechanicalKeyboardCost()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        for (int i = 0; i < 10; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        _changedPropertyName = null;
+        viewModel.PropertyChanged += HandlePropertyChanged;
+
+        // Act
+        viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(nameof(MainViewModel.MechanicalKeyboardCost), _changedPropertyName);
+    }
+
+    [TestMethod]
+    public void WriteCodeCommand_WhenExecuted_IncreasesLinesOfCode()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        // Act
+        viewModel.WriteCodeCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(1L, viewModel.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void WriteCodeCommand_WhenExecuted_RaisesPropertyChangedForLinesOfCode()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+
+        _changedPropertyName = null;
+        viewModel.PropertyChanged += HandlePropertyChanged;
+
+        // Act
+        viewModel.WriteCodeCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(nameof(MainViewModel.LinesOfCode), _changedPropertyName);
     }
 }
