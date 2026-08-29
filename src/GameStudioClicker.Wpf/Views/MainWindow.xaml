@@ -78,7 +78,7 @@
         <StackPanel Grid.Row="0">
 
             <!-- Welcome Message -->
-            <TextBlock Text="Welcome to Game Studio Clicker!"
+            <TextBlock Text="Game Studio Clicker!"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        FontSize="24"
