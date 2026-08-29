@@ -1,6 +1,6 @@
 # Game Studio Clicker
 
-Game Studio Clicker is a small C# and WPF clicker game built as a learning project. Write lines of code, spend them on mechanical keyboards, and increase the number of lines produced by each click.
+Game Studio Clicker is a small C# and WPF idle/clicker game built as a learning project. Write lines of code, improve active production with mechanical keyboards, and hire interns to generate code automatically.
 
 ## Current features
 
@@ -8,11 +8,16 @@ Game Studio Clicker is a small C# and WPF clicker game built as a learning proje
 - Buy mechanical keyboards with accumulated lines of code.
 - Gain one additional line per click for every keyboard owned.
 - Buy multiple keyboards; the price doubles after each purchase.
+- Hire interns that generate lines of code automatically every second.
+- Gain two additional lines per second for every intern hired.
+- Buy multiple interns; the hiring cost doubles each time.
 - Disable purchases automatically when the player cannot afford them.
+- Display active and passive production separately.
+- Use a two-panel dark interface with reusable button styling and scrollable upgrade cards.
 - Keep game rules separate from the WPF interface with an MVVM-style design.
 - Cover the game state and view-model behavior with MSTest tests.
 
-The project is currently an early playable prototype. Progress exists only for the current session; save/load and offline or automatic production have not been implemented yet.
+The project is currently an early playable prototype. Progress exists only for the current session; save/load and offline progression have not been implemented yet.
 
 ## Requirements
 
@@ -42,6 +47,9 @@ dotnet test GameStudioClicker.sln
 ## Current gameplay balance
 
 - A new game starts with 0 lines of code and 1 line per click.
-- The first mechanical keyboard costs 10 lines of code.
+- Passive production starts at 0 lines per second.
+- The first mechanical keyboard costs 25 lines of code.
 - Each keyboard adds 1 line per click.
-- Each purchase doubles the cost of the next keyboard.
+- The first intern costs 50 lines of code.
+- Each intern adds 2 lines per second.
+- Each upgrade type doubles in cost after every purchase.

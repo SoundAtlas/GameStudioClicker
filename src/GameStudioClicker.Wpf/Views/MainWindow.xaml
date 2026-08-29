@@ -64,23 +64,6 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#52525B" />
-                </Trigger>
-
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#71717A" />
-                </Trigger>
-
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#27272A" />
-                    <Setter Property="Foreground" Value="#71717A" />
-                    <Setter Property="BorderBrush" Value="#3F3F46" />
-                    <Setter Property="Cursor" Value="Arrow" />
-                </Trigger>
-            </Style.Triggers>
         </Style>
     </Window.Resources>
 

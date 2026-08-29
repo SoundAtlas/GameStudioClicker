@@ -30,7 +30,7 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void GameState_MechanicalKeyboardCost_IsTen()
+    public void GameState_MechanicalKeyboardCost_IsTwentyFive()
     {
         // Arrange
         var gameState = new GameState();
@@ -38,17 +38,17 @@ public class GameStateTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(10L, gameState.MechanicalKeyboardCost);
+        Assert.AreEqual(25L, gameState.MechanicalKeyboardCost);
     }
 
     [TestMethod]
-    public void GameState_WithNineLines_CannotPurchaseMechanicalKeyboard()
+    public void GameState_WithTwentyFourLines_CannotPurchaseMechanicalKeyboard()
     {
         // Arrange
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 24; i++)
         {
             gameState.WriteCode();
         }
@@ -58,13 +58,13 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void GameState_WithTenLines_CanPurchaseMechanicalKeyboard()
+    public void GameState_WithTwentyFiveLines_CanPurchaseMechanicalKeyboard()
     {
         // Arrange
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -156,7 +156,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -173,7 +173,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 30; i++)
         {
             gameState.WriteCode();
         }
@@ -190,7 +190,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -207,7 +207,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -225,7 +225,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -233,7 +233,7 @@ public class GameStateTests
 
 
         // Assert   
-        Assert.AreEqual(20L, gameState.MechanicalKeyboardCost);
+        Assert.AreEqual(50L, gameState.MechanicalKeyboardCost);
     }
 
     [TestMethod]
@@ -243,7 +243,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 75; i++)
         {
             gameState.WriteCode();
         }
@@ -261,7 +261,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 75; i++)
         {
             gameState.WriteCode();
         }
@@ -280,7 +280,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 75; i++)
         {
             gameState.WriteCode();
         }
@@ -299,7 +299,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             gameState.WriteCode();
         }
@@ -354,11 +354,11 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void GeneratePassiveLines_AfterPurchasingIntern_AddsOneLine()
+    public void GeneratePassiveLines_AfterPurchasingIntern_AddsTwoLines()
     {
         // Arrange
         var gameState = new GameState();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
         {
             gameState.WriteCode();
         }
@@ -368,7 +368,7 @@ public class GameStateTests
         gameState.GeneratePassiveLines();
 
         // Assert       
-        Assert.AreEqual(1L, gameState.LinesOfCode);
+        Assert.AreEqual(2L, gameState.LinesOfCode);
     }
 
     [TestMethod]
@@ -376,7 +376,7 @@ public class GameStateTests
     {
         // Arrange
         var gameState = new GameState();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
         {
             gameState.WriteCode();
         }
@@ -385,7 +385,7 @@ public class GameStateTests
         gameState.TryPurchaseIntern();
 
         // Assert       
-        Assert.AreEqual(1L, gameState.LinesPerSecond);
+        Assert.AreEqual(2L, gameState.LinesPerSecond);
     }
 
 }

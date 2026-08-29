@@ -50,7 +50,7 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(10L, viewModel.MechanicalKeyboardCost);
+        Assert.AreEqual(25L, viewModel.MechanicalKeyboardCost);
     }
 
     [TestMethod]
@@ -87,7 +87,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -106,7 +106,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 30; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -126,7 +126,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -144,7 +144,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -153,7 +153,7 @@ public class MainViewModelTests
         viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
 
         // Assert
-        Assert.AreEqual(20L, viewModel.MechanicalKeyboardCost);
+        Assert.AreEqual(50L, viewModel.MechanicalKeyboardCost);
     }
 
     [TestMethod]
@@ -162,7 +162,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 75; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -181,7 +181,7 @@ public class MainViewModelTests
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 25; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
