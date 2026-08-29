@@ -1,4 +1,5 @@
 using GameStudioClicker.Core.Models;
+using GameStudioClicker.Core.Persistence;
 
 namespace GameStudioClicker.Tests;
 
@@ -386,6 +387,87 @@ public class GameStateTests
 
         // Assert       
         Assert.AreEqual(2L, gameState.LinesPerSecond);
+    }
+
+    [TestMethod]
+    public void CreateSaveData_CopiesCurrentPersistentState()
+    {
+        // Arrange
+        var gameState = new GameState();
+        for (int i = 0; i < 75; i++)
+        {
+            gameState.WriteCode();
+        }
+        gameState.TryPurchaseMechanicalKeyboard();
+        gameState.TryPurchaseIntern();
+
+        // Act
+        GameSaveData saveData = gameState.CreateSaveData();
+
+        // Assert
+        Assert.AreEqual(0L, saveData.LinesOfCode);
+        Assert.AreEqual(1, saveData.MechanicalKeyboardCount);
+        Assert.AreEqual(1, saveData.InternCount);
+    }
+
+    [TestMethod]
+    public void RestoreFromSaveData_RestoresStateAndRecalculatesDerivedValues()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var saveData = new GameSaveData
+        {
+            LinesOfCode = 250,
+            MechanicalKeyboardCount = 2,
+            InternCount = 3
+        };
+
+        // Act
+        gameState.RestoreFromSaveData(saveData);
+
+        // Assert
+        Assert.AreEqual(250L, gameState.LinesOfCode);
+        Assert.AreEqual(2, gameState.MechanicalKeyboardCount);
+        Assert.AreEqual(3L, gameState.LinesPerClick);
+        Assert.AreEqual(100L, gameState.MechanicalKeyboardCost);
+        Assert.AreEqual(3, gameState.InternCount);
+        Assert.AreEqual(6L, gameState.LinesPerSecond);
+        Assert.AreEqual(400L, gameState.InternCost);
+    }
+
+    [TestMethod]
+    public void RestoreFromSaveData_WithNegativeValues_ClampsValuesToZero()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var saveData = new GameSaveData
+        {
+            LinesOfCode = -1,
+            MechanicalKeyboardCount = -1,
+            InternCount = -1
+        };
+
+        // Act
+        gameState.RestoreFromSaveData(saveData);
+
+        // Assert
+        Assert.AreEqual(0L, gameState.LinesOfCode);
+        Assert.AreEqual(0, gameState.MechanicalKeyboardCount);
+        Assert.AreEqual(0, gameState.InternCount);
+        Assert.AreEqual(1L, gameState.LinesPerClick);
+        Assert.AreEqual(0L, gameState.LinesPerSecond);
+        Assert.AreEqual(25L, gameState.MechanicalKeyboardCost);
+        Assert.AreEqual(50L, gameState.InternCost);
+    }
+
+    [TestMethod]
+    public void RestoreFromSaveData_WithNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act and assert
+        Assert.ThrowsExactly<ArgumentNullException>(() => gameState.RestoreFromSaveData(null!));
     }
 
 }

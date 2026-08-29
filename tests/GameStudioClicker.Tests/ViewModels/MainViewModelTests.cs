@@ -226,4 +226,42 @@ public class MainViewModelTests
         // Assert
         Assert.AreEqual(nameof(MainViewModel.LinesOfCode), _changedPropertyName);
     }
+
+    [TestMethod]
+    public void NewMainViewModel_ExposesInitialInternState()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        var viewModel = new MainViewModel(gameState);
+
+        // Assert
+        Assert.AreEqual(0L, viewModel.LinesPerSecond);
+        Assert.AreEqual(50L, viewModel.InternCost);
+        Assert.AreEqual(0, viewModel.InternCount);
+        Assert.IsFalse(viewModel.PurchaseInternCommand.CanExecute(null));
+    }
+
+    [TestMethod]
+    public void PurchaseInternCommand_WithEnoughLines_UpdatesExposedGameState()
+    {
+        // Arrange
+        var gameState = new GameState();
+        var viewModel = new MainViewModel(gameState);
+        for (int i = 0; i < 50; i++)
+        {
+            viewModel.WriteCodeCommand.Execute(null);
+        }
+
+        // Act
+        viewModel.PurchaseInternCommand.Execute(null);
+
+        // Assert
+        Assert.AreEqual(0L, viewModel.LinesOfCode);
+        Assert.AreEqual(2L, viewModel.LinesPerSecond);
+        Assert.AreEqual(100L, viewModel.InternCost);
+        Assert.AreEqual(1, viewModel.InternCount);
+        Assert.IsFalse(viewModel.PurchaseInternCommand.CanExecute(null));
+    }
 }
