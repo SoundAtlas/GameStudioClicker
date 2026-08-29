@@ -470,4 +470,53 @@ public class GameStateTests
         Assert.ThrowsExactly<ArgumentNullException>(() => gameState.RestoreFromSaveData(null!));
     }
 
+    [TestMethod]
+    public void ApplyOfflineProgress_WithInterns_AddsAndReturnsWholeSecondProduction()
+    {
+        // Arrange
+        var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData { InternCount = 1 });
+
+        // Act
+        long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromSeconds(10.8));
+
+        // Assert
+        Assert.AreEqual(20L, earnedLines);
+        Assert.AreEqual(20L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void ApplyOfflineProgress_WithNegativeElapsedTime_DoesNotAddLines()
+    {
+        // Arrange
+        var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100,
+            InternCount = 1
+        });
+
+        // Act
+        long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromMinutes(-5));
+
+        // Assert
+        Assert.AreEqual(0L, earnedLines);
+        Assert.AreEqual(100L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void ApplyOfflineProgress_OverTwentyFourHours_CapsProductionAtTwentyFourHours()
+    {
+        // Arrange
+        var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData { InternCount = 1 });
+
+        // Act
+        long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromHours(30));
+
+        // Assert
+        Assert.AreEqual(172_800L, earnedLines);
+        Assert.AreEqual(172_800L, gameState.LinesOfCode);
+    }
+
 }

@@ -85,6 +85,35 @@
                        FontWeight="Bold"
                        Margin="0,20,0,20" />
 
+            <Border Padding="12"
+                    Margin="0,0,0,16"
+                    HorizontalAlignment="Center"
+                    Background="#2F2F33"
+                    BorderBrush="#45454B"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasOfflineEarnings}"
+                                         Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <TextBlock Text="{Binding OfflineEarningsMessage}"
+                           Foreground="#D4D4D8"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center" />
+            </Border>
+
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="0,24,0,0">

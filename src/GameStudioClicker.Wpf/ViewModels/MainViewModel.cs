@@ -6,25 +6,77 @@ namespace GameStudioClicker.Wpf.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        // Game state and timers
         private readonly GameState _gameState;
-
         private readonly DispatcherTimer _passiveTimer;
+        private readonly DispatcherTimer _offlineMessageTimer;
+        private bool _showOfflineEarnings;
 
+        // Production displayed by the main coding panel
         public long LinesOfCode => _gameState.LinesOfCode;
-
         public long LinesPerClick => _gameState.LinesPerClick;
-
         public long LinesPerSecond => _gameState.LinesPerSecond;
 
+        // Offline earnings notification
+        public bool HasOfflineEarnings => _showOfflineEarnings;
+        public long OfflineLinesEarned { get; }
+        public string OfflineEarningsMessage =>
+            $"Your interns & Employees wrote {OfflineLinesEarned} lines of code while you were away!";
 
-        // LinesPerClick Upgrades
-
-        // Mechanical Keyboard
+        // Mechanical keyboard upgrade
         public long MechanicalKeyboardCost => _gameState.MechanicalKeyboardCost;
-
         public int MechanicalKeyboardCount => _gameState.MechanicalKeyboardCount;
 
+        // Intern upgrade
+        public long InternCost => _gameState.InternCost;
+        public int InternCount => _gameState.InternCount;
+
+        // Commands exposed to the view
+        public RelayCommand WriteCodeCommand { get; }
         public RelayCommand PurchaseMechanicalKeyboardCommand { get; }
+        public RelayCommand PurchaseInternCommand { get; }
+
+        // Construction and setup
+        public MainViewModel(GameState gameState, long offlineLinesEarned = 0)
+        {
+            _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
+
+            OfflineLinesEarned = Math.Max(0, offlineLinesEarned);
+            _showOfflineEarnings = OfflineLinesEarned > 0;
+
+            // This timer hides the one-time offline earnings notification.
+            _offlineMessageTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(7)
+            };
+            _offlineMessageTimer.Tick += OfflineMessageTimer_Tick;
+
+            // This timer advances passive production while the game is running.
+            _passiveTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(1),
+            };
+            _passiveTimer.Tick += PassiveTimer_Tick;
+
+            WriteCodeCommand = new RelayCommand(ExecuteWriteCode);
+            PurchaseMechanicalKeyboardCommand =
+                new RelayCommand(
+                    ExecutePurchaseMechanicalKeyboard,
+                    CanExecutePurchaseMechanicalKeyboard);
+            PurchaseInternCommand =
+                new RelayCommand(
+                    ExecutePurchaseIntern,
+                    CanExecutePurchaseIntern);
+
+            if (_showOfflineEarnings)
+            {
+                _offlineMessageTimer.Start();
+            }
+
+            _passiveTimer.Start();
+        }
+
+        // Mechanical keyboard command handlers
 
         private void ExecutePurchaseMechanicalKeyboard(object? parameter)
         {
@@ -50,14 +102,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             return _gameState.CanPurchaseMechanicalKeyboard;
         }
 
-
-        // LinesPerSecond Upgrades
-
-        // Intern
-        public long InternCost => _gameState.InternCost;
-        public int InternCount => _gameState.InternCount;
-
-        public RelayCommand PurchaseInternCommand { get; }
+        // Intern command handlers
 
         private void ExecutePurchaseIntern(object? parameter)
         {
@@ -82,34 +127,13 @@ namespace GameStudioClicker.Wpf.ViewModels
             return _gameState.CanPurchaseIntern;
         }
 
-        public RelayCommand WriteCodeCommand { get; }
-
-        // Constructor
-        public MainViewModel(GameState gameState)
+        // Timer handlers
+        private void OfflineMessageTimer_Tick(object? sender, EventArgs e)
         {
-            // Ensure that the gameState is not null
-            _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
+            _offlineMessageTimer.Stop();
 
-            // Set up a timer to generate passive lines of code every second
-            _passiveTimer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromSeconds(1),
-            };
-            _passiveTimer.Tick += PassiveTimer_Tick;
-
-            // Set up commands
-            WriteCodeCommand = new RelayCommand(ExecuteWriteCode);
-            PurchaseMechanicalKeyboardCommand =
-                new RelayCommand(
-                    ExecutePurchaseMechanicalKeyboard,
-                    CanExecutePurchaseMechanicalKeyboard);
-            PurchaseInternCommand =
-                new RelayCommand(
-                    ExecutePurchaseIntern,
-                    CanExecutePurchaseIntern);
-
-            // Start the passive generation timer
-            _passiveTimer.Start();
+            _showOfflineEarnings = false;
+            OnPropertyChanged(nameof(HasOfflineEarnings));
         }
 
         private void PassiveTimer_Tick(object? sender, EventArgs e)
@@ -119,6 +143,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             RefreshPurchaseCommands();
         }
 
+        // Manual production command handler
         private void ExecuteWriteCode(object? parameter)
         {
             _gameState.WriteCode();
@@ -127,7 +152,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             RefreshPurchaseCommands();
         }
 
-        // Helpers
+        // Command state helpers
         private void RefreshPurchaseCommands()
         {
             PurchaseMechanicalKeyboardCommand.RaiseCanExecuteChanged();

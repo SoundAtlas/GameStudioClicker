@@ -4,6 +4,7 @@ namespace GameStudioClicker.Wpf.Commands
 {
     public class RelayCommand : ICommand
     {
+        // Delegates supplied by the view model define command behavior and availability.
         private readonly Action<object?> _execute;
         private readonly Func<object?, bool>? _canExecute;
 
@@ -27,6 +28,7 @@ namespace GameStudioClicker.Wpf.Commands
 
         public void RaiseCanExecuteChanged()
         {
+            // Ask WPF to reevaluate controls bound to this command.
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
