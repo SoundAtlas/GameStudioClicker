@@ -98,6 +98,30 @@ public class GameStateTests
     }
 
     [TestMethod]
+    public void NewGameState_StartsWithZeroLinesPerSecond()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.AreEqual(0L, gameState.LinesPerSecond);
+    }
+
+    [TestMethod]
+    public void NewGameState_StartsWithZeroInterns()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act: No action needed, we are testing the initial state
+
+        // Assert
+        Assert.AreEqual(0, gameState.InternCount);
+    }
+
+    [TestMethod]
     public void TryPurchaseMechanicalKeyboard_WithoutEnoughLines_ReturnsFalse()
     {
         // Arrange
@@ -313,4 +337,55 @@ public class GameStateTests
         // Assert
         Assert.AreEqual(3L, gameState.LinesOfCode);
     }
+
+    [TestMethod]
+    public void GeneratePassiveLines_ZeroProduction_DoesNotAddLines()
+    {
+        // Arrange
+        var gameState = new GameState();
+
+        // Act
+        gameState.GeneratePassiveLines();
+        gameState.GeneratePassiveLines();
+        gameState.GeneratePassiveLines();
+
+        // Assert
+        Assert.AreEqual(0L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void GeneratePassiveLines_AfterPurchasingIntern_AddsOneLine()
+    {
+        // Arrange
+        var gameState = new GameState();
+        for (int i = 0; i < 100; i++)
+        {
+            gameState.WriteCode();
+        }
+
+        // Act
+        gameState.TryPurchaseIntern();
+        gameState.GeneratePassiveLines();
+
+        // Assert       
+        Assert.AreEqual(1L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void TryPurchaseIntern_WithEnoughLines_IncreasesLinesPerSecond()
+    {
+        // Arrange
+        var gameState = new GameState();
+        for (int i = 0; i < 100; i++)
+        {
+            gameState.WriteCode();
+        }
+
+        // Act
+        gameState.TryPurchaseIntern();
+
+        // Assert       
+        Assert.AreEqual(1L, gameState.LinesPerSecond);
+    }
+
 }
