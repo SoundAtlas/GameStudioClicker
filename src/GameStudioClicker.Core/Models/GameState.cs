@@ -9,7 +9,7 @@
         // LinesPerClick Upgrades
 
         // Mechanical Keyboard
-        public long MechanicalKeyboardCost { get; private set; } = 10;
+        public long MechanicalKeyboardCost { get; private set; } = 25;
         public int MechanicalKeyboardCount { get; private set; } = 0;
         public bool CanPurchaseMechanicalKeyboard
         {
@@ -35,7 +35,7 @@
         // LinesPerSecond Upgrades
 
         // Intern
-        public long InternCost { get; private set; } = 100;
+        public long InternCost { get; private set; } = 50;
         public int InternCount { get; private set; } = 0;
         public bool CanPurchaseIntern
         {
@@ -51,7 +51,7 @@
             {
                 LinesOfCode -= InternCost;
                 InternCount += 1;
-                LinesPerSecond += 1;
+                LinesPerSecond += 2;
                 InternCost *= 2;
                 return true;
             }

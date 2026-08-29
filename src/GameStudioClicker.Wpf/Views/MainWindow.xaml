@@ -5,10 +5,95 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Game Studio Clicker"
-        Height="450"
-        Width="800">
-    <Grid>
-        <StackPanel Orientation="Vertical">
+        Height="600"
+        Width="800"
+        MinHeight="500"
+        MinWidth="700"
+        Background="#18181B"
+        Foreground="#F4F4F5">
+
+    <Window.Resources>
+        <Style x:Key="PrimaryButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background" Value="#3F3F46" />
+            <Setter Property="Foreground" Value="#F4F4F5" />
+            <Setter Property="BorderBrush" Value="#52525B" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="#45454B" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="#38383E" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="#303034" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="#38383E" />
+                                <Setter Property="Foreground"
+                                        Value="#777780" />
+                                <Setter Property="Cursor"
+                                        Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#52525B" />
+                </Trigger>
+
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#71717A" />
+                </Trigger>
+
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#27272A" />
+                    <Setter Property="Foreground" Value="#71717A" />
+                    <Setter Property="BorderBrush" Value="#3F3F46" />
+                    <Setter Property="Cursor" Value="Arrow" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+
+        <StackPanel Grid.Row="0">
+
             <!-- Welcome Message -->
             <TextBlock Text="Welcome to Game Studio Clicker!"
                        HorizontalAlignment="Center"
@@ -17,114 +102,185 @@
                        FontWeight="Bold"
                        Margin="0,20,0,20" />
 
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,0,0,10">
-                <TextBlock Text="Lines of Code Written: "
-                           FontSize="16" />
-                <TextBlock Text="{Binding LinesOfCode}"
-                           FontSize="16" />
-            </StackPanel>
-            
-            <!-- Write Code Button -->
-            <Button Content="Write Code"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Width="150"
-                    Height="50"
-                    FontSize="16"
-                    Command="{Binding WriteCodeCommand}" />
-
-            
-            
-            <!-- Lines of Code Production Section -->
-            <TextBlock Text="Current Production"
-                       HorizontalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Bold"
-                       Margin="0,30,0,5" />
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Lines of code per click: " />
-                <TextBlock Text="{Binding LinesPerClick}" />
-            </StackPanel>
-            
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Lines of code per Second: " />
-                <TextBlock Text="{Binding LinesPerSecond}" />
-            </StackPanel>
-            
-            
-            <StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Margin="0,10,0,10">
-
-            </StackPanel>
-            <!-- Mechanical Keyboard Section -->
-            <TextBlock Text="Mechanical Keyboard"
-                       HorizontalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Bold"
-                       Margin="0,25,0,5" />
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Increases lines of code per click by: 1" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,5,0,0">
-                
-                <TextBlock Text="Cost: " />
-                <TextBlock Text="{Binding MechanicalKeyboardCost}" />
-                <TextBlock Text=" Lines of Code" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,5,0,10">
-                <TextBlock Text="Owned: " />
-                <TextBlock Text="{Binding MechanicalKeyboardCount}" />
-            </StackPanel>
-
-            <!-- Buy Mechanical Keyboard Button -->
-            <Button Content="Buy Mechanical Keyboard"
-                    HorizontalAlignment="Center"
-                    Width="200"
-                    Height="40"
-                    Command="{Binding PurchaseMechanicalKeyboardCommand}" />
-            
-            <!-- Intern Section -->
-            <TextBlock Text="Intern"
-                       HorizontalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Bold"
-                       Margin="0,25,0,5" />
-            <StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center">
-                <TextBlock Text="Increases lines of code per second by: 1" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Cost: " />
-                <TextBlock Text="{Binding InternCost}" />
-                <TextBlock Text=" Lines of Code" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,5,0,10">
-                <TextBlock Text="Owned: " />
-                <TextBlock Text="{Binding InternCount}" />
-            </StackPanel>
-
-            <!-- Hire Intern Button -->
-            <Button Content="Hire Intern"
-                    HorizontalAlignment="Center"
-                    Width="200"
-                    Height="40"
-                    Command="{Binding PurchaseInternCommand}" />
         </StackPanel>
+
+
+
+
+        <Grid Grid.Row="1" Margin="0,24,0,0">
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Coding Panel -->
+
+            <Border Grid.Column="0"
+                    Padding="10"
+                    BorderThickness="1"
+                    Background="#27272A"
+                    BorderBrush="#3F3F46"
+                    CornerRadius="8">
+
+                <StackPanel>
+
+                    <!-- Lines of Code Written -->
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,10">
+                        <TextBlock Text="Lines of Code Written: "
+                                   FontSize="24"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding LinesOfCode}"
+                                   FontSize="24"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <!-- Write Code Button -->
+                    <Button Content="Write Code"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Width="150"
+                            Height="50"
+                            FontSize="16"
+                            Command="{Binding WriteCodeCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}" />
+
+                    <!-- Current Production Info -->
+                    <TextBlock Text="Current Production"
+                               HorizontalAlignment="Center"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Margin="0,30,0,10" />
+
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,10">
+                        <TextBlock Text="Lines of code per click: "
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   />
+                        <TextBlock Text="{Binding LinesPerClick}"
+                                   HorizontalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="Lines of code per Second: "
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding LinesPerSecond}"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+            </Border>
+
+            <ScrollViewer Grid.Column="1"
+                          Margin="24,0,0,0"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel>
+                    <!-- Upgrade Cards-->
+                    <!-- Mechanical Keyboard Card -->
+                    <Border Padding="10"
+                            BorderThickness="1"
+                            Background="#27272A"
+                            BorderBrush="#3F3F46"
+                            CornerRadius="8"
+                            Margin="0,0,0,16">
+
+                        <!-- Mechanical Keyboard Title -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Mechanical Keyboard"
+                                       HorizontalAlignment="Center"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       />
+
+                            <!-- Mechanical Keyboard Description -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="Increases lines of code per click by: 1" />
+                            </StackPanel>
+
+                            <!-- Mechanical Keyboard Cost -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,0">
+                                <TextBlock Text="Cost: " />
+                                <TextBlock Text="{Binding MechanicalKeyboardCost}" />
+                                <TextBlock Text=" Lines of Code" />
+                            </StackPanel>
+
+                            <!-- Mechanical Keyboard Owned -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,10">
+                                <TextBlock Text="Owned: " />
+                                <TextBlock Text="{Binding MechanicalKeyboardCount}" />
+                            </StackPanel>
+
+                            <!-- Buy Mechanical Keyboard Button -->
+                            <Button Content="Buy Mechanical Keyboard"
+                                    HorizontalAlignment="Center"
+                                    Width="200"
+                                    Height="40"
+                                    Command="{Binding PurchaseMechanicalKeyboardCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Intern Card -->
+                    <Border Padding="10"
+                            BorderThickness="1"
+                            Background="#27272A"
+                            BorderBrush="#3F3F46"
+                            CornerRadius="8">
+                        <!-- Intern Title -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Intern"
+                                       HorizontalAlignment="Center"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       />
+
+                            <!-- Intern Description -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="Increases lines of code per second by: 2" />
+                            </StackPanel>
+
+                            <!-- Intern Cost -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,0">
+                                <TextBlock Text="Cost: " />
+                                <TextBlock Text="{Binding InternCost}" />
+                                <TextBlock Text=" Lines of Code" />
+                            </StackPanel>
+
+                            <!-- Intern Owned -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,10">
+                                <TextBlock Text="Owned: " />
+                                <TextBlock Text="{Binding InternCount}" />
+                            </StackPanel>
+
+                            <!-- Hire Intern Purchase Button -->
+                            <Button Content="Hire Intern"
+                                    HorizontalAlignment="Center"
+                                    Width="200"
+                                    Height="40"
+                                    Command="{Binding PurchaseInternCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>
