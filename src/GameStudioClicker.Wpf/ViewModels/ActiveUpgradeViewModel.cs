@@ -11,6 +11,7 @@ namespace GameStudioClicker.Wpf.ViewModels
         public long Cost => _activeUpgrade.Cost;
         public bool IsPurchased => _activeUpgrade.IsPurchased;
         public bool IsAvailable => _activeUpgrade.IsAvailable;
+        public bool IsVisible { get; private set; }
 
         // Internal property to access the underlying ActiveUpgrade model
         internal ActiveUpgrade Upgrade => _activeUpgrade;
@@ -24,6 +25,12 @@ namespace GameStudioClicker.Wpf.ViewModels
         {
             OnPropertyChanged(nameof(IsPurchased));
             OnPropertyChanged(nameof(IsAvailable));
+        }
+
+        public void UpdateVisibility(bool isVisible)
+        {
+            IsVisible = isVisible;
+            OnPropertyChanged(nameof(IsVisible));
         }
     }
 }

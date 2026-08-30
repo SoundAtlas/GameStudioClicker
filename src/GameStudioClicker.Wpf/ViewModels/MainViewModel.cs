@@ -44,6 +44,7 @@ namespace GameStudioClicker.Wpf.ViewModels
                 activeUpgradeViewModels.Add(new ActiveUpgradeViewModel(upgrade));
             }
             ActiveUpgrades = activeUpgradeViewModels;
+            RefreshActiveUpgradeVisibility();
 
             // Create view models for each worker upgrade to expose to the view
             List<WorkerUpgradeViewModel> workerUpgradeViewModels = new List<WorkerUpgradeViewModel>();
@@ -173,12 +174,32 @@ namespace GameStudioClicker.Wpf.ViewModels
             {
                 upgradeViewModel.RefreshState();
             }
+
+            RefreshActiveUpgradeVisibility();
         }
         private void RefreshWorkerUpgradeStates()
         {
             foreach (var upgradeViewModel in WorkerUpgrades)
             {
                 upgradeViewModel.RefreshState();
+            }
+        }
+
+        private void RefreshActiveUpgradeVisibility()
+        {
+            int visibleUpgradeCount = 0;
+            foreach (ActiveUpgradeViewModel upgradeViewModel in ActiveUpgrades)
+            {
+                bool shouldBeVisible =
+                    !upgradeViewModel.IsPurchased &&
+                    visibleUpgradeCount < 3;
+
+                upgradeViewModel.UpdateVisibility(shouldBeVisible);
+
+                if (shouldBeVisible)
+                {
+                    visibleUpgradeCount++;
+                }
             }
         }
     }

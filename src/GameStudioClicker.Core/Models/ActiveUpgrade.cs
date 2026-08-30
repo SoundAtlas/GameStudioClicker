@@ -10,6 +10,7 @@
         public bool IsPurchased { get; private set; }
         public bool IsUnlocked => Prerequisite == null || Prerequisite.IsPurchased;
         public bool IsAvailable => IsUnlocked && !IsPurchased;
+
         public ActiveUpgrade? Prerequisite { get; }
 
         public ActiveUpgrade(string id, string displayName, string description, long cost, int clickMultiplier, ActiveUpgrade? prerequisite = null)

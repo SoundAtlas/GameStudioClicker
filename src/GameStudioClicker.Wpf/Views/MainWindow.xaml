@@ -259,7 +259,7 @@
                                                         Value="Visible" />
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsAvailable}"
+                                                    <DataTrigger Binding="{Binding IsVisible}"
                                                                  Value="False">
                                                         <Setter Property="Visibility"
                                                                 Value="Collapsed" />
