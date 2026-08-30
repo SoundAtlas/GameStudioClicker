@@ -6,15 +6,16 @@ namespace GameStudioClicker.Core.Models
     {
         // Core production state
         public long LinesOfCode { get; private set; }
-        public long LinesPerClick { get; private set; } = 1;
+        public long LinesPerClick { get; private set; } = 1000;
         public long LinesPerSecond { get; private set; } = 0;
 
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
+        public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
 
         // Construction
         public GameState()
         {
-            ActiveUpgrade MousePad = new ActiveUpgrade(
+            ActiveUpgrade mousePad = new ActiveUpgrade(
                 id: "mouse_pad",
                 displayName: "Mouse Pad",
                 description: "Doubles lines of code per click",
@@ -27,7 +28,7 @@ namespace GameStudioClicker.Core.Models
                 description: "Doubles lines of code per click",
                 cost: 400,
                 clickMultiplier: 2,
-                prerequisite: MousePad);
+                prerequisite: mousePad);
 
             ActiveUpgrade mechanicalKeyboard = new ActiveUpgrade(
                 id: "mechanical_keyboard",
@@ -93,7 +94,7 @@ namespace GameStudioClicker.Core.Models
 
             ActiveUpgrades = new List<ActiveUpgrade>
             {
-                MousePad,
+                mousePad,
                 gamingMouse,
                 mechanicalKeyboard,
                 headset,
@@ -102,19 +103,31 @@ namespace GameStudioClicker.Core.Models
                 secondMonitor,
                 ultrawideMonitor
             };
+
+            WorkerUpgrade intern = new WorkerUpgrade(
+                id: "intern",
+                displayName: "Intern",
+                description: "Produces 2 lines of code per second",
+                baseCost: 50,
+                baseLinesPerSecond: 2);
+
+            WorkerUpgrade juniorDeveloper = new WorkerUpgrade(
+                id: "junior_developer",
+                displayName: "Junior Developer",
+                description: "Produces 20 lines of code per second",
+                baseCost: 2000,
+                baseLinesPerSecond: 20,
+                prerequisite: intern,
+                requiredPrerequisiteCount: 5);
+
+            // Additional worker upgrades can be added here in the future, following the same pattern.
+
+            WorkerUpgrades = new List<WorkerUpgrade>
+            {
+                intern,
+                juniorDeveloper
+            };
         }
-
-
-        // Intern upgrade (passive production)
-        public long InternCost { get; private set; } = 50;
-        public int InternCount { get; private set; } = 0;
-        public bool CanPurchaseIntern => LinesOfCode >= InternCost;
-
-        // Junior developer upgrade (passive production)
-        public long JuniorDeveloperCost { get; private set; } = 2000;
-        public int JuniorDeveloperCount { get; private set; } = 0;
-        public bool IsJuniorDeveloperUnlocked => InternCount >= 5;
-        public bool CanPurchaseJuniorDeveloper => LinesOfCode >= JuniorDeveloperCost && IsJuniorDeveloperUnlocked;
 
         // Persistence
 
@@ -124,8 +137,6 @@ namespace GameStudioClicker.Core.Models
             var saveData = new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
-                InternCount = this.InternCount,
-                JuniorDeveloperCount = this.JuniorDeveloperCount,
             };
 
             foreach (var upgrade in ActiveUpgrades)
@@ -135,6 +146,12 @@ namespace GameStudioClicker.Core.Models
                     saveData.PurchasedActiveUpgradeIds.Add(upgrade.Id);
                 }
             }
+
+            foreach (var workerUpgrade in WorkerUpgrades)
+            {
+                saveData.WorkerUpgradeCounts[workerUpgrade.Id] = workerUpgrade.WorkerCount;
+            }
+
             return saveData;
         }
 
@@ -149,17 +166,17 @@ namespace GameStudioClicker.Core.Models
 
             // Clamp persisted values in case the save file was edited or corrupted.
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
-            InternCount = Math.Max(0, saveData.InternCount);
-            JuniorDeveloperCount = Math.Max(0, saveData.JuniorDeveloperCount);
 
+
+            // Restore active upgrade counts and recalculate their costs.
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
                 bool isPurchased = saveData.PurchasedActiveUpgradeIds.Contains(upgrade.Id);
                 upgrade.RestorePurchaseState(isPurchased);
             }
 
+            // Apply click multipliers from purchased active upgrades.
             LinesPerClick = 1;
-
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
                 if (upgrade.IsPurchased)
@@ -168,19 +185,17 @@ namespace GameStudioClicker.Core.Models
                 }
             }
 
-            LinesPerSecond = 2 * InternCount + 20 * JuniorDeveloperCount;
-
-            InternCost = 50;
-            for (int i = 0; i < InternCount; i++)
+            // Restore worker upgrade counts and recalculate their costs.
+            foreach (WorkerUpgrade upgrade in WorkerUpgrades)
             {
-                InternCost *= 2;
+                // If the save data does not contain a count for this upgrade, default to 0.
+                saveData.WorkerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
+
+                // Restore the worker count and recalculate the current cost based on the saved count.
+                upgrade.RestoreWorkerCount(savedCount);
             }
 
-            JuniorDeveloperCost = 2000;
-            for (int i = 0; i < JuniorDeveloperCount; i++)
-            {
-                JuniorDeveloperCost *= 2;
-            }
+            RecalculateLinesPerSecond();
         }
 
         public bool CanAffordUpgrade(long cost)
@@ -211,30 +226,38 @@ namespace GameStudioClicker.Core.Models
             return false;
         }
 
-        public bool TryPurchaseIntern()
+        public bool CanPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
         {
-            if (CanPurchaseIntern)
+            if (WorkerUpgrades.Contains(workerUpgrade) &&
+                workerUpgrade.IsUnlocked &&
+                CanAffordUpgrade(workerUpgrade.CurrentCost))
             {
-                LinesOfCode -= InternCost;
-                InternCount += 1;
-                LinesPerSecond += 2;
-                InternCost *= 2;
                 return true;
             }
             return false;
         }
 
-        public bool TryPurchaseJuniorDeveloper()
+        public bool TryPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
         {
-            if (CanPurchaseJuniorDeveloper)
+            if (CanPurchaseWorkerUpgrade(workerUpgrade))
             {
-                LinesOfCode -= JuniorDeveloperCost;
-                JuniorDeveloperCount += 1;
-                LinesPerSecond += 20;
-                JuniorDeveloperCost *= 2;
+                LinesOfCode -= workerUpgrade.CurrentCost;
+                workerUpgrade.AddWorker();
+
+                RecalculateLinesPerSecond();
                 return true;
             }
             return false;
+        }
+
+        private void RecalculateLinesPerSecond()
+        {
+            long calculatedLinesPerSecond = 0;
+            foreach (var upgrade in WorkerUpgrades)
+            {
+                calculatedLinesPerSecond += upgrade.TotalLinesPerSecond;
+            }
+            LinesPerSecond = calculatedLinesPerSecond;
         }
 
         // Code generation

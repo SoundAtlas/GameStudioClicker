@@ -300,114 +300,131 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <!-- Intern Card -->
-                    <Border Padding="10"
-                            BorderThickness="1"
-                            Background="#27272A"
-                            BorderBrush="#3F3F46"
-                            CornerRadius="8"
-                            Margin="0,0,0,16">
 
-                        <!-- Intern Title -->
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Intern"
-                                       HorizontalAlignment="Center"
-                                       FontSize="18"
-                                       FontWeight="Bold"
-                                       />
 
-                            <!-- Intern Description -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="Increases lines of code per second by: 2" />
-                            </StackPanel>
 
-                            <!-- Intern Cost -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,0">
-                                <TextBlock Text="Cost: " />
-                                <TextBlock Text="{Binding InternCost}" />
-                                <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
 
-                            <!-- Intern Owned -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Owned: " />
-                                <TextBlock Text="{Binding InternCount}" />
-                            </StackPanel>
+                    <!-- Generic worker cards -->
+                    <ItemsControl ItemsSource="{Binding WorkerUpgrades}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="12"
+                                        Margin="0,0,0,12"
+                                        Background="#27272A"
+                                        BorderBrush="#3F3F46"
+                                        BorderThickness="1"
+                                        CornerRadius="8">
 
-                            <!-- Hire Intern Purchase Button -->
-                            <Button Content="Hire Intern"
-                                    HorizontalAlignment="Center"
-                                    Width="200"
-                                    Height="40"
-                                    Command="{Binding PurchaseInternCommand}"
-                                    Style="{StaticResource PrimaryButtonStyle}"/>
-                        </StackPanel>
-                    </Border>
+                                    <!-- Hide workers that are too far ahead -->
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
 
-                    <!-- Junior Developer Card -->
-                    <Border Padding="10"
-                            BorderThickness="1"
-                            Background="#27272A"
-                            BorderBrush="#3F3F46"
-                            CornerRadius="8">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsVisible}"
+                                                             Value="False">
+                                                    <Setter Property="Visibility"
+                                                            Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
 
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Collapsed" />
+                                    <Grid>
+                                        <!-- Unlocked worker details -->
+                                        <StackPanel>
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility"
+                                                            Value="Visible" />
 
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsJuniorDeveloperUnlocked}"
-                                                 Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <!-- Junior Developer Title -->
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Junior Developer"
-                                       HorizontalAlignment="Center"
-                                       FontSize="18"
-                                       FontWeight="Bold"
-                                       />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsMystery}"
+                                                                     Value="True">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
 
-                            <!-- Junior Developer Description -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="Increases lines of code per second by: 20" />
-                            </StackPanel>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       HorizontalAlignment="Center"
+                                                       FontSize="18"
+                                                       FontWeight="Bold" />
 
-                            <!-- Junior Developer Cost -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,0">
-                                <TextBlock Text="Cost: " />
-                                <TextBlock Text="{Binding JuniorDeveloperCost}" />
-                                <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
+                                            <TextBlock Text="{Binding Description}"
+                                                       HorizontalAlignment="Center"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,4,0,8" />
 
-                            <!-- Junior Developer Owned -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Owned: " />
-                                <TextBlock Text="{Binding JuniorDeveloperCount}" />
-                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Center">
+                                                <TextBlock Text="Cost: " />
+                                                <TextBlock Text="{Binding CurrentCost}" />
+                                                <TextBlock Text=" Lines of Code" />
+                                            </StackPanel>
 
-                            <!-- Hire Junior Developer Purchase Button -->
-                            <Button Content="Hire Junior Developer"
-                                    HorizontalAlignment="Center"
-                                    Width="200"
-                                    Height="40"
-                                    Command="{Binding PurchaseJuniorDeveloperCommand}"
-                                    Style="{StaticResource PrimaryButtonStyle}"/>
-                        </StackPanel>
-                    </Border>
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Center"
+                                                        Margin="0,4,0,8">
+                                                <TextBlock Text="Owned: " />
+                                                <TextBlock Text="{Binding WorkerCount}" />
+                                            </StackPanel>
+
+                                            <Button Content="Hire"
+                                                    Width="200"
+                                                    Height="40"
+                                                    HorizontalAlignment="Center"
+                                                    Style="{StaticResource PrimaryButtonStyle}"
+                                                    Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
+                                                    RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                    CommandParameter="{Binding}" />
+                                        </StackPanel>
+
+                                        <!-- Locked mystery preview -->
+                                        <StackPanel HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,12">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility"
+                                                            Value="Collapsed" />
+
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsMystery}"
+                                                                     Value="True">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+
+                                            <TextBlock Text="???"
+                                                       HorizontalAlignment="Center"
+                                                       FontSize="26"
+                                                       FontWeight="Bold"
+                                                       Foreground="#A1A1AA" />
+
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       Foreground="#71717A"
+                                                       Margin="0,4,0,0">
+                                                <Run Text="Cost: " />
+                                                <Run Text="{Binding CurrentCost, Mode=OneWay}" />
+                                                <Run Text=" Lines of Code" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+
+
                 </StackPanel>
             </ScrollViewer>
         </Grid>

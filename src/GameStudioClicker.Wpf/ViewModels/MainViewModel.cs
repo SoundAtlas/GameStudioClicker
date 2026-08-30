@@ -24,24 +24,13 @@ namespace GameStudioClicker.Wpf.ViewModels
         public string OfflineEarningsMessage =>
             $"Your interns & Employees wrote {OfflineLinesEarned} lines of code while you were away!";
 
-
         public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
-
-
-        // Intern upgrade
-        public long InternCost => _gameState.InternCost;
-        public int InternCount => _gameState.InternCount;
-
-        // Junior developer upgrade
-        public long JuniorDeveloperCost => _gameState.JuniorDeveloperCost;
-        public int JuniorDeveloperCount => _gameState.JuniorDeveloperCount;
-        public bool IsJuniorDeveloperUnlocked => _gameState.IsJuniorDeveloperUnlocked;
+        public IReadOnlyList<WorkerUpgradeViewModel> WorkerUpgrades { get; }
 
         // Commands exposed to the view
         public RelayCommand WriteCodeCommand { get; }
         public RelayCommand PurchaseActiveUpgradeCommand { get; }
-        public RelayCommand PurchaseJuniorDeveloperCommand { get; }
-        public RelayCommand PurchaseInternCommand { get; }
+        public RelayCommand PurchaseWorkerUpgradeCommand { get; }
 
         // Construction and setup
         public MainViewModel(GameState gameState, long offlineLinesEarned = 0)
@@ -50,13 +39,19 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             // Create view models for each active upgrade to expose to the view
             List<ActiveUpgradeViewModel> activeUpgradeViewModels = new List<ActiveUpgradeViewModel>();
-
             foreach (var upgrade in _gameState.ActiveUpgrades)
             {
                 activeUpgradeViewModels.Add(new ActiveUpgradeViewModel(upgrade));
             }
-
             ActiveUpgrades = activeUpgradeViewModels;
+
+            // Create view models for each worker upgrade to expose to the view
+            List<WorkerUpgradeViewModel> workerUpgradeViewModels = new List<WorkerUpgradeViewModel>();
+            foreach (var upgrade in _gameState.WorkerUpgrades)
+            {
+                workerUpgradeViewModels.Add(new WorkerUpgradeViewModel(upgrade));
+            }
+            WorkerUpgrades = workerUpgradeViewModels;
 
             // Offline earnings are only shown if the player earned more than 0 lines of code while away.
             OfflineLinesEarned = Math.Max(0, offlineLinesEarned);
@@ -81,14 +76,10 @@ namespace GameStudioClicker.Wpf.ViewModels
                 new RelayCommand(
                     ExecutePurchaseActiveUpgrade,
                     CanExecutePurchaseActiveUpgrade);
-            PurchaseInternCommand =
+            PurchaseWorkerUpgradeCommand =
                 new RelayCommand(
-                    ExecutePurchaseIntern,
-                    CanExecutePurchaseIntern);
-            PurchaseJuniorDeveloperCommand =
-                new RelayCommand(
-                    ExecutePurchaseJuniorDeveloper,
-                    CanExecutePurchaseJuniorDeveloper);
+                    ExecutePurchaseWorkerUpgrade,
+                    CanExecutePurchaseWorkerUpgrade);
 
             if (_showOfflineEarnings)
             {
@@ -96,6 +87,30 @@ namespace GameStudioClicker.Wpf.ViewModels
             }
 
             _passiveTimer.Start();
+        }
+
+        private bool CanExecutePurchaseWorkerUpgrade(object? parameter)
+        {
+            if (parameter is WorkerUpgradeViewModel upgradeViewModel)
+            {
+                return _gameState.CanPurchaseWorkerUpgrade(upgradeViewModel.Upgrade);
+            }
+            return false;
+        }
+
+        private void ExecutePurchaseWorkerUpgrade(object? parameter)
+        {
+            if (parameter is WorkerUpgradeViewModel upgradeViewModel &&
+                _gameState.TryPurchaseWorkerUpgrade(upgradeViewModel.Upgrade))
+            {
+
+                OnPropertyChanged(nameof(LinesOfCode));
+                OnPropertyChanged(nameof(LinesPerSecond));
+
+                RefreshWorkerUpgradeStates();
+                RefreshPurchaseCommands();
+
+            }
         }
 
         private bool CanExecutePurchaseActiveUpgrade(object? parameter)
@@ -109,7 +124,8 @@ namespace GameStudioClicker.Wpf.ViewModels
 
         private void ExecutePurchaseActiveUpgrade(object? parameter)
         {
-            if (parameter is ActiveUpgradeViewModel upgradeViewModel && _gameState.TryPurchaseActiveUpgrade(upgradeViewModel.Upgrade))
+            if (parameter is ActiveUpgradeViewModel upgradeViewModel &&
+                _gameState.TryPurchaseActiveUpgrade(upgradeViewModel.Upgrade))
             {
                 OnPropertyChanged(nameof(LinesOfCode));
                 OnPropertyChanged(nameof(LinesPerClick));
@@ -117,55 +133,6 @@ namespace GameStudioClicker.Wpf.ViewModels
                 RefreshActiveUpgradeStates();
                 RefreshPurchaseCommands();
             }
-        }
-
-        // Intern command handlers
-
-        private void ExecutePurchaseIntern(object? parameter)
-        {
-            bool purchaseSuccessful =
-                _gameState.TryPurchaseIntern();
-
-            if (!purchaseSuccessful)
-            {
-                return;
-            }
-
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerSecond));
-            OnPropertyChanged(nameof(InternCost));
-            OnPropertyChanged(nameof(InternCount));
-            OnPropertyChanged(nameof(IsJuniorDeveloperUnlocked));
-
-            RefreshPurchaseCommands();
-        }
-
-        private bool CanExecutePurchaseIntern(object? parameter)
-        {
-            return _gameState.CanPurchaseIntern;
-        }
-
-        // Junior developer command handlers
-        private void ExecutePurchaseJuniorDeveloper(object? parameter)
-        {
-            bool purchaseSuccessful =
-                _gameState.TryPurchaseJuniorDeveloper();
-
-            if (!purchaseSuccessful)
-            {
-                return;
-            }
-
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerSecond));
-            OnPropertyChanged(nameof(JuniorDeveloperCost));
-            OnPropertyChanged(nameof(JuniorDeveloperCount));
-
-            RefreshPurchaseCommands();
-        }
-        private bool CanExecutePurchaseJuniorDeveloper(object? parameter)
-        {
-            return _gameState.CanPurchaseJuniorDeveloper;
         }
 
         // Timer handlers
@@ -197,14 +164,19 @@ namespace GameStudioClicker.Wpf.ViewModels
         private void RefreshPurchaseCommands()
         {
             PurchaseActiveUpgradeCommand.RaiseCanExecuteChanged();
-
-            PurchaseInternCommand.RaiseCanExecuteChanged();
-            PurchaseJuniorDeveloperCommand.RaiseCanExecuteChanged();
+            PurchaseWorkerUpgradeCommand.RaiseCanExecuteChanged();
         }
 
         private void RefreshActiveUpgradeStates()
         {
             foreach (var upgradeViewModel in ActiveUpgrades)
+            {
+                upgradeViewModel.RefreshState();
+            }
+        }
+        private void RefreshWorkerUpgradeStates()
+        {
+            foreach (var upgradeViewModel in WorkerUpgrades)
             {
                 upgradeViewModel.RefreshState();
             }
