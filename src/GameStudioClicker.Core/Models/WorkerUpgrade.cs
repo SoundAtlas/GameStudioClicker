@@ -16,7 +16,6 @@
         public WorkerUpgrade? Prerequisite { get; }
         public int RequiredPrerequisiteCount { get; }
 
-
         public WorkerUpgrade(string id, string displayName, string description, long baseCost, long baseLinesPerSecond, WorkerUpgrade? prerequisite = null, int requiredPrerequisiteCount = 0)
         {
             Id = id;
@@ -41,7 +40,7 @@
             WorkerCount = 0;
             CurrentCost = BaseCost;
 
-            // clamp workerCount to a minimum of 0
+            // Saved counts cannot reduce the owned worker count below zero.
             if (workerCount < 0)
             {
                 workerCount = 0;

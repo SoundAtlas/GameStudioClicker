@@ -14,7 +14,10 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 123,
-            InternCount = 3,
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 3
+            },
             PurchasedActiveUpgradeIds = new List<string>
             {
                 "mechanical_keyboard",
@@ -30,7 +33,9 @@ public class JsonGameSaveServiceTests
         using JsonDocument document = JsonDocument.Parse(json);
         JsonElement root = document.RootElement;
         Assert.AreEqual(123L, root.GetProperty(nameof(GameSaveData.LinesOfCode)).GetInt64());
-        Assert.AreEqual(3, root.GetProperty(nameof(GameSaveData.InternCount)).GetInt32());
+        JsonElement workerCounts =
+            root.GetProperty(nameof(GameSaveData.WorkerUpgradeCounts));
+        Assert.AreEqual(3, workerCounts.GetProperty("intern").GetInt32());
         JsonElement purchasedUpgradeIds =
             root.GetProperty(nameof(GameSaveData.PurchasedActiveUpgradeIds));
         Assert.AreEqual(2, purchasedUpgradeIds.GetArrayLength());
@@ -46,7 +51,11 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 456,
-            InternCount = 5,
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 5,
+                ["junior_developer"] = 2
+            },
             PurchasedActiveUpgradeIds = new List<string>
             {
                 "mechanical_keyboard",
@@ -66,7 +75,8 @@ public class JsonGameSaveServiceTests
             // Assert
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
-            Assert.AreEqual(5, loadedSaveData.InternCount);
+            Assert.AreEqual(5, loadedSaveData.WorkerUpgradeCounts["intern"]);
+            Assert.AreEqual(2, loadedSaveData.WorkerUpgradeCounts["junior_developer"]);
             CollectionAssert.AreEqual(
                 new List<string> { "mechanical_keyboard", "ultrawide_monitor" },
                 loadedSaveData.PurchasedActiveUpgradeIds);

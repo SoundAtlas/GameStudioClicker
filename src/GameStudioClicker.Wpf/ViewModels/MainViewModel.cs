@@ -6,7 +6,6 @@ namespace GameStudioClicker.Wpf.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-
         // Game state and timers
         private readonly GameState _gameState;
         private readonly DispatcherTimer _passiveTimer;
@@ -104,13 +103,11 @@ namespace GameStudioClicker.Wpf.ViewModels
             if (parameter is WorkerUpgradeViewModel upgradeViewModel &&
                 _gameState.TryPurchaseWorkerUpgrade(upgradeViewModel.Upgrade))
             {
-
                 OnPropertyChanged(nameof(LinesOfCode));
                 OnPropertyChanged(nameof(LinesPerSecond));
 
                 RefreshWorkerUpgradeStates();
                 RefreshPurchaseCommands();
-
             }
         }
 
@@ -177,6 +174,7 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             RefreshActiveUpgradeVisibility();
         }
+
         private void RefreshWorkerUpgradeStates()
         {
             foreach (var upgradeViewModel in WorkerUpgrades)

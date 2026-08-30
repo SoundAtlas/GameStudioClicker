@@ -299,11 +299,6 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-
-
-
-
-
                     <!-- Generic worker cards -->
                     <ItemsControl ItemsSource="{Binding WorkerUpgrades}">
                         <ItemsControl.ItemTemplate>
@@ -410,9 +405,7 @@
                                                        Foreground="#A1A1AA" />
 
                                             <StackPanel Orientation="Vertical"
-                                                        HorizontalAlignment="Center">
-
-
+                                                       HorizontalAlignment="Center">
                                                 <TextBlock Text="{Binding UnlockRequirementText}"
                                                            HorizontalAlignment="Center"
                                                            Foreground="#71717A"

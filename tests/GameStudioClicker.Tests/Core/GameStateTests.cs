@@ -12,40 +12,39 @@ public class GameStateTests
         var gameState = new GameState();
 
         Assert.AreEqual(0L, gameState.LinesOfCode);
-        Assert.AreEqual(1L, gameState.LinesPerClick);
+        Assert.AreEqual(1_000L, gameState.LinesPerClick);
         Assert.AreEqual(0L, gameState.LinesPerSecond);
 
-        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
-        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+        ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
+        ActiveUpgrade gamingMouse = GetActiveUpgrade(gameState, "gaming_mouse");
+        WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
 
-        Assert.AreEqual(100L, keyboard.Cost);
-        Assert.IsFalse(keyboard.IsPurchased);
-        Assert.IsTrue(keyboard.IsAvailable);
-        Assert.IsFalse(gameState.CanPurchaseActiveUpgrade(keyboard));
-        Assert.IsFalse(monitor.IsAvailable);
+        Assert.AreEqual(100L, mousePad.Cost);
+        Assert.IsFalse(mousePad.IsPurchased);
+        Assert.IsTrue(mousePad.IsAvailable);
+        Assert.IsFalse(gameState.CanPurchaseActiveUpgrade(mousePad));
+        Assert.IsFalse(gamingMouse.IsAvailable);
+        Assert.AreEqual(50L, intern.CurrentCost);
+        Assert.AreEqual(0, intern.WorkerCount);
     }
 
     [TestMethod]
-    public void TryPurchaseActiveUpgrade_WhenKeyboardPurchaseSucceeds_UpdatesOneTimeUpgradeState()
+    public void TryPurchaseActiveUpgrade_WhenFirstUpgradePurchaseSucceeds_UpdatesState()
     {
         var gameState = new GameState();
-        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
-        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+        ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
+        ActiveUpgrade gamingMouse = GetActiveUpgrade(gameState, "gaming_mouse");
 
-        for (int i = 0; i < 105; i++)
-        {
-            gameState.WriteCode();
-        }
+        gameState.WriteCode();
 
-        bool result = gameState.TryPurchaseActiveUpgrade(keyboard);
+        bool result = gameState.TryPurchaseActiveUpgrade(mousePad);
 
         Assert.IsTrue(result);
-        Assert.AreEqual(5L, gameState.LinesOfCode);
-        Assert.AreEqual(2L, gameState.LinesPerClick);
-        Assert.IsTrue(keyboard.IsPurchased);
-        Assert.IsFalse(keyboard.IsAvailable);
-        Assert.IsTrue(monitor.IsAvailable);
-        Assert.AreEqual(100L, keyboard.Cost);
+        Assert.AreEqual(900L, gameState.LinesOfCode);
+        Assert.AreEqual(2_000L, gameState.LinesPerClick);
+        Assert.IsTrue(mousePad.IsPurchased);
+        Assert.IsFalse(mousePad.IsAvailable);
+        Assert.IsTrue(gamingMouse.IsAvailable);
     }
 
     [TestMethod]
@@ -57,13 +56,13 @@ public class GameStateTests
             LinesOfCode = 1_000,
             PurchasedActiveUpgradeIds = new List<string>
             {
-                "mechanical_keyboard"
+                "mouse_pad"
             }
         });
 
-        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
+        ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
 
-        bool result = gameState.TryPurchaseActiveUpgrade(keyboard);
+        bool result = gameState.TryPurchaseActiveUpgrade(mousePad);
 
         Assert.IsFalse(result);
         Assert.AreEqual(1_000L, gameState.LinesOfCode);
@@ -71,52 +70,59 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void TryPurchaseActiveUpgrade_WhenMonitorPurchaseSucceeds_UpdatesOneTimeUpgradeState()
+    public void TryPurchaseActiveUpgrade_WhenPrerequisiteWasPurchased_UpdatesState()
     {
         var gameState = new GameState();
         gameState.RestoreFromSaveData(new GameSaveData
         {
-            LinesOfCode = 1_000,
+            LinesOfCode = 400,
             PurchasedActiveUpgradeIds = new List<string>
             {
-                "mechanical_keyboard"
+                "mouse_pad"
             }
         });
 
-        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+        ActiveUpgrade gamingMouse = GetActiveUpgrade(gameState, "gaming_mouse");
 
-        bool result = gameState.TryPurchaseActiveUpgrade(monitor);
+        bool result = gameState.TryPurchaseActiveUpgrade(gamingMouse);
 
         Assert.IsTrue(result);
         Assert.AreEqual(0L, gameState.LinesOfCode);
         Assert.AreEqual(4L, gameState.LinesPerClick);
-        Assert.IsTrue(monitor.IsPurchased);
-        Assert.IsFalse(monitor.IsAvailable);
+        Assert.IsTrue(gamingMouse.IsPurchased);
+        Assert.IsFalse(gamingMouse.IsAvailable);
     }
 
     [TestMethod]
-    public void TryPurchaseIntern_WithEnoughLines_UpdatesPassiveProduction()
+    public void TryPurchaseWorkerUpgrade_WithEnoughLines_UpdatesPassiveProduction()
     {
         var gameState = new GameState();
-        for (int i = 0; i < 50; i++)
+        gameState.RestoreFromSaveData(new GameSaveData
         {
-            gameState.WriteCode();
-        }
+            LinesOfCode = 50
+        });
+        WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
 
-        bool result = gameState.TryPurchaseIntern();
+        bool result = gameState.TryPurchaseWorkerUpgrade(intern);
 
         Assert.IsTrue(result);
         Assert.AreEqual(0L, gameState.LinesOfCode);
-        Assert.AreEqual(1, gameState.InternCount);
+        Assert.AreEqual(1, intern.WorkerCount);
         Assert.AreEqual(2L, gameState.LinesPerSecond);
-        Assert.AreEqual(100L, gameState.InternCost);
+        Assert.AreEqual(100L, intern.CurrentCost);
     }
 
     [TestMethod]
     public void GeneratePassiveLines_AfterPurchasingIntern_AddsProduction()
     {
         var gameState = new GameState();
-        gameState.RestoreFromSaveData(new GameSaveData { InternCount = 1 });
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 1
+            }
+        });
 
         gameState.GeneratePassiveLines();
 
@@ -130,12 +136,15 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 500,
-            InternCount = 5,
-            JuniorDeveloperCount = 2,
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 5,
+                ["junior_developer"] = 2
+            },
             PurchasedActiveUpgradeIds = new List<string>
             {
-                "mechanical_keyboard",
-                "ultrawide_monitor"
+                "mouse_pad",
+                "gaming_mouse"
             }
         });
 
@@ -143,10 +152,10 @@ public class GameStateTests
 
         Assert.AreEqual(500L, saveData.LinesOfCode);
         CollectionAssert.AreEqual(
-            new List<string> { "mechanical_keyboard", "ultrawide_monitor" },
+            new List<string> { "mouse_pad", "gaming_mouse" },
             saveData.PurchasedActiveUpgradeIds);
-        Assert.AreEqual(5, saveData.InternCount);
-        Assert.AreEqual(2, saveData.JuniorDeveloperCount);
+        Assert.AreEqual(5, saveData.WorkerUpgradeCounts["intern"]);
+        Assert.AreEqual(2, saveData.WorkerUpgradeCounts["junior_developer"]);
     }
 
     [TestMethod]
@@ -156,29 +165,34 @@ public class GameStateTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 250,
-            InternCount = 5,
-            JuniorDeveloperCount = 2,
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 5,
+                ["junior_developer"] = 2
+            },
             PurchasedActiveUpgradeIds = new List<string>
             {
-                "mechanical_keyboard",
-                "ultrawide_monitor"
+                "mouse_pad",
+                "gaming_mouse"
             }
         };
 
         gameState.RestoreFromSaveData(saveData);
 
-        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
-        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+        ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
+        ActiveUpgrade gamingMouse = GetActiveUpgrade(gameState, "gaming_mouse");
+        WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
+        WorkerUpgrade juniorDeveloper = GetWorkerUpgrade(gameState, "junior_developer");
 
         Assert.AreEqual(250L, gameState.LinesOfCode);
-        Assert.IsTrue(keyboard.IsPurchased);
-        Assert.IsTrue(monitor.IsPurchased);
+        Assert.IsTrue(mousePad.IsPurchased);
+        Assert.IsTrue(gamingMouse.IsPurchased);
         Assert.AreEqual(4L, gameState.LinesPerClick);
-        Assert.AreEqual(5, gameState.InternCount);
-        Assert.AreEqual(2, gameState.JuniorDeveloperCount);
+        Assert.AreEqual(5, intern.WorkerCount);
+        Assert.AreEqual(2, juniorDeveloper.WorkerCount);
         Assert.AreEqual(50L, gameState.LinesPerSecond);
-        Assert.AreEqual(1_600L, gameState.InternCost);
-        Assert.AreEqual(8_000L, gameState.JuniorDeveloperCost);
+        Assert.AreEqual(1_600L, intern.CurrentCost);
+        Assert.AreEqual(8_000L, juniorDeveloper.CurrentCost);
     }
 
     [TestMethod]
@@ -188,19 +202,25 @@ public class GameStateTests
         var saveData = new GameSaveData
         {
             LinesOfCode = -1,
-            InternCount = -1,
-            JuniorDeveloperCount = -1
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = -1,
+                ["junior_developer"] = -1
+            }
         };
 
         gameState.RestoreFromSaveData(saveData);
 
+        WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
+        WorkerUpgrade juniorDeveloper = GetWorkerUpgrade(gameState, "junior_developer");
+
         Assert.AreEqual(0L, gameState.LinesOfCode);
-        Assert.AreEqual(0, gameState.InternCount);
-        Assert.AreEqual(0, gameState.JuniorDeveloperCount);
+        Assert.AreEqual(0, intern.WorkerCount);
+        Assert.AreEqual(0, juniorDeveloper.WorkerCount);
         Assert.AreEqual(1L, gameState.LinesPerClick);
         Assert.AreEqual(0L, gameState.LinesPerSecond);
-        Assert.AreEqual(50L, gameState.InternCost);
-        Assert.AreEqual(2_000L, gameState.JuniorDeveloperCost);
+        Assert.AreEqual(50L, intern.CurrentCost);
+        Assert.AreEqual(2_000L, juniorDeveloper.CurrentCost);
     }
 
     [TestMethod]
@@ -218,8 +238,11 @@ public class GameStateTests
         var gameState = new GameState();
         gameState.RestoreFromSaveData(new GameSaveData
         {
-            InternCount = 1,
-            JuniorDeveloperCount = 1
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 1,
+                ["junior_developer"] = 1
+            }
         });
 
         long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromSeconds(10.8));
@@ -235,7 +258,10 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 100,
-            InternCount = 1
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 1
+            }
         });
 
         long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromMinutes(-5));
@@ -248,7 +274,13 @@ public class GameStateTests
     public void ApplyOfflineProgress_OverTwentyFourHours_CapsProductionAtTwentyFourHours()
     {
         var gameState = new GameState();
-        gameState.RestoreFromSaveData(new GameSaveData { InternCount = 1 });
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 1
+            }
+        });
 
         long earnedLines = gameState.ApplyOfflineProgress(TimeSpan.FromHours(30));
 
@@ -259,5 +291,10 @@ public class GameStateTests
     private static ActiveUpgrade GetActiveUpgrade(GameState gameState, string id)
     {
         return gameState.ActiveUpgrades.Single(upgrade => upgrade.Id == id);
+    }
+
+    private static WorkerUpgrade GetWorkerUpgrade(GameState gameState, string id)
+    {
+        return gameState.WorkerUpgrades.Single(upgrade => upgrade.Id == id);
     }
 }

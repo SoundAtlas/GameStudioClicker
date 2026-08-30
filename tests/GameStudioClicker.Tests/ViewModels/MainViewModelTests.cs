@@ -1,4 +1,5 @@
 using GameStudioClicker.Core.Models;
+using GameStudioClicker.Core.Persistence;
 using GameStudioClicker.Wpf.ViewModels;
 
 namespace GameStudioClicker.Tests;
@@ -29,7 +30,7 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(1L, viewModel.LinesPerClick);
+        Assert.AreEqual(1_000L, viewModel.LinesPerClick);
     }
 
     [TestMethod]
@@ -42,45 +43,42 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
-        ActiveUpgradeViewModel monitor = GetActiveUpgrade(viewModel, "ultrawide_monitor");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
+        ActiveUpgradeViewModel gamingMouse = GetActiveUpgrade(viewModel, "gaming_mouse");
 
-        Assert.AreEqual(100L, keyboard.Cost);
-        Assert.IsTrue(keyboard.IsAvailable);
-        Assert.IsFalse(monitor.IsAvailable);
+        Assert.AreEqual(100L, mousePad.Cost);
+        Assert.IsTrue(mousePad.IsAvailable);
+        Assert.IsFalse(gamingMouse.IsAvailable);
     }
 
     [TestMethod]
-    public void PurchaseActiveUpgradeCommand_NewGame_CannotPurchaseKeyboard()
+    public void PurchaseActiveUpgradeCommand_NewGame_CannotPurchaseFirstUpgrade()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
 
         // Act
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
 
-        bool canExecute = viewModel.PurchaseActiveUpgradeCommand.CanExecute(keyboard);
+        bool canExecute = viewModel.PurchaseActiveUpgradeCommand.CanExecute(mousePad);
 
         // Assert
         Assert.IsFalse(canExecute);
     }
 
     [TestMethod]
-    public void PurchaseActiveUpgradeCommand_WithEnoughLines_CanPurchaseKeyboard()
+    public void PurchaseActiveUpgradeCommand_WithEnoughLines_CanPurchaseFirstUpgrade()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 100; i++)
-        {
-            viewModel.WriteCodeCommand.Execute(null);
-        }
+        viewModel.WriteCodeCommand.Execute(null);
 
         // Act
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
 
-        bool canExecute = viewModel.PurchaseActiveUpgradeCommand.CanExecute(keyboard);
+        bool canExecute = viewModel.PurchaseActiveUpgradeCommand.CanExecute(mousePad);
 
         // Assert
         Assert.IsTrue(canExecute);
@@ -92,22 +90,19 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 105; i++)
-        {
-            viewModel.WriteCodeCommand.Execute(null);
-        }
+        viewModel.WriteCodeCommand.Execute(null);
 
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
-        ActiveUpgradeViewModel monitor = GetActiveUpgrade(viewModel, "ultrawide_monitor");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
+        ActiveUpgradeViewModel gamingMouse = GetActiveUpgrade(viewModel, "gaming_mouse");
 
         // Act
-        viewModel.PurchaseActiveUpgradeCommand.Execute(keyboard);
+        viewModel.PurchaseActiveUpgradeCommand.Execute(mousePad);
 
         // Assert
-        Assert.AreEqual(5L, viewModel.LinesOfCode);
-        Assert.AreEqual(2L, viewModel.LinesPerClick);
-        Assert.IsFalse(keyboard.IsAvailable);
-        Assert.IsTrue(monitor.IsAvailable);
+        Assert.AreEqual(900L, viewModel.LinesOfCode);
+        Assert.AreEqual(2_000L, viewModel.LinesPerClick);
+        Assert.IsFalse(mousePad.IsAvailable);
+        Assert.IsTrue(gamingMouse.IsAvailable);
     }
 
     [TestMethod]
@@ -116,41 +111,35 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 100; i++)
-        {
-            viewModel.WriteCodeCommand.Execute(null);
-        }
+        viewModel.WriteCodeCommand.Execute(null);
 
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
 
         // Act
-        viewModel.PurchaseActiveUpgradeCommand.Execute(keyboard);
+        viewModel.PurchaseActiveUpgradeCommand.Execute(mousePad);
 
         // Assert
-        Assert.IsFalse(viewModel.PurchaseActiveUpgradeCommand.CanExecute(keyboard));
-        Assert.AreEqual(100L, keyboard.Cost);
+        Assert.IsFalse(viewModel.PurchaseActiveUpgradeCommand.CanExecute(mousePad));
+        Assert.AreEqual(100L, mousePad.Cost);
     }
 
     [TestMethod]
-    public void PurchaseActiveUpgradeCommand_WhenExecuted_NotifiesMonitorAvailability()
+    public void PurchaseActiveUpgradeCommand_WhenExecuted_NotifiesNextUpgradeAvailability()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
 
-        for (int i = 0; i < 100; i++)
-        {
-            viewModel.WriteCodeCommand.Execute(null);
-        }
+        viewModel.WriteCodeCommand.Execute(null);
 
-        ActiveUpgradeViewModel keyboard = GetActiveUpgrade(viewModel, "mechanical_keyboard");
-        ActiveUpgradeViewModel monitor = GetActiveUpgrade(viewModel, "ultrawide_monitor");
+        ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
+        ActiveUpgradeViewModel gamingMouse = GetActiveUpgrade(viewModel, "gaming_mouse");
         var changedPropertyNames = new List<string?>();
-        monitor.PropertyChanged += (_, eventArgs) =>
+        gamingMouse.PropertyChanged += (_, eventArgs) =>
             changedPropertyNames.Add(eventArgs.PropertyName);
 
         // Act
-        viewModel.PurchaseActiveUpgradeCommand.Execute(keyboard);
+        viewModel.PurchaseActiveUpgradeCommand.Execute(mousePad);
 
         // Assert
         CollectionAssert.Contains(
@@ -169,7 +158,7 @@ public class MainViewModelTests
         viewModel.WriteCodeCommand.Execute(null);
 
         // Assert
-        Assert.AreEqual(1L, viewModel.LinesOfCode);
+        Assert.AreEqual(1_000L, viewModel.LinesOfCode);
     }
 
     [TestMethod]
@@ -193,41 +182,43 @@ public class MainViewModelTests
     }
 
     [TestMethod]
-    public void NewMainViewModel_ExposesInitialInternState()
+    public void NewMainViewModel_ExposesInitialWorkerState()
     {
         // Arrange
         var gameState = new GameState();
 
         // Act
         var viewModel = new MainViewModel(gameState);
+        WorkerUpgradeViewModel intern = GetWorkerUpgrade(viewModel, "intern");
 
         // Assert
         Assert.AreEqual(0L, viewModel.LinesPerSecond);
-        Assert.AreEqual(50L, viewModel.InternCost);
-        Assert.AreEqual(0, viewModel.InternCount);
-        Assert.IsFalse(viewModel.PurchaseInternCommand.CanExecute(null));
+        Assert.AreEqual(50L, intern.CurrentCost);
+        Assert.AreEqual(0, intern.WorkerCount);
+        Assert.IsFalse(viewModel.PurchaseWorkerUpgradeCommand.CanExecute(intern));
     }
 
     [TestMethod]
-    public void PurchaseInternCommand_WithEnoughLines_UpdatesExposedGameState()
+    public void PurchaseWorkerUpgradeCommand_WithEnoughLines_UpdatesExposedGameState()
     {
         // Arrange
         var gameState = new GameState();
-        var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 50; i++)
+        gameState.RestoreFromSaveData(new GameSaveData
         {
-            viewModel.WriteCodeCommand.Execute(null);
-        }
+            LinesOfCode = 50
+        });
+        var viewModel = new MainViewModel(gameState);
+        WorkerUpgradeViewModel intern = GetWorkerUpgrade(viewModel, "intern");
 
         // Act
-        viewModel.PurchaseInternCommand.Execute(null);
+        viewModel.PurchaseWorkerUpgradeCommand.Execute(intern);
 
         // Assert
         Assert.AreEqual(0L, viewModel.LinesOfCode);
         Assert.AreEqual(2L, viewModel.LinesPerSecond);
-        Assert.AreEqual(100L, viewModel.InternCost);
-        Assert.AreEqual(1, viewModel.InternCount);
-        Assert.IsFalse(viewModel.PurchaseInternCommand.CanExecute(null));
+        Assert.AreEqual(100L, intern.CurrentCost);
+        Assert.AreEqual(1, intern.WorkerCount);
+        Assert.IsFalse(viewModel.PurchaseWorkerUpgradeCommand.CanExecute(intern));
     }
 
     private static ActiveUpgradeViewModel GetActiveUpgrade(
@@ -235,5 +226,12 @@ public class MainViewModelTests
         string id)
     {
         return viewModel.ActiveUpgrades.Single(upgrade => upgrade.Id == id);
+    }
+
+    private static WorkerUpgradeViewModel GetWorkerUpgrade(
+        MainViewModel viewModel,
+        string id)
+    {
+        return viewModel.WorkerUpgrades.Single(upgrade => upgrade.Id == id);
     }
 }

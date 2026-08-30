@@ -21,7 +21,6 @@ namespace GameStudioClicker.Wpf.ViewModels
               $"({_workerUpgrade.Prerequisite.WorkerCount}/" +
               $"{_workerUpgrade.RequiredPrerequisiteCount})";
 
-
         internal WorkerUpgrade Upgrade => _workerUpgrade;
 
         public WorkerUpgradeViewModel(WorkerUpgrade workerUpgrade)

@@ -78,20 +78,7 @@ namespace GameStudioClicker.Core.Models
                 clickMultiplier: 3,
                 prerequisite: secondMonitor);
 
-            //9   Developer Laptop    
-            //10  Developer PC    
-            //11  High - End Workstation    
-            //12  Home Server 
-            //13  AI Workstation  
-            //14  Rack Server 
-            //15  Server Rack 
-            //16  Server Room 
-            //17  Small Data Center   
-            //18  Enterprise Data Center  
-            //19  Hyperscale Data Center  
-            //20  Supercomputer   
-
-
+            // Additional hardware upgrades can extend this ordered progression.
             ActiveUpgrades = new List<ActiveUpgrade>
             {
                 mousePad,
@@ -128,8 +115,6 @@ namespace GameStudioClicker.Core.Models
                 baseLinesPerSecond: 2000,
                 prerequisite: juniorDeveloper,
                 requiredPrerequisiteCount: 5);
-
-            // Additional worker upgrades can be added here in the future, following the same pattern.
 
             WorkerUpgrades = new List<WorkerUpgrade>
             {
@@ -177,8 +162,7 @@ namespace GameStudioClicker.Core.Models
             // Clamp persisted values in case the save file was edited or corrupted.
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
 
-
-            // Restore active upgrade counts and recalculate their costs.
+            // Restore the one-time purchase state of every active upgrade.
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
                 bool isPurchased = saveData.PurchasedActiveUpgradeIds.Contains(upgrade.Id);
@@ -195,13 +179,11 @@ namespace GameStudioClicker.Core.Models
                 }
             }
 
-            // Restore worker upgrade counts and recalculate their costs.
+            // Restore worker counts; each worker rebuilds its own current cost.
             foreach (WorkerUpgrade upgrade in WorkerUpgrades)
             {
-                // If the save data does not contain a count for this upgrade, default to 0.
+                // Missing dictionary entries default to zero through TryGetValue.
                 saveData.WorkerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
-
-                // Restore the worker count and recalculate the current cost based on the saved count.
                 upgrade.RestoreWorkerCount(savedCount);
             }
 
