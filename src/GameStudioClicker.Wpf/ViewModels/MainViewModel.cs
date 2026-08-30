@@ -25,12 +25,11 @@ namespace GameStudioClicker.Wpf.ViewModels
 
         // Mechanical keyboard upgrade
         public long MechanicalKeyboardCost => _gameState.MechanicalKeyboardCost;
-        public int MechanicalKeyboardCount => _gameState.MechanicalKeyboardCount;
+        public bool IsMechanicalKeyboardAvailable => _gameState.IsMechanicalKeyboardAvailable;
 
         // Ultrawide monitor upgrade
         public long UltrawideMonitorCost => _gameState.UltrawideMonitorCost;
-        public int UltrawideMonitorCount => _gameState.UltrawideMonitorCount;
-        public bool IsUltrawideMonitorUnlocked => _gameState.IsUltrawideMonitorUnlocked;
+        public bool IsUltrawideMonitorAvailable => _gameState.IsUltrawideMonitorAvailable;
 
         // Intern upgrade
         public long InternCost => _gameState.InternCost;
@@ -111,9 +110,8 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             OnPropertyChanged(nameof(LinesOfCode));
             OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(MechanicalKeyboardCount));
-            OnPropertyChanged(nameof(MechanicalKeyboardCost));
-            OnPropertyChanged(nameof(IsUltrawideMonitorUnlocked));
+            OnPropertyChanged(nameof(IsMechanicalKeyboardAvailable));
+            OnPropertyChanged(nameof(IsUltrawideMonitorAvailable));
 
             // Makes WPF check if the command can be executed again, which will update the button's enabled state
             RefreshPurchaseCommands();
@@ -139,8 +137,7 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             OnPropertyChanged(nameof(LinesOfCode));
             OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(UltrawideMonitorCount));
-            OnPropertyChanged(nameof(UltrawideMonitorCost));
+            OnPropertyChanged(nameof(IsUltrawideMonitorAvailable));
 
             RefreshPurchaseCommands();
         }

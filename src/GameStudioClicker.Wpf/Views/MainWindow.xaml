@@ -200,6 +200,18 @@
                             BorderBrush="#3F3F46"
                             CornerRadius="8"
                             Margin="0,0,0,16">
+                        <Border.Style>
+
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMechanicalKeyboardAvailable}"
+                                                 Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
 
                         <!-- Mechanical Keyboard Title -->
                         <StackPanel Orientation="Vertical">
@@ -212,24 +224,16 @@
                             <!-- Mechanical Keyboard Description -->
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
-                                <TextBlock Text="Increases lines of code per click by: 1" />
+                                <TextBlock Text="Doubles lines of code per Click" />
                             </StackPanel>
 
                             <!-- Mechanical Keyboard Cost -->
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center"
-                                        Margin="0,5,0,0">
+                                        Margin="0,5,0,10">
                                 <TextBlock Text="Cost: " />
                                 <TextBlock Text="{Binding MechanicalKeyboardCost}" />
                                 <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
-
-                            <!-- Mechanical Keyboard Owned -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Owned: " />
-                                <TextBlock Text="{Binding MechanicalKeyboardCount}" />
                             </StackPanel>
 
                             <!-- Buy Mechanical Keyboard Button -->
@@ -256,7 +260,7 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
 
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsUltrawideMonitorUnlocked}"
+                                    <DataTrigger Binding="{Binding IsUltrawideMonitorAvailable}"
                                                  Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
@@ -275,24 +279,16 @@
                             <!-- Ultrawide Monitor Description -->
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
-                                <TextBlock Text="Increases lines of code per click by: 10" />
+                                <TextBlock Text="Doubles lines of code per click" />
                             </StackPanel>
 
                             <!-- Ultrawide Monitor Cost -->
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center"
-                                        Margin="0,5,0,0">
+                                        Margin="0,5,0,10">
                                 <TextBlock Text="Cost: " />
                                 <TextBlock Text="{Binding UltrawideMonitorCost}" />
                                 <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
-
-                            <!-- Ultrawide Monitor Owned -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Owned: " />
-                                <TextBlock Text="{Binding UltrawideMonitorCount}" />
                             </StackPanel>
 
                             <!-- Buy Ultrawide Monitor Button -->

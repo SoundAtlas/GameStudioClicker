@@ -50,11 +50,11 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(25L, viewModel.MechanicalKeyboardCost);
+        Assert.AreEqual(100L, viewModel.MechanicalKeyboardCost);
     }
 
     [TestMethod]
-    public void NewMainViewModel_ReportsMechanicalKeyboardAsNotOwned()
+    public void NewMainViewModel_ReportsMechanicalKeyboardAsAvailable()
     {
         // Arrange
         var gameState = new GameState();
@@ -63,7 +63,7 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(0, viewModel.MechanicalKeyboardCount);
+        Assert.IsTrue(viewModel.IsMechanicalKeyboardAvailable);
     }
 
     [TestMethod]
@@ -87,7 +87,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 100; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -106,7 +106,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 105; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -117,7 +117,8 @@ public class MainViewModelTests
         // Assert
         Assert.AreEqual(5L, viewModel.LinesOfCode);
         Assert.AreEqual(2L, viewModel.LinesPerClick);
-        Assert.AreEqual(1, viewModel.MechanicalKeyboardCount);
+        Assert.IsFalse(viewModel.IsMechanicalKeyboardAvailable);
+        Assert.IsTrue(viewModel.IsUltrawideMonitorAvailable);
     }
 
     [TestMethod]
@@ -126,7 +127,7 @@ public class MainViewModelTests
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 100; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -139,12 +140,12 @@ public class MainViewModelTests
     }
 
     [TestMethod]
-    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_UpdatesNextKeyboardCost()
+    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_KeepsFixedKeyboardCost()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 100; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -153,16 +154,16 @@ public class MainViewModelTests
         viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
 
         // Assert
-        Assert.AreEqual(50L, viewModel.MechanicalKeyboardCost);
+        Assert.AreEqual(100L, viewModel.MechanicalKeyboardCost);
     }
 
     [TestMethod]
-    public void PurchaseMechanicalKeyboardCommand_AfterFirstPurchaseWithEnoughLines_CanExecute()
+    public void PurchaseMechanicalKeyboardCommand_AfterFirstPurchaseWithEnoughLines_CannotExecute()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
-        for (int i = 0; i < 75; i++)
+        for (int i = 0; i < 200; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -171,17 +172,17 @@ public class MainViewModelTests
         viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
 
         // Assert
-        Assert.IsTrue(viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.PurchaseMechanicalKeyboardCommand.CanExecute(null));
     }
 
     [TestMethod]
-    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_RaisesPropertyChangedForMechanicalKeyboardCost()
+    public void PurchaseMechanicalKeyboardCommand_WhenExecuted_RaisesPropertyChangedForMonitorAvailability()
     {
         // Arrange
         var gameState = new GameState();
         var viewModel = new MainViewModel(gameState);
 
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 100; i++)
         {
             viewModel.WriteCodeCommand.Execute(null);
         }
@@ -193,7 +194,7 @@ public class MainViewModelTests
         viewModel.PurchaseMechanicalKeyboardCommand.Execute(null);
 
         // Assert
-        Assert.AreEqual(nameof(MainViewModel.MechanicalKeyboardCost), _changedPropertyName);
+        Assert.AreEqual(nameof(MainViewModel.IsUltrawideMonitorAvailable), _changedPropertyName);
     }
 
     [TestMethod]

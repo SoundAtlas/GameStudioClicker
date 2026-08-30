@@ -14,7 +14,8 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 123,
-            MechanicalKeyboardCount = 2,
+            IsMechanicalKeyboardPurchased = true,
+            IsUltrawideMonitorPurchased = true,
             InternCount = 3
         };
 
@@ -26,7 +27,8 @@ public class JsonGameSaveServiceTests
         using JsonDocument document = JsonDocument.Parse(json);
         JsonElement root = document.RootElement;
         Assert.AreEqual(123L, root.GetProperty(nameof(GameSaveData.LinesOfCode)).GetInt64());
-        Assert.AreEqual(2, root.GetProperty(nameof(GameSaveData.MechanicalKeyboardCount)).GetInt32());
+        Assert.IsTrue(root.GetProperty(nameof(GameSaveData.IsMechanicalKeyboardPurchased)).GetBoolean());
+        Assert.IsTrue(root.GetProperty(nameof(GameSaveData.IsUltrawideMonitorPurchased)).GetBoolean());
         Assert.AreEqual(3, root.GetProperty(nameof(GameSaveData.InternCount)).GetInt32());
     }
 
@@ -38,7 +40,8 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 456,
-            MechanicalKeyboardCount = 4,
+            IsMechanicalKeyboardPurchased = true,
+            IsUltrawideMonitorPurchased = true,
             InternCount = 5
         };
         string filePath = Path.Combine(
@@ -54,7 +57,8 @@ public class JsonGameSaveServiceTests
             // Assert
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
-            Assert.AreEqual(4, loadedSaveData.MechanicalKeyboardCount);
+            Assert.IsTrue(loadedSaveData.IsMechanicalKeyboardPurchased);
+            Assert.IsTrue(loadedSaveData.IsUltrawideMonitorPurchased);
             Assert.AreEqual(5, loadedSaveData.InternCount);
         }
         finally

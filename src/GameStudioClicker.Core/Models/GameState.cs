@@ -10,16 +10,24 @@ namespace GameStudioClicker.Core.Models
         public long LinesPerSecond { get; private set; } = 0;
 
         // Mechanical keyboard upgrade (active production)
-        public long MechanicalKeyboardCost { get; private set; } = 25;
-        public int MechanicalKeyboardCount { get; private set; } = 0;
-        public bool CanPurchaseMechanicalKeyboard => LinesOfCode >= MechanicalKeyboardCost;
+        public long MechanicalKeyboardCost { get; private set; } = 100;
+        public bool IsMechanicalKeyboardPurchased { get; private set; }
+        public bool IsMechanicalKeyboardAvailable => !IsMechanicalKeyboardPurchased;
+        public bool CanPurchaseMechanicalKeyboard =>
+            LinesOfCode >= MechanicalKeyboardCost &&
+            IsMechanicalKeyboardAvailable;
 
 
         // Ultrawide monitor upgrade (active production)
         public long UltrawideMonitorCost { get; private set; } = 1000;
-        public int UltrawideMonitorCount { get; private set; } = 0;
-        public bool IsUltrawideMonitorUnlocked => MechanicalKeyboardCount >= 5;
-        public bool CanPurchaseUltrawideMonitor => LinesOfCode >= UltrawideMonitorCost && IsUltrawideMonitorUnlocked;
+        public bool IsUltrawideMonitorPurchased { get; private set; }
+        public bool IsUltrawideMonitorUnlocked => IsMechanicalKeyboardPurchased;
+        public bool IsUltrawideMonitorAvailable =>
+            IsUltrawideMonitorUnlocked &&
+            !IsUltrawideMonitorPurchased;
+        public bool CanPurchaseUltrawideMonitor =>
+            LinesOfCode >= UltrawideMonitorCost &&
+            IsUltrawideMonitorAvailable;
 
         // Intern upgrade (passive production)
         public long InternCost { get; private set; } = 50;
@@ -40,8 +48,8 @@ namespace GameStudioClicker.Core.Models
             return new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
-                MechanicalKeyboardCount = this.MechanicalKeyboardCount,
-                UltrawideMonitorCount = this.UltrawideMonitorCount,
+                IsMechanicalKeyboardPurchased = this.IsMechanicalKeyboardPurchased,
+                IsUltrawideMonitorPurchased = this.IsUltrawideMonitorPurchased,
                 InternCount = this.InternCount,
                 JuniorDeveloperCount = this.JuniorDeveloperCount,
             };
@@ -58,26 +66,23 @@ namespace GameStudioClicker.Core.Models
 
             // Clamp persisted values in case the save file was edited or corrupted.
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
-            MechanicalKeyboardCount = Math.Max(0, saveData.MechanicalKeyboardCount);
-            UltrawideMonitorCount = Math.Max(0, saveData.UltrawideMonitorCount);
             InternCount = Math.Max(0, saveData.InternCount);
             JuniorDeveloperCount = Math.Max(0, saveData.JuniorDeveloperCount);
+            IsMechanicalKeyboardPurchased = saveData.IsMechanicalKeyboardPurchased;
+            IsUltrawideMonitorPurchased = saveData.IsUltrawideMonitorPurchased;
 
             // Recalculate values that are derived from the number of upgrades owned.
-            LinesPerClick = 1 + MechanicalKeyboardCount + 10 * UltrawideMonitorCount;
+            LinesPerClick = 1;
+            if (IsMechanicalKeyboardPurchased)
+            {
+                LinesPerClick *= 2;
+            }
+            if (IsUltrawideMonitorPurchased)
+            {
+                LinesPerClick *= 2;
+            }
+
             LinesPerSecond = 2 * InternCount + 20 * JuniorDeveloperCount;
-
-            MechanicalKeyboardCost = 25;
-            for (int i = 0; i < MechanicalKeyboardCount; i++)
-            {
-                MechanicalKeyboardCost *= 2;
-            }
-
-            UltrawideMonitorCost = 1000;
-            for (int i = 0; i < UltrawideMonitorCount; i++)
-            {
-                UltrawideMonitorCost *= 2;
-            }
 
             InternCost = 50;
             for (int i = 0; i < InternCount; i++)
@@ -98,9 +103,8 @@ namespace GameStudioClicker.Core.Models
             if (CanPurchaseMechanicalKeyboard)
             {
                 LinesOfCode -= MechanicalKeyboardCost;
-                MechanicalKeyboardCount += 1;
-                LinesPerClick += 1;
-                MechanicalKeyboardCost *= 2;
+                LinesPerClick *= 2;
+                IsMechanicalKeyboardPurchased = true;
                 return true;
             }
             return false;
@@ -111,9 +115,8 @@ namespace GameStudioClicker.Core.Models
             if (CanPurchaseUltrawideMonitor)
             {
                 LinesOfCode -= UltrawideMonitorCost;
-                UltrawideMonitorCount += 1;
-                LinesPerClick += 10;
-                UltrawideMonitorCost *= 2;
+                LinesPerClick *= 2;
+                IsUltrawideMonitorPurchased = true;
                 return true;
             }
             return false;
