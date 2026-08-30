@@ -12,24 +12,25 @@ namespace GameStudioClicker.Core.Models
         // Mechanical keyboard upgrade (active production)
         public long MechanicalKeyboardCost { get; private set; } = 25;
         public int MechanicalKeyboardCount { get; private set; } = 0;
-        public bool CanPurchaseMechanicalKeyboard
-        {
-            get
-            {
-                return LinesOfCode >= MechanicalKeyboardCost;
-            }
-        }
+        public bool CanPurchaseMechanicalKeyboard => LinesOfCode >= MechanicalKeyboardCost;
+
+
+        // Ultrawide monitor upgrade (active production)
+        public long UltrawideMonitorCost { get; private set; } = 1000;
+        public int UltrawideMonitorCount { get; private set; } = 0;
+        public bool IsUltrawideMonitorUnlocked => MechanicalKeyboardCount >= 5;
+        public bool CanPurchaseUltrawideMonitor => LinesOfCode >= UltrawideMonitorCost && IsUltrawideMonitorUnlocked;
 
         // Intern upgrade (passive production)
         public long InternCost { get; private set; } = 50;
         public int InternCount { get; private set; } = 0;
-        public bool CanPurchaseIntern
-        {
-            get
-            {
-                return LinesOfCode >= InternCost;
-            }
-        }
+        public bool CanPurchaseIntern => LinesOfCode >= InternCost;
+
+        // Junior developer upgrade (passive production)
+        public long JuniorDeveloperCost { get; private set; } = 2000;
+        public int JuniorDeveloperCount { get; private set; } = 0;
+        public bool IsJuniorDeveloperUnlocked => InternCount >= 5;
+        public bool CanPurchaseJuniorDeveloper => LinesOfCode >= JuniorDeveloperCost && IsJuniorDeveloperUnlocked;
 
         // Persistence
 
@@ -40,7 +41,9 @@ namespace GameStudioClicker.Core.Models
             {
                 LinesOfCode = this.LinesOfCode,
                 MechanicalKeyboardCount = this.MechanicalKeyboardCount,
-                InternCount = this.InternCount
+                UltrawideMonitorCount = this.UltrawideMonitorCount,
+                InternCount = this.InternCount,
+                JuniorDeveloperCount = this.JuniorDeveloperCount,
             };
         }
 
@@ -56,16 +59,24 @@ namespace GameStudioClicker.Core.Models
             // Clamp persisted values in case the save file was edited or corrupted.
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
             MechanicalKeyboardCount = Math.Max(0, saveData.MechanicalKeyboardCount);
+            UltrawideMonitorCount = Math.Max(0, saveData.UltrawideMonitorCount);
             InternCount = Math.Max(0, saveData.InternCount);
+            JuniorDeveloperCount = Math.Max(0, saveData.JuniorDeveloperCount);
 
             // Recalculate values that are derived from the number of upgrades owned.
-            LinesPerClick = 1 + MechanicalKeyboardCount;
-            LinesPerSecond = 2 * InternCount;
-            MechanicalKeyboardCost = 25;
+            LinesPerClick = 1 + MechanicalKeyboardCount + 10 * UltrawideMonitorCount;
+            LinesPerSecond = 2 * InternCount + 20 * JuniorDeveloperCount;
 
+            MechanicalKeyboardCost = 25;
             for (int i = 0; i < MechanicalKeyboardCount; i++)
             {
                 MechanicalKeyboardCost *= 2;
+            }
+
+            UltrawideMonitorCost = 1000;
+            for (int i = 0; i < UltrawideMonitorCount; i++)
+            {
+                UltrawideMonitorCost *= 2;
             }
 
             InternCost = 50;
@@ -73,10 +84,15 @@ namespace GameStudioClicker.Core.Models
             {
                 InternCost *= 2;
             }
+
+            JuniorDeveloperCost = 2000;
+            for (int i = 0; i < JuniorDeveloperCount; i++)
+            {
+                JuniorDeveloperCost *= 2;
+            }
         }
 
         // Upgrade purchases
-
         public bool TryPurchaseMechanicalKeyboard()
         {
             if (CanPurchaseMechanicalKeyboard)
@@ -90,6 +106,19 @@ namespace GameStudioClicker.Core.Models
             return false;
         }
 
+        public bool TryPurchaseUltrawideMonitor()
+        {
+            if (CanPurchaseUltrawideMonitor)
+            {
+                LinesOfCode -= UltrawideMonitorCost;
+                UltrawideMonitorCount += 1;
+                LinesPerClick += 10;
+                UltrawideMonitorCost *= 2;
+                return true;
+            }
+            return false;
+        }
+
         public bool TryPurchaseIntern()
         {
             if (CanPurchaseIntern)
@@ -98,6 +127,19 @@ namespace GameStudioClicker.Core.Models
                 InternCount += 1;
                 LinesPerSecond += 2;
                 InternCost *= 2;
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryPurchaseJuniorDeveloper()
+        {
+            if (CanPurchaseJuniorDeveloper)
+            {
+                LinesOfCode -= JuniorDeveloperCost;
+                JuniorDeveloperCount += 1;
+                LinesPerSecond += 20;
+                JuniorDeveloperCost *= 2;
                 return true;
             }
             return false;

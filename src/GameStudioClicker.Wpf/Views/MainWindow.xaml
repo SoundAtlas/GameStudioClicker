@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Game Studio Clicker"
-        Height="600"
-        Width="800"
+        Height="800"
+        Width="1200"
         MinHeight="500"
         MinWidth="700"
         Background="#18181B"
@@ -81,10 +81,10 @@
             <TextBlock Text="Game Studio Clicker!"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
-                       FontSize="24"
+                       FontSize="45"
                        FontWeight="Bold"
-                       Margin="0,20,0,20" />
-
+                       Margin="0,20,0,10" />
+            <!-- Offline Earnings Message -->
             <Border Padding="12"
                     Margin="0,0,0,16"
                     HorizontalAlignment="Center"
@@ -144,6 +144,7 @@
                                    FontSize="24"
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
+
                     <!-- Write Code Button -->
                     <Button Content="Write Code"
                             HorizontalAlignment="Center"
@@ -242,12 +243,77 @@
 
                     </Border>
 
+                    <!-- Ultrawide Monitor Card -->
+                    <Border Padding="10"
+                            BorderThickness="1"
+                            Background="#27272A"
+                            BorderBrush="#3F3F46"
+                            CornerRadius="8"
+                            Margin="0,0,0,16">
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsUltrawideMonitorUnlocked}"
+                                                 Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <!-- Ultrawide Monitor Title -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Ultrawide Monitor"
+                                       HorizontalAlignment="Center"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       />
+
+                            <!-- Ultrawide Monitor Description -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="Increases lines of code per click by: 10" />
+                            </StackPanel>
+
+                            <!-- Ultrawide Monitor Cost -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,0">
+                                <TextBlock Text="Cost: " />
+                                <TextBlock Text="{Binding UltrawideMonitorCost}" />
+                                <TextBlock Text=" Lines of Code" />
+                            </StackPanel>
+
+                            <!-- Ultrawide Monitor Owned -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,10">
+                                <TextBlock Text="Owned: " />
+                                <TextBlock Text="{Binding UltrawideMonitorCount}" />
+                            </StackPanel>
+
+                            <!-- Buy Ultrawide Monitor Button -->
+                            <Button Content="Buy Ultrawide Monitor"
+                                    HorizontalAlignment="Center"
+                                    Width="200"
+                                    Height="40"
+                                    Command="{Binding PurchaseUltrawideMonitorCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
+                        </StackPanel>
+
+                    </Border>
+
                     <!-- Intern Card -->
                     <Border Padding="10"
                             BorderThickness="1"
                             Background="#27272A"
                             BorderBrush="#3F3F46"
-                            CornerRadius="8">
+                            CornerRadius="8"
+                            Margin="0,0,0,16">
+
                         <!-- Intern Title -->
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Intern"
@@ -285,6 +351,66 @@
                                     Width="200"
                                     Height="40"
                                     Command="{Binding PurchaseInternCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Junior Developer Card -->
+                    <Border Padding="10"
+                            BorderThickness="1"
+                            Background="#27272A"
+                            BorderBrush="#3F3F46"
+                            CornerRadius="8">
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsJuniorDeveloperUnlocked}"
+                                                 Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <!-- Junior Developer Title -->
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Junior Developer"
+                                       HorizontalAlignment="Center"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       />
+
+                            <!-- Junior Developer Description -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="Increases lines of code per second by: 20" />
+                            </StackPanel>
+
+                            <!-- Junior Developer Cost -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,0">
+                                <TextBlock Text="Cost: " />
+                                <TextBlock Text="{Binding JuniorDeveloperCost}" />
+                                <TextBlock Text=" Lines of Code" />
+                            </StackPanel>
+
+                            <!-- Junior Developer Owned -->
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,5,0,10">
+                                <TextBlock Text="Owned: " />
+                                <TextBlock Text="{Binding JuniorDeveloperCount}" />
+                            </StackPanel>
+
+                            <!-- Hire Junior Developer Purchase Button -->
+                            <Button Content="Hire Junior Developer"
+                                    HorizontalAlignment="Center"
+                                    Width="200"
+                                    Height="40"
+                                    Command="{Binding PurchaseJuniorDeveloperCommand}"
                                     Style="{StaticResource PrimaryButtonStyle}"/>
                         </StackPanel>
                     </Border>

@@ -27,13 +27,25 @@ namespace GameStudioClicker.Wpf.ViewModels
         public long MechanicalKeyboardCost => _gameState.MechanicalKeyboardCost;
         public int MechanicalKeyboardCount => _gameState.MechanicalKeyboardCount;
 
+        // Ultrawide monitor upgrade
+        public long UltrawideMonitorCost => _gameState.UltrawideMonitorCost;
+        public int UltrawideMonitorCount => _gameState.UltrawideMonitorCount;
+        public bool IsUltrawideMonitorUnlocked => _gameState.IsUltrawideMonitorUnlocked;
+
         // Intern upgrade
         public long InternCost => _gameState.InternCost;
         public int InternCount => _gameState.InternCount;
 
+        // Junior developer upgrade
+        public long JuniorDeveloperCost => _gameState.JuniorDeveloperCost;
+        public int JuniorDeveloperCount => _gameState.JuniorDeveloperCount;
+        public bool IsJuniorDeveloperUnlocked => _gameState.IsJuniorDeveloperUnlocked;
+
         // Commands exposed to the view
         public RelayCommand WriteCodeCommand { get; }
         public RelayCommand PurchaseMechanicalKeyboardCommand { get; }
+        public RelayCommand PurchaseUltrawideMonitorCommand { get; }
+        public RelayCommand PurchaseJuniorDeveloperCommand { get; }
         public RelayCommand PurchaseInternCommand { get; }
 
         // Construction and setup
@@ -63,10 +75,18 @@ namespace GameStudioClicker.Wpf.ViewModels
                 new RelayCommand(
                     ExecutePurchaseMechanicalKeyboard,
                     CanExecutePurchaseMechanicalKeyboard);
+            PurchaseUltrawideMonitorCommand =
+                new RelayCommand(
+                    ExecutePurchaseUltrawideMonitor,
+                    CanExecutePurchaseUltrawideMonitor);
             PurchaseInternCommand =
                 new RelayCommand(
                     ExecutePurchaseIntern,
                     CanExecutePurchaseIntern);
+            PurchaseJuniorDeveloperCommand =
+                new RelayCommand(
+                    ExecutePurchaseJuniorDeveloper,
+                    CanExecutePurchaseJuniorDeveloper);
 
             if (_showOfflineEarnings)
             {
@@ -75,6 +95,7 @@ namespace GameStudioClicker.Wpf.ViewModels
 
             _passiveTimer.Start();
         }
+
 
         // Mechanical keyboard command handlers
 
@@ -92,6 +113,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(LinesPerClick));
             OnPropertyChanged(nameof(MechanicalKeyboardCount));
             OnPropertyChanged(nameof(MechanicalKeyboardCost));
+            OnPropertyChanged(nameof(IsUltrawideMonitorUnlocked));
 
             // Makes WPF check if the command can be executed again, which will update the button's enabled state
             RefreshPurchaseCommands();
@@ -100,6 +122,31 @@ namespace GameStudioClicker.Wpf.ViewModels
         private bool CanExecutePurchaseMechanicalKeyboard(object? parameter)
         {
             return _gameState.CanPurchaseMechanicalKeyboard;
+        }
+
+
+        // Ultrawide monitor command handlers
+
+        private void ExecutePurchaseUltrawideMonitor(object? parameter)
+        {
+            bool purchaseSuccessful =
+                _gameState.TryPurchaseUltrawideMonitor();
+
+            if (!purchaseSuccessful)
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(LinesOfCode));
+            OnPropertyChanged(nameof(LinesPerClick));
+            OnPropertyChanged(nameof(UltrawideMonitorCount));
+            OnPropertyChanged(nameof(UltrawideMonitorCost));
+
+            RefreshPurchaseCommands();
+        }
+        private bool CanExecutePurchaseUltrawideMonitor(object? parameter)
+        {
+            return _gameState.CanPurchaseUltrawideMonitor;
         }
 
         // Intern command handlers
@@ -118,6 +165,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(LinesPerSecond));
             OnPropertyChanged(nameof(InternCost));
             OnPropertyChanged(nameof(InternCount));
+            OnPropertyChanged(nameof(IsJuniorDeveloperUnlocked));
 
             RefreshPurchaseCommands();
         }
@@ -125,6 +173,29 @@ namespace GameStudioClicker.Wpf.ViewModels
         private bool CanExecutePurchaseIntern(object? parameter)
         {
             return _gameState.CanPurchaseIntern;
+        }
+
+        // Junior developer command handlers
+        private void ExecutePurchaseJuniorDeveloper(object? parameter)
+        {
+            bool purchaseSuccessful =
+                _gameState.TryPurchaseJuniorDeveloper();
+
+            if (!purchaseSuccessful)
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(LinesOfCode));
+            OnPropertyChanged(nameof(LinesPerSecond));
+            OnPropertyChanged(nameof(JuniorDeveloperCost));
+            OnPropertyChanged(nameof(JuniorDeveloperCount));
+
+            RefreshPurchaseCommands();
+        }
+        private bool CanExecutePurchaseJuniorDeveloper(object? parameter)
+        {
+            return _gameState.CanPurchaseJuniorDeveloper;
         }
 
         // Timer handlers
@@ -156,7 +227,10 @@ namespace GameStudioClicker.Wpf.ViewModels
         private void RefreshPurchaseCommands()
         {
             PurchaseMechanicalKeyboardCommand.RaiseCanExecuteChanged();
+            PurchaseUltrawideMonitorCommand.RaiseCanExecuteChanged();
+
             PurchaseInternCommand.RaiseCanExecuteChanged();
+            PurchaseJuniorDeveloperCommand.RaiseCanExecuteChanged();
         }
     }
 }
