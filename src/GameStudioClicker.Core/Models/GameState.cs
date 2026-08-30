@@ -14,23 +14,92 @@ namespace GameStudioClicker.Core.Models
         // Construction
         public GameState()
         {
+            ActiveUpgrade MousePad = new ActiveUpgrade(
+                id: "mouse_pad",
+                displayName: "Mouse Pad",
+                description: "Doubles lines of code per click",
+                cost: 100,
+                clickMultiplier: 2);
+
+            ActiveUpgrade gamingMouse = new ActiveUpgrade(
+                id: "gaming_mouse",
+                displayName: "Gaming Mouse",
+                description: "Doubles lines of code per click",
+                cost: 400,
+                clickMultiplier: 2,
+                prerequisite: MousePad);
+
             ActiveUpgrade mechanicalKeyboard = new ActiveUpgrade(
                 id: "mechanical_keyboard",
                 displayName: "Mechanical Keyboard",
                 description: "Doubles lines of code per click",
-                cost: 100,
-                clickMultiplier: 2);
-            ActiveUpgrade ultrawideMonitor = new ActiveUpgrade(
-                id: "ultrawide_monitor",
-                displayName: "Ultrawide Monitor",
+                cost: 700,
+                clickMultiplier: 2,
+                prerequisite: gamingMouse);
+
+            ActiveUpgrade headset = new ActiveUpgrade(
+                id: "headset",
+                displayName: "Headset",
                 description: "Doubles lines of code per click",
-                cost: 1000,
+                cost: 800,
                 clickMultiplier: 2,
                 prerequisite: mechanicalKeyboard);
 
+            ActiveUpgrade webcam = new ActiveUpgrade(
+                id: "webcam",
+                displayName: "Webcam",
+                description: "Doubles lines of code per click",
+                cost: 900,
+                clickMultiplier: 2,
+                prerequisite: headset);
+
+            ActiveUpgrade externalSSD = new ActiveUpgrade(
+                id: "external_ssd",
+                displayName: "External SSD",
+                description: "Doubles lines of code per click",
+                cost: 1000,
+                clickMultiplier: 2,
+                prerequisite: webcam);
+
+            ActiveUpgrade secondMonitor = new ActiveUpgrade(
+                id: "second_monitor",
+                displayName: "Second Monitor",
+                description: "Doubles lines of code per click",
+                cost: 1500,
+                clickMultiplier: 2,
+                prerequisite: externalSSD);
+
+            ActiveUpgrade ultrawideMonitor = new ActiveUpgrade(
+                id: "ultrawide_monitor",
+                displayName: "Ultrawide Monitor",
+                description: "Triples lines of code per click",
+                cost: 3000,
+                clickMultiplier: 3,
+                prerequisite: secondMonitor);
+
+            //9   Developer Laptop    
+            //10  Developer PC    
+            //11  High - End Workstation    
+            //12  Home Server 
+            //13  AI Workstation  
+            //14  Rack Server 
+            //15  Server Rack 
+            //16  Server Room 
+            //17  Small Data Center   
+            //18  Enterprise Data Center  
+            //19  Hyperscale Data Center  
+            //20  Supercomputer   
+
+
             ActiveUpgrades = new List<ActiveUpgrade>
             {
+                MousePad,
+                gamingMouse,
                 mechanicalKeyboard,
+                headset,
+                webcam,
+                externalSSD,
+                secondMonitor,
                 ultrawideMonitor
             };
         }
