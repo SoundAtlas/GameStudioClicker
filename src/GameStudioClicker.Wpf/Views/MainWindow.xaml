@@ -65,6 +65,37 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="Background"
+                    Value="#27272A" />
+            <Setter Property="Foreground"
+                    Value="#F4F4F5" />
+            <Setter Property="BorderBrush"
+                    Value="#52525B" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="Padding"
+                    Value="12" />
+            <Setter Property="Placement"
+                    Value="Bottom" />
+            <Setter Property="HasDropShadow"
+                    Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToolTip}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="6">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid Margin="24">
@@ -192,115 +223,82 @@
                           VerticalScrollBarVisibility="Auto">
 
                 <StackPanel>
-                    <!-- Upgrade Cards-->
-                    <!-- Mechanical Keyboard Card -->
-                    <Border Padding="10"
-                            BorderThickness="1"
-                            Background="#27272A"
-                            BorderBrush="#3F3F46"
-                            CornerRadius="8"
-                            Margin="0,0,0,16">
-                        <Border.Style>
 
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Visible" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsMechanicalKeyboardAvailable}"
-                                                 Value="False">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
+                    <!-- Compact active upgrades -->
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Active Upgrades"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,8" />
 
-                        <!-- Mechanical Keyboard Title -->
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Mechanical Keyboard"
-                                       HorizontalAlignment="Center"
-                                       FontSize="18"
-                                       FontWeight="Bold"
-                                       />
+                        <ItemsControl ItemsSource="{Binding ActiveUpgrades}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                            <!-- Mechanical Keyboard Description -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="Doubles lines of code per Click" />
-                            </StackPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Width="60"
+                                            Height="60"
+                                            Margin="0,0,8,8"
+                                            Padding="4"
+                                            ToolTipService.InitialShowDelay="150"
+                                            ToolTipService.BetweenShowDelay="0"
+                                            ToolTipService.ShowDuration="30000"
+                                            ToolTipService.ShowOnDisabled="True"
+                                            Command="{Binding DataContext.PurchaseActiveUpgradeCommand,
+                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                            CommandParameter="{Binding}">
 
-                            <!-- Mechanical Keyboard Cost -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Cost: " />
-                                <TextBlock Text="{Binding MechanicalKeyboardCost}" />
-                                <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
+                                        <Button.Style>
+                                            <Style TargetType="Button"
+                                                   BasedOn="{StaticResource PrimaryButtonStyle}">
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
 
-                            <!-- Buy Mechanical Keyboard Button -->
-                            <Button Content="Buy Mechanical Keyboard"
-                                    HorizontalAlignment="Center"
-                                    Width="200"
-                                    Height="40"
-                                    Command="{Binding PurchaseMechanicalKeyboardCommand}"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
-                        </StackPanel>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsAvailable}"
+                                                                 Value="False">
+                                                        <Setter Property="Visibility"
+                                                                Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
 
-                    </Border>
+                                        <!-- Temporary generic upgrade icon -->
+                                        <TextBlock Text="↑"
+                                                   FontSize="24"
+                                                   FontWeight="Bold" />
 
-                    <!-- Ultrawide Monitor Card -->
-                    <Border Padding="10"
-                            BorderThickness="1"
-                            Background="#27272A"
-                            BorderBrush="#3F3F46"
-                            CornerRadius="8"
-                            Margin="0,0,0,16">
+                                        <Button.ToolTip>
+                                            <ToolTip DataContext="{Binding PlacementTarget.DataContext,
+                                                     RelativeSource={RelativeSource Self}}">
+                                                <StackPanel MaxWidth="260">
+                                                    <TextBlock Text="{Binding DisplayName}"
+                                                               FontSize="16"
+                                                               FontWeight="Bold"
+                                                               Margin="0,0,0,6" />
 
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Collapsed" />
+                                                    <TextBlock Text="{Binding Description}"
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,0,0,8" />
 
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsUltrawideMonitorAvailable}"
-                                                 Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-
-                        <!-- Ultrawide Monitor Title -->
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Ultrawide Monitor"
-                                       HorizontalAlignment="Center"
-                                       FontSize="18"
-                                       FontWeight="Bold"
-                                       />
-
-                            <!-- Ultrawide Monitor Description -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="Doubles lines of code per click" />
-                            </StackPanel>
-
-                            <!-- Ultrawide Monitor Cost -->
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,5,0,10">
-                                <TextBlock Text="Cost: " />
-                                <TextBlock Text="{Binding UltrawideMonitorCost}" />
-                                <TextBlock Text=" Lines of Code" />
-                            </StackPanel>
-
-                            <!-- Buy Ultrawide Monitor Button -->
-                            <Button Content="Buy Ultrawide Monitor"
-                                    HorizontalAlignment="Center"
-                                    Width="200"
-                                    Height="40"
-                                    Command="{Binding PurchaseUltrawideMonitorCommand}"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
-                        </StackPanel>
-
-                    </Border>
+                                                    <TextBlock FontWeight="SemiBold">
+                                                        <Run Text="Cost: " />
+                                                        <Run Text="{Binding Cost, Mode=OneWay}" />
+                                                        <Run Text=" lines of code" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </ToolTip>
+                                        </Button.ToolTip>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
 
                     <!-- Intern Card -->
                     <Border Padding="10"

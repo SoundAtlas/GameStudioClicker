@@ -14,9 +14,12 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 123,
-            IsMechanicalKeyboardPurchased = true,
-            IsUltrawideMonitorPurchased = true,
-            InternCount = 3
+            InternCount = 3,
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard",
+                "ultrawide_monitor"
+            }
         };
 
         // Act
@@ -27,9 +30,12 @@ public class JsonGameSaveServiceTests
         using JsonDocument document = JsonDocument.Parse(json);
         JsonElement root = document.RootElement;
         Assert.AreEqual(123L, root.GetProperty(nameof(GameSaveData.LinesOfCode)).GetInt64());
-        Assert.IsTrue(root.GetProperty(nameof(GameSaveData.IsMechanicalKeyboardPurchased)).GetBoolean());
-        Assert.IsTrue(root.GetProperty(nameof(GameSaveData.IsUltrawideMonitorPurchased)).GetBoolean());
         Assert.AreEqual(3, root.GetProperty(nameof(GameSaveData.InternCount)).GetInt32());
+        JsonElement purchasedUpgradeIds =
+            root.GetProperty(nameof(GameSaveData.PurchasedActiveUpgradeIds));
+        Assert.AreEqual(2, purchasedUpgradeIds.GetArrayLength());
+        Assert.AreEqual("mechanical_keyboard", purchasedUpgradeIds[0].GetString());
+        Assert.AreEqual("ultrawide_monitor", purchasedUpgradeIds[1].GetString());
     }
 
     [TestMethod]
@@ -40,9 +46,12 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 456,
-            IsMechanicalKeyboardPurchased = true,
-            IsUltrawideMonitorPurchased = true,
-            InternCount = 5
+            InternCount = 5,
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard",
+                "ultrawide_monitor"
+            }
         };
         string filePath = Path.Combine(
             Path.GetTempPath(),
@@ -57,9 +66,10 @@ public class JsonGameSaveServiceTests
             // Assert
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
-            Assert.IsTrue(loadedSaveData.IsMechanicalKeyboardPurchased);
-            Assert.IsTrue(loadedSaveData.IsUltrawideMonitorPurchased);
             Assert.AreEqual(5, loadedSaveData.InternCount);
+            CollectionAssert.AreEqual(
+                new List<string> { "mechanical_keyboard", "ultrawide_monitor" },
+                loadedSaveData.PurchasedActiveUpgradeIds);
         }
         finally
         {

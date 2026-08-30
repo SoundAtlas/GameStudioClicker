@@ -14,43 +14,56 @@ public class GameStateTests
         Assert.AreEqual(0L, gameState.LinesOfCode);
         Assert.AreEqual(1L, gameState.LinesPerClick);
         Assert.AreEqual(0L, gameState.LinesPerSecond);
-        Assert.AreEqual(100L, gameState.MechanicalKeyboardCost);
-        Assert.IsFalse(gameState.IsMechanicalKeyboardPurchased);
-        Assert.IsTrue(gameState.IsMechanicalKeyboardAvailable);
-        Assert.IsFalse(gameState.CanPurchaseMechanicalKeyboard);
+
+        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
+        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+
+        Assert.AreEqual(100L, keyboard.Cost);
+        Assert.IsFalse(keyboard.IsPurchased);
+        Assert.IsTrue(keyboard.IsAvailable);
+        Assert.IsFalse(gameState.CanPurchaseActiveUpgrade(keyboard));
+        Assert.IsFalse(monitor.IsAvailable);
     }
 
     [TestMethod]
-    public void TryPurchaseMechanicalKeyboard_WhenSuccessful_UpdatesOneTimeUpgradeState()
+    public void TryPurchaseActiveUpgrade_WhenKeyboardPurchaseSucceeds_UpdatesOneTimeUpgradeState()
     {
         var gameState = new GameState();
+        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
+        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+
         for (int i = 0; i < 105; i++)
         {
             gameState.WriteCode();
         }
 
-        bool result = gameState.TryPurchaseMechanicalKeyboard();
+        bool result = gameState.TryPurchaseActiveUpgrade(keyboard);
 
         Assert.IsTrue(result);
         Assert.AreEqual(5L, gameState.LinesOfCode);
         Assert.AreEqual(2L, gameState.LinesPerClick);
-        Assert.IsTrue(gameState.IsMechanicalKeyboardPurchased);
-        Assert.IsFalse(gameState.IsMechanicalKeyboardAvailable);
-        Assert.IsTrue(gameState.IsUltrawideMonitorAvailable);
-        Assert.AreEqual(100L, gameState.MechanicalKeyboardCost);
+        Assert.IsTrue(keyboard.IsPurchased);
+        Assert.IsFalse(keyboard.IsAvailable);
+        Assert.IsTrue(monitor.IsAvailable);
+        Assert.AreEqual(100L, keyboard.Cost);
     }
 
     [TestMethod]
-    public void TryPurchaseMechanicalKeyboard_AfterPurchase_ReturnsFalse()
+    public void TryPurchaseActiveUpgrade_AfterPurchase_ReturnsFalse()
     {
         var gameState = new GameState();
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 1_000,
-            IsMechanicalKeyboardPurchased = true
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard"
+            }
         });
 
-        bool result = gameState.TryPurchaseMechanicalKeyboard();
+        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
+
+        bool result = gameState.TryPurchaseActiveUpgrade(keyboard);
 
         Assert.IsFalse(result);
         Assert.AreEqual(1_000L, gameState.LinesOfCode);
@@ -58,22 +71,27 @@ public class GameStateTests
     }
 
     [TestMethod]
-    public void TryPurchaseUltrawideMonitor_WhenSuccessful_UpdatesOneTimeUpgradeState()
+    public void TryPurchaseActiveUpgrade_WhenMonitorPurchaseSucceeds_UpdatesOneTimeUpgradeState()
     {
         var gameState = new GameState();
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 1_000,
-            IsMechanicalKeyboardPurchased = true
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard"
+            }
         });
 
-        bool result = gameState.TryPurchaseUltrawideMonitor();
+        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+
+        bool result = gameState.TryPurchaseActiveUpgrade(monitor);
 
         Assert.IsTrue(result);
         Assert.AreEqual(0L, gameState.LinesOfCode);
         Assert.AreEqual(4L, gameState.LinesPerClick);
-        Assert.IsTrue(gameState.IsUltrawideMonitorPurchased);
-        Assert.IsFalse(gameState.IsUltrawideMonitorAvailable);
+        Assert.IsTrue(monitor.IsPurchased);
+        Assert.IsFalse(monitor.IsAvailable);
     }
 
     [TestMethod]
@@ -112,17 +130,21 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 500,
-            IsMechanicalKeyboardPurchased = true,
-            IsUltrawideMonitorPurchased = true,
             InternCount = 5,
-            JuniorDeveloperCount = 2
+            JuniorDeveloperCount = 2,
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard",
+                "ultrawide_monitor"
+            }
         });
 
         GameSaveData saveData = gameState.CreateSaveData();
 
         Assert.AreEqual(500L, saveData.LinesOfCode);
-        Assert.IsTrue(saveData.IsMechanicalKeyboardPurchased);
-        Assert.IsTrue(saveData.IsUltrawideMonitorPurchased);
+        CollectionAssert.AreEqual(
+            new List<string> { "mechanical_keyboard", "ultrawide_monitor" },
+            saveData.PurchasedActiveUpgradeIds);
         Assert.AreEqual(5, saveData.InternCount);
         Assert.AreEqual(2, saveData.JuniorDeveloperCount);
     }
@@ -134,17 +156,23 @@ public class GameStateTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 250,
-            IsMechanicalKeyboardPurchased = true,
-            IsUltrawideMonitorPurchased = true,
             InternCount = 5,
-            JuniorDeveloperCount = 2
+            JuniorDeveloperCount = 2,
+            PurchasedActiveUpgradeIds = new List<string>
+            {
+                "mechanical_keyboard",
+                "ultrawide_monitor"
+            }
         };
 
         gameState.RestoreFromSaveData(saveData);
 
+        ActiveUpgrade keyboard = GetActiveUpgrade(gameState, "mechanical_keyboard");
+        ActiveUpgrade monitor = GetActiveUpgrade(gameState, "ultrawide_monitor");
+
         Assert.AreEqual(250L, gameState.LinesOfCode);
-        Assert.IsTrue(gameState.IsMechanicalKeyboardPurchased);
-        Assert.IsTrue(gameState.IsUltrawideMonitorPurchased);
+        Assert.IsTrue(keyboard.IsPurchased);
+        Assert.IsTrue(monitor.IsPurchased);
         Assert.AreEqual(4L, gameState.LinesPerClick);
         Assert.AreEqual(5, gameState.InternCount);
         Assert.AreEqual(2, gameState.JuniorDeveloperCount);
@@ -226,5 +254,10 @@ public class GameStateTests
 
         Assert.AreEqual(172_800L, earnedLines);
         Assert.AreEqual(172_800L, gameState.LinesOfCode);
+    }
+
+    private static ActiveUpgrade GetActiveUpgrade(GameState gameState, string id)
+    {
+        return gameState.ActiveUpgrades.Single(upgrade => upgrade.Id == id);
     }
 }

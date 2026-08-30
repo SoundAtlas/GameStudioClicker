@@ -6,6 +6,7 @@ namespace GameStudioClicker.Wpf.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+
         // Game state and timers
         private readonly GameState _gameState;
         private readonly DispatcherTimer _passiveTimer;
@@ -23,13 +24,9 @@ namespace GameStudioClicker.Wpf.ViewModels
         public string OfflineEarningsMessage =>
             $"Your interns & Employees wrote {OfflineLinesEarned} lines of code while you were away!";
 
-        // Mechanical keyboard upgrade
-        public long MechanicalKeyboardCost => _gameState.MechanicalKeyboardCost;
-        public bool IsMechanicalKeyboardAvailable => _gameState.IsMechanicalKeyboardAvailable;
 
-        // Ultrawide monitor upgrade
-        public long UltrawideMonitorCost => _gameState.UltrawideMonitorCost;
-        public bool IsUltrawideMonitorAvailable => _gameState.IsUltrawideMonitorAvailable;
+        public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
+
 
         // Intern upgrade
         public long InternCost => _gameState.InternCost;
@@ -42,8 +39,7 @@ namespace GameStudioClicker.Wpf.ViewModels
 
         // Commands exposed to the view
         public RelayCommand WriteCodeCommand { get; }
-        public RelayCommand PurchaseMechanicalKeyboardCommand { get; }
-        public RelayCommand PurchaseUltrawideMonitorCommand { get; }
+        public RelayCommand PurchaseActiveUpgradeCommand { get; }
         public RelayCommand PurchaseJuniorDeveloperCommand { get; }
         public RelayCommand PurchaseInternCommand { get; }
 
@@ -52,6 +48,17 @@ namespace GameStudioClicker.Wpf.ViewModels
         {
             _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
 
+            // Create view models for each active upgrade to expose to the view
+            List<ActiveUpgradeViewModel> activeUpgradeViewModels = new List<ActiveUpgradeViewModel>();
+
+            foreach (var upgrade in _gameState.ActiveUpgrades)
+            {
+                activeUpgradeViewModels.Add(new ActiveUpgradeViewModel(upgrade));
+            }
+
+            ActiveUpgrades = activeUpgradeViewModels;
+
+            // Offline earnings are only shown if the player earned more than 0 lines of code while away.
             OfflineLinesEarned = Math.Max(0, offlineLinesEarned);
             _showOfflineEarnings = OfflineLinesEarned > 0;
 
@@ -70,14 +77,10 @@ namespace GameStudioClicker.Wpf.ViewModels
             _passiveTimer.Tick += PassiveTimer_Tick;
 
             WriteCodeCommand = new RelayCommand(ExecuteWriteCode);
-            PurchaseMechanicalKeyboardCommand =
+            PurchaseActiveUpgradeCommand =
                 new RelayCommand(
-                    ExecutePurchaseMechanicalKeyboard,
-                    CanExecutePurchaseMechanicalKeyboard);
-            PurchaseUltrawideMonitorCommand =
-                new RelayCommand(
-                    ExecutePurchaseUltrawideMonitor,
-                    CanExecutePurchaseUltrawideMonitor);
+                    ExecutePurchaseActiveUpgrade,
+                    CanExecutePurchaseActiveUpgrade);
             PurchaseInternCommand =
                 new RelayCommand(
                     ExecutePurchaseIntern,
@@ -95,55 +98,25 @@ namespace GameStudioClicker.Wpf.ViewModels
             _passiveTimer.Start();
         }
 
-
-        // Mechanical keyboard command handlers
-
-        private void ExecutePurchaseMechanicalKeyboard(object? parameter)
+        private bool CanExecutePurchaseActiveUpgrade(object? parameter)
         {
-            bool purchaseSuccessful =
-                _gameState.TryPurchaseMechanicalKeyboard();
-
-            if (!purchaseSuccessful)
+            if (parameter is ActiveUpgradeViewModel upgradeViewModel)
             {
-                return;
+                return _gameState.CanPurchaseActiveUpgrade(upgradeViewModel.Upgrade);
             }
-
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(IsMechanicalKeyboardAvailable));
-            OnPropertyChanged(nameof(IsUltrawideMonitorAvailable));
-
-            // Makes WPF check if the command can be executed again, which will update the button's enabled state
-            RefreshPurchaseCommands();
+            return false;
         }
 
-        private bool CanExecutePurchaseMechanicalKeyboard(object? parameter)
+        private void ExecutePurchaseActiveUpgrade(object? parameter)
         {
-            return _gameState.CanPurchaseMechanicalKeyboard;
-        }
-
-
-        // Ultrawide monitor command handlers
-
-        private void ExecutePurchaseUltrawideMonitor(object? parameter)
-        {
-            bool purchaseSuccessful =
-                _gameState.TryPurchaseUltrawideMonitor();
-
-            if (!purchaseSuccessful)
+            if (parameter is ActiveUpgradeViewModel upgradeViewModel && _gameState.TryPurchaseActiveUpgrade(upgradeViewModel.Upgrade))
             {
-                return;
+                OnPropertyChanged(nameof(LinesOfCode));
+                OnPropertyChanged(nameof(LinesPerClick));
+
+                RefreshActiveUpgradeStates();
+                RefreshPurchaseCommands();
             }
-
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(IsUltrawideMonitorAvailable));
-
-            RefreshPurchaseCommands();
-        }
-        private bool CanExecutePurchaseUltrawideMonitor(object? parameter)
-        {
-            return _gameState.CanPurchaseUltrawideMonitor;
         }
 
         // Intern command handlers
@@ -223,11 +196,18 @@ namespace GameStudioClicker.Wpf.ViewModels
         // Command state helpers
         private void RefreshPurchaseCommands()
         {
-            PurchaseMechanicalKeyboardCommand.RaiseCanExecuteChanged();
-            PurchaseUltrawideMonitorCommand.RaiseCanExecuteChanged();
+            PurchaseActiveUpgradeCommand.RaiseCanExecuteChanged();
 
             PurchaseInternCommand.RaiseCanExecuteChanged();
             PurchaseJuniorDeveloperCommand.RaiseCanExecuteChanged();
+        }
+
+        private void RefreshActiveUpgradeStates()
+        {
+            foreach (var upgradeViewModel in ActiveUpgrades)
+            {
+                upgradeViewModel.RefreshState();
+            }
         }
     }
 }

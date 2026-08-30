@@ -9,25 +9,32 @@ namespace GameStudioClicker.Core.Models
         public long LinesPerClick { get; private set; } = 1;
         public long LinesPerSecond { get; private set; } = 0;
 
-        // Mechanical keyboard upgrade (active production)
-        public long MechanicalKeyboardCost { get; private set; } = 100;
-        public bool IsMechanicalKeyboardPurchased { get; private set; }
-        public bool IsMechanicalKeyboardAvailable => !IsMechanicalKeyboardPurchased;
-        public bool CanPurchaseMechanicalKeyboard =>
-            LinesOfCode >= MechanicalKeyboardCost &&
-            IsMechanicalKeyboardAvailable;
+        public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
 
+        // Construction
+        public GameState()
+        {
+            ActiveUpgrade mechanicalKeyboard = new ActiveUpgrade(
+                id: "mechanical_keyboard",
+                displayName: "Mechanical Keyboard",
+                description: "Doubles lines of code per click",
+                cost: 100,
+                clickMultiplier: 2);
+            ActiveUpgrade ultrawideMonitor = new ActiveUpgrade(
+                id: "ultrawide_monitor",
+                displayName: "Ultrawide Monitor",
+                description: "Doubles lines of code per click",
+                cost: 1000,
+                clickMultiplier: 2,
+                prerequisite: mechanicalKeyboard);
 
-        // Ultrawide monitor upgrade (active production)
-        public long UltrawideMonitorCost { get; private set; } = 1000;
-        public bool IsUltrawideMonitorPurchased { get; private set; }
-        public bool IsUltrawideMonitorUnlocked => IsMechanicalKeyboardPurchased;
-        public bool IsUltrawideMonitorAvailable =>
-            IsUltrawideMonitorUnlocked &&
-            !IsUltrawideMonitorPurchased;
-        public bool CanPurchaseUltrawideMonitor =>
-            LinesOfCode >= UltrawideMonitorCost &&
-            IsUltrawideMonitorAvailable;
+            ActiveUpgrades = new List<ActiveUpgrade>
+            {
+                mechanicalKeyboard,
+                ultrawideMonitor
+            };
+        }
+
 
         // Intern upgrade (passive production)
         public long InternCost { get; private set; } = 50;
@@ -45,14 +52,21 @@ namespace GameStudioClicker.Core.Models
         // Creates an independent snapshot containing only values that need to be saved.
         public GameSaveData CreateSaveData()
         {
-            return new GameSaveData
+            var saveData = new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
-                IsMechanicalKeyboardPurchased = this.IsMechanicalKeyboardPurchased,
-                IsUltrawideMonitorPurchased = this.IsUltrawideMonitorPurchased,
                 InternCount = this.InternCount,
                 JuniorDeveloperCount = this.JuniorDeveloperCount,
             };
+
+            foreach (var upgrade in ActiveUpgrades)
+            {
+                if (upgrade.IsPurchased)
+                {
+                    saveData.PurchasedActiveUpgradeIds.Add(upgrade.Id);
+                }
+            }
+            return saveData;
         }
 
         // Restores saved values and rebuilds production rates and future upgrade costs.
@@ -68,18 +82,21 @@ namespace GameStudioClicker.Core.Models
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
             InternCount = Math.Max(0, saveData.InternCount);
             JuniorDeveloperCount = Math.Max(0, saveData.JuniorDeveloperCount);
-            IsMechanicalKeyboardPurchased = saveData.IsMechanicalKeyboardPurchased;
-            IsUltrawideMonitorPurchased = saveData.IsUltrawideMonitorPurchased;
 
-            // Recalculate values that are derived from the number of upgrades owned.
-            LinesPerClick = 1;
-            if (IsMechanicalKeyboardPurchased)
+            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
-                LinesPerClick *= 2;
+                bool isPurchased = saveData.PurchasedActiveUpgradeIds.Contains(upgrade.Id);
+                upgrade.RestorePurchaseState(isPurchased);
             }
-            if (IsUltrawideMonitorPurchased)
+
+            LinesPerClick = 1;
+
+            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
-                LinesPerClick *= 2;
+                if (upgrade.IsPurchased)
+                {
+                    LinesPerClick *= upgrade.ClickMultiplier;
+                }
             }
 
             LinesPerSecond = 2 * InternCount + 20 * JuniorDeveloperCount;
@@ -97,26 +114,29 @@ namespace GameStudioClicker.Core.Models
             }
         }
 
-        // Upgrade purchases
-        public bool TryPurchaseMechanicalKeyboard()
+        public bool CanAffordUpgrade(long cost)
         {
-            if (CanPurchaseMechanicalKeyboard)
+            return LinesOfCode >= cost;
+        }
+
+        public bool CanPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
+        {
+            if (ActiveUpgrades.Contains(activeUpgrade) &&
+                activeUpgrade.IsAvailable &&
+                CanAffordUpgrade(activeUpgrade.Cost))
             {
-                LinesOfCode -= MechanicalKeyboardCost;
-                LinesPerClick *= 2;
-                IsMechanicalKeyboardPurchased = true;
                 return true;
             }
             return false;
         }
 
-        public bool TryPurchaseUltrawideMonitor()
+        public bool TryPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
         {
-            if (CanPurchaseUltrawideMonitor)
+            if (CanPurchaseActiveUpgrade(activeUpgrade))
             {
-                LinesOfCode -= UltrawideMonitorCost;
-                LinesPerClick *= 2;
-                IsUltrawideMonitorPurchased = true;
+                LinesOfCode -= activeUpgrade.Cost;
+                LinesPerClick *= activeUpgrade.ClickMultiplier;
+                activeUpgrade.MarkAsPurchased();
                 return true;
             }
             return false;
