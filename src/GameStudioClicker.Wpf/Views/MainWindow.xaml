@@ -313,7 +313,8 @@
                                         Background="#27272A"
                                         BorderBrush="#3F3F46"
                                         BorderThickness="1"
-                                        CornerRadius="8">
+                                        CornerRadius="8"
+                                        Height="170">
 
                                     <!-- Hide workers that are too far ahead -->
                                     <Border.Style>
@@ -408,22 +409,30 @@
                                                        FontWeight="Bold"
                                                        Foreground="#A1A1AA" />
 
-                                            <TextBlock HorizontalAlignment="Center"
-                                                       Foreground="#71717A"
-                                                       Margin="0,4,0,0">
-                                                <Run Text="Cost: " />
-                                                <Run Text="{Binding CurrentCost, Mode=OneWay}" />
-                                                <Run Text=" Lines of Code" />
-                                            </TextBlock>
+                                            <StackPanel Orientation="Vertical"
+                                                        HorizontalAlignment="Center">
+
+
+                                                <TextBlock Text="{Binding UnlockRequirementText}"
+                                                           HorizontalAlignment="Center"
+                                                           Foreground="#71717A"
+                                                           Margin="0,6,0,0"/>
+
+                                                <TextBlock HorizontalAlignment="Center"
+                                                           Foreground="#71717A"
+                                                           Margin="4,6,0,0">
+                                                    <Run Text="Cost: " />
+                                                    <Run Text="{Binding CurrentCost, Mode=OneWay}" />
+                                                    <Run Text=" Lines of Code" />
+                                                </TextBlock>
+                                            </StackPanel>
+
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
-
-
 
                 </StackPanel>
             </ScrollViewer>

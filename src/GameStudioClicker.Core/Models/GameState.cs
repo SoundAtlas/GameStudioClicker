@@ -120,12 +120,22 @@ namespace GameStudioClicker.Core.Models
                 prerequisite: intern,
                 requiredPrerequisiteCount: 5);
 
+            WorkerUpgrade seniorDeveloper = new WorkerUpgrade(
+                id: "senior_developer",
+                displayName: "Senior Developer",
+                description: "Produces 2000 lines of code per second",
+                baseCost: 20000,
+                baseLinesPerSecond: 2000,
+                prerequisite: juniorDeveloper,
+                requiredPrerequisiteCount: 5);
+
             // Additional worker upgrades can be added here in the future, following the same pattern.
 
             WorkerUpgrades = new List<WorkerUpgrade>
             {
                 intern,
-                juniorDeveloper
+                juniorDeveloper,
+                seniorDeveloper,
             };
         }
 
