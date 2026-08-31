@@ -4,7 +4,6 @@
     {
         public string Id { get; }
         public string DisplayName { get; }
-        public string Description { get; }
         public long BaseCost { get; }
         public long BaseLinesPerSecond { get; }
         public long CurrentCost { get; private set; }
@@ -16,11 +15,10 @@
         public WorkerUpgrade? Prerequisite { get; }
         public int RequiredPrerequisiteCount { get; }
 
-        public WorkerUpgrade(string id, string displayName, string description, long baseCost, long baseLinesPerSecond, WorkerUpgrade? prerequisite = null, int requiredPrerequisiteCount = 0)
+        public WorkerUpgrade(string id, string displayName, long baseCost, long baseLinesPerSecond, WorkerUpgrade? prerequisite = null, int requiredPrerequisiteCount = 0)
         {
             Id = id;
             DisplayName = displayName;
-            Description = description;
             BaseCost = baseCost;
             BaseLinesPerSecond = baseLinesPerSecond;
             CurrentCost = baseCost;

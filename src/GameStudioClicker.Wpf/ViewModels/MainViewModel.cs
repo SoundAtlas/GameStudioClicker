@@ -1,5 +1,6 @@
 ﻿using GameStudioClicker.Core.Models;
 using GameStudioClicker.Wpf.Commands;
+using GameStudioClicker.Wpf.Formatting;
 using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.ViewModels
@@ -21,7 +22,7 @@ namespace GameStudioClicker.Wpf.ViewModels
         public bool HasOfflineEarnings => _showOfflineEarnings;
         public long OfflineLinesEarned { get; }
         public string OfflineEarningsMessage =>
-            $"Your interns & Employees wrote {OfflineLinesEarned} lines of code while you were away!";
+            $"Your interns & Employees wrote {CompactNumberFormatter.Format(OfflineLinesEarned)} lines of code while you were away!";
 
         public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgradeViewModel> WorkerUpgrades { get; }

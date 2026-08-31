@@ -13,6 +13,7 @@
         Foreground="#F4F4F5">
 
     <Window.Resources>
+
         <Style x:Key="PrimaryButtonStyle"
                TargetType="Button">
             <Setter Property="Background" Value="#3F3F46" />
@@ -171,7 +172,8 @@
                         <TextBlock Text="Lines of Code Written: "
                                    FontSize="24"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="{Binding LinesOfCode}"
+                        <TextBlock Text="{Binding LinesOfCode,
+                                   Converter={StaticResource CompactNumberConverter}}"
                                    FontSize="24"
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
@@ -200,7 +202,7 @@
                                    FontSize="16"
                                    FontWeight="Bold"
                                    />
-                        <TextBlock Text="{Binding LinesPerClick}"
+                        <TextBlock Text="{Binding LinesPerClick, Converter={StaticResource CompactNumberConverter}}"
                                    HorizontalAlignment="Center"/>
 
                     </StackPanel>
@@ -210,7 +212,7 @@
                         <TextBlock Text="Lines of code per Second: "
                                    FontSize="16"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="{Binding LinesPerSecond}"
+                        <TextBlock Text="{Binding LinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
 
@@ -288,7 +290,7 @@
 
                                                     <TextBlock FontWeight="SemiBold">
                                                         <Run Text="Cost: " />
-                                                        <Run Text="{Binding Cost, Mode=OneWay}" />
+                                                        <Run Text="{Binding Cost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
                                                         <Run Text=" lines of code" />
                                                     </TextBlock>
                                                 </StackPanel>
@@ -358,7 +360,7 @@
                                             <StackPanel Orientation="Horizontal"
                                                         HorizontalAlignment="Center">
                                                 <TextBlock Text="Cost: " />
-                                                <TextBlock Text="{Binding CurrentCost}" />
+                                                <TextBlock Text="{Binding CurrentCost, Converter={StaticResource CompactNumberConverter}}" />
                                                 <TextBlock Text=" Lines of Code" />
                                             </StackPanel>
 
@@ -366,7 +368,7 @@
                                                         HorizontalAlignment="Center"
                                                         Margin="0,4,0,8">
                                                 <TextBlock Text="Owned: " />
-                                                <TextBlock Text="{Binding WorkerCount}" />
+                                                <TextBlock Text="{Binding WorkerCount, Converter={StaticResource CompactNumberConverter}}" />
                                             </StackPanel>
 
                                             <Button Content="Hire"
@@ -405,7 +407,7 @@
                                                        Foreground="#A1A1AA" />
 
                                             <StackPanel Orientation="Vertical"
-                                                       HorizontalAlignment="Center">
+                                                        HorizontalAlignment="Center">
                                                 <TextBlock Text="{Binding UnlockRequirementText}"
                                                            HorizontalAlignment="Center"
                                                            Foreground="#71717A"
@@ -415,7 +417,7 @@
                                                            Foreground="#71717A"
                                                            Margin="4,6,0,0">
                                                     <Run Text="Cost: " />
-                                                    <Run Text="{Binding CurrentCost, Mode=OneWay}" />
+                                                    <Run Text="{Binding CurrentCost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
                                                     <Run Text=" Lines of Code" />
                                                 </TextBlock>
                                             </StackPanel>

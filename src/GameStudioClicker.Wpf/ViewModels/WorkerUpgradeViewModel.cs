@@ -1,4 +1,5 @@
 ﻿using GameStudioClicker.Core.Models;
+using GameStudioClicker.Wpf.Formatting;
 
 namespace GameStudioClicker.Wpf.ViewModels
 {
@@ -7,7 +8,8 @@ namespace GameStudioClicker.Wpf.ViewModels
         private readonly WorkerUpgrade _workerUpgrade;
         public string Id => _workerUpgrade.Id;
         public string DisplayName => _workerUpgrade.DisplayName;
-        public string Description => _workerUpgrade.Description;
+        public string Description =>
+            $"Produces {CompactNumberFormatter.Format(_workerUpgrade.BaseLinesPerSecond)} lines of code per second";
         public long CurrentCost => _workerUpgrade.CurrentCost;
         public int WorkerCount => _workerUpgrade.WorkerCount;
         public long TotalLinesPerSecond => _workerUpgrade.TotalLinesPerSecond;

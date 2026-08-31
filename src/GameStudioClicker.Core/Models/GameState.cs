@@ -94,14 +94,12 @@ namespace GameStudioClicker.Core.Models
             WorkerUpgrade intern = new WorkerUpgrade(
                 id: "intern",
                 displayName: "Intern",
-                description: "Produces 2 lines of code per second",
                 baseCost: 50,
                 baseLinesPerSecond: 2);
 
             WorkerUpgrade juniorDeveloper = new WorkerUpgrade(
                 id: "junior_developer",
                 displayName: "Junior Developer",
-                description: "Produces 20 lines of code per second",
                 baseCost: 2000,
                 baseLinesPerSecond: 20,
                 prerequisite: intern,
@@ -110,17 +108,25 @@ namespace GameStudioClicker.Core.Models
             WorkerUpgrade seniorDeveloper = new WorkerUpgrade(
                 id: "senior_developer",
                 displayName: "Senior Developer",
-                description: "Produces 2000 lines of code per second",
                 baseCost: 20000,
                 baseLinesPerSecond: 2000,
                 prerequisite: juniorDeveloper,
                 requiredPrerequisiteCount: 5);
+
+            WorkerUpgrade leadDeveloper = new WorkerUpgrade(
+                id: "lead_developer",
+                displayName: "Lead Developer",
+                baseCost: 200000,
+                baseLinesPerSecond: 20000,
+                prerequisite: seniorDeveloper,
+                requiredPrerequisiteCount: 1);
 
             WorkerUpgrades = new List<WorkerUpgrade>
             {
                 intern,
                 juniorDeveloper,
                 seniorDeveloper,
+                leadDeveloper,
             };
         }
 
