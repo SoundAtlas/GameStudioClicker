@@ -4,7 +4,6 @@ namespace GameStudioClicker.Wpf.Formatting
 {
     public static class CompactNumberFormatter
     {
-
         private static readonly (long divisor, string suffix)[] Scales =
             {
             (1_000_000_000_000_000_000, "Qi"),
