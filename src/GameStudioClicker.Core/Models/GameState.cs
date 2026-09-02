@@ -204,7 +204,7 @@ namespace GameStudioClicker.Core.Models
                 id: "advanced_tooling_license",
                 displayName: "Advanced Tooling License",
                 description: "Triples Senior Developer Productivity",
-                cost: 12000,
+                cost: 100000000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "senior_developer",
