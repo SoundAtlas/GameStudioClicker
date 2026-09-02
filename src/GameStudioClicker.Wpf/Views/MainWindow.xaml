@@ -198,7 +198,7 @@
                     <StackPanel Orientation="Vertical"
                                 HorizontalAlignment="Center"
                                 Margin="0,0,0,10">
-                        <TextBlock Text="Lines of code per click: "
+                        <TextBlock Text="Lines of Code / Click: "
                                    FontSize="16"
                                    FontWeight="Bold"
                                    />
@@ -209,7 +209,7 @@
 
                     <StackPanel Orientation="Vertical"
                                 HorizontalAlignment="Center">
-                        <TextBlock Text="Lines of code per Second: "
+                        <TextBlock Text="Lines of Code / Second: "
                                    FontSize="16"
                                    FontWeight="Bold"/>
                         <TextBlock Text="{Binding LinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
@@ -291,7 +291,7 @@
                                                     <TextBlock FontWeight="SemiBold">
                                                         <Run Text="Cost: " />
                                                         <Run Text="{Binding Cost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
-                                                        <Run Text=" lines of code" />
+                                                        <Run Text=" Lines of Code" />
                                                     </TextBlock>
                                                 </StackPanel>
                                             </ToolTip>
@@ -311,7 +311,7 @@
                                         BorderBrush="#3F3F46"
                                         BorderThickness="1"
                                         CornerRadius="8"
-                                        Height="170">
+                                        Height="190">
 
                                     <!-- Hide workers that are too far ahead -->
                                     <Border.Style>
@@ -355,7 +355,7 @@
                                             <TextBlock Text="{Binding Description}"
                                                        HorizontalAlignment="Center"
                                                        TextWrapping="Wrap"
-                                                       Margin="0,4,0,8" />
+                                                       Margin="0,4,0,12" />
 
                                             <StackPanel Orientation="Horizontal"
                                                         HorizontalAlignment="Center">
@@ -366,9 +366,17 @@
 
                                             <StackPanel Orientation="Horizontal"
                                                         HorizontalAlignment="Center"
-                                                        Margin="0,4,0,8">
-                                                <TextBlock Text="Owned: " />
+                                                        Margin="0,4,0,4">
+                                                <TextBlock Text="Employees: " />
                                                 <TextBlock Text="{Binding WorkerCount, Converter={StaticResource CompactNumberConverter}}" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Center"
+                                                        Margin="0,0,0,8">
+                                                <TextBlock Text="Current Production: " />
+                                                <TextBlock Text="{Binding CurrentLinesPerSecond, Converter={StaticResource CompactNumberConverter}}" />
+                                                <TextBlock Text=" Lines of Code / Second" />
                                             </StackPanel>
 
                                             <Button Content="Hire"

@@ -5,12 +5,14 @@ namespace GameStudioClicker.Wpf.ViewModels
 {
     public class WorkerUpgradeViewModel : ViewModelBase
     {
+        private readonly GameState _gameState;
         private readonly WorkerUpgrade _workerUpgrade;
         public string Id => _workerUpgrade.Id;
         public string DisplayName => _workerUpgrade.DisplayName;
         public string Description =>
             $"Produces {CompactNumberFormatter.Format(_workerUpgrade.BaseLinesPerSecond)} lines of code per second";
         public long CurrentCost => _workerUpgrade.CurrentCost;
+        public long CurrentLinesPerSecond => _gameState.GetWorkerLinesPerSecond(_workerUpgrade);
         public int WorkerCount => _workerUpgrade.WorkerCount;
         public long TotalLinesPerSecond => _workerUpgrade.TotalLinesPerSecond;
         public bool IsUnlocked => _workerUpgrade.IsUnlocked;
@@ -25,8 +27,9 @@ namespace GameStudioClicker.Wpf.ViewModels
 
         internal WorkerUpgrade Upgrade => _workerUpgrade;
 
-        public WorkerUpgradeViewModel(WorkerUpgrade workerUpgrade)
+        public WorkerUpgradeViewModel(GameState gameState, WorkerUpgrade workerUpgrade)
         {
+            _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
             _workerUpgrade = workerUpgrade ?? throw new ArgumentNullException(nameof(workerUpgrade));
         }
 
@@ -39,6 +42,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(IsVisible));
             OnPropertyChanged(nameof(IsMystery));
             OnPropertyChanged(nameof(UnlockRequirementText));
+            OnPropertyChanged(nameof(CurrentLinesPerSecond));
         }
     }
 }

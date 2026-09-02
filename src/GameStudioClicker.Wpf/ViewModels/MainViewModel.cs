@@ -50,7 +50,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             List<WorkerUpgradeViewModel> workerUpgradeViewModels = new List<WorkerUpgradeViewModel>();
             foreach (var upgrade in _gameState.WorkerUpgrades)
             {
-                workerUpgradeViewModels.Add(new WorkerUpgradeViewModel(upgrade));
+                workerUpgradeViewModels.Add(new WorkerUpgradeViewModel(_gameState, upgrade));
             }
             WorkerUpgrades = workerUpgradeViewModels;
 
@@ -128,7 +128,9 @@ namespace GameStudioClicker.Wpf.ViewModels
             {
                 OnPropertyChanged(nameof(LinesOfCode));
                 OnPropertyChanged(nameof(LinesPerClick));
+                OnPropertyChanged(nameof(LinesPerSecond));
 
+                RefreshWorkerUpgradeStates();
                 RefreshActiveUpgradeStates();
                 RefreshPurchaseCommands();
             }

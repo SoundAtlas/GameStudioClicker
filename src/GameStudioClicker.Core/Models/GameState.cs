@@ -18,14 +18,14 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade mousePad = new ActiveUpgrade(
                 id: "mouse_pad",
                 displayName: "Mouse Pad",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 100,
                 clickMultiplier: 2);
 
             ActiveUpgrade gamingMouse = new ActiveUpgrade(
                 id: "gaming_mouse",
                 displayName: "Gaming Mouse",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 400,
                 clickMultiplier: 2,
                 prerequisite: mousePad);
@@ -33,7 +33,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade mechanicalKeyboard = new ActiveUpgrade(
                 id: "mechanical_keyboard",
                 displayName: "Mechanical Keyboard",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 700,
                 clickMultiplier: 2,
                 prerequisite: gamingMouse);
@@ -41,7 +41,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade headset = new ActiveUpgrade(
                 id: "headset",
                 displayName: "Headset",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 800,
                 clickMultiplier: 2,
                 prerequisite: mechanicalKeyboard);
@@ -49,7 +49,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade webcam = new ActiveUpgrade(
                 id: "webcam",
                 displayName: "Webcam",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 900,
                 clickMultiplier: 2,
                 prerequisite: headset);
@@ -57,7 +57,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade externalSSD = new ActiveUpgrade(
                 id: "external_ssd",
                 displayName: "External SSD",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 1000,
                 clickMultiplier: 2,
                 prerequisite: webcam);
@@ -65,15 +65,25 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade secondMonitor = new ActiveUpgrade(
                 id: "second_monitor",
                 displayName: "Second Monitor",
-                description: "Doubles lines of code per click",
+                description: "Doubles Lines of Code / Click",
                 cost: 1500,
                 clickMultiplier: 2,
                 prerequisite: externalSSD);
 
+            ActiveUpgrade internTrainingManual = new ActiveUpgrade(
+                id: "intern_training_manual",
+                displayName: "Intern Training Manual",
+                description: "Doubles Intern Productivity",
+                cost: 2000,
+                clickMultiplier: 1,
+                workerProductionMultiplier: 2,
+                targetWorkerId: "intern",
+                prerequisite: secondMonitor);
+
             ActiveUpgrade ultrawideMonitor = new ActiveUpgrade(
                 id: "ultrawide_monitor",
                 displayName: "Ultrawide Monitor",
-                description: "Triples lines of code per click",
+                description: "Triples Lines of Code / Click",
                 cost: 3000,
                 clickMultiplier: 3,
                 prerequisite: secondMonitor);
@@ -88,6 +98,7 @@ namespace GameStudioClicker.Core.Models
                 webcam,
                 externalSSD,
                 secondMonitor,
+                internTrainingManual,
                 ultrawideMonitor
             };
 
@@ -219,6 +230,7 @@ namespace GameStudioClicker.Core.Models
                 LinesOfCode -= activeUpgrade.Cost;
                 LinesPerClick *= activeUpgrade.ClickMultiplier;
                 activeUpgrade.MarkAsPurchased();
+                RecalculateLinesPerSecond();
                 return true;
             }
             return false;
@@ -251,11 +263,28 @@ namespace GameStudioClicker.Core.Models
         private void RecalculateLinesPerSecond()
         {
             long calculatedLinesPerSecond = 0;
-            foreach (var upgrade in WorkerUpgrades)
+            foreach (WorkerUpgrade worker in WorkerUpgrades)
             {
-                calculatedLinesPerSecond += upgrade.TotalLinesPerSecond;
+                long linesPerSecond = GetWorkerLinesPerSecond(worker);
+
+                calculatedLinesPerSecond += linesPerSecond;
             }
+
             LinesPerSecond = calculatedLinesPerSecond;
+        }
+
+        public long GetWorkerLinesPerSecond(WorkerUpgrade worker)
+        {
+            long linesPerSecond = worker.TotalLinesPerSecond;
+            foreach (ActiveUpgrade activeUpgrade in ActiveUpgrades)
+            {
+                if (activeUpgrade.IsPurchased && activeUpgrade.TargetWorkerId == worker.Id)
+                {
+                    linesPerSecond *= activeUpgrade.WorkerProductionMultiplier;
+                }
+            }
+
+            return linesPerSecond;
         }
 
         // Code generation
