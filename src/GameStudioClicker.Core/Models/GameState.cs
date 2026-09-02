@@ -407,8 +407,24 @@ namespace GameStudioClicker.Core.Models
                 activeUpgrade.IsAvailable &&
                 CanAffordUpgrade(activeUpgrade.Cost))
             {
+                // check if an active upgrade targets a specific worker
+                if (activeUpgrade.TargetWorkerId != null)
+                {
+                    // find the worker upgrade with the matching ID
+                    foreach (WorkerUpgrade workerUpgrade in WorkerUpgrades)
+                    {
+                        if (workerUpgrade.Id == activeUpgrade.TargetWorkerId)
+                        {
+                            return workerUpgrade.WorkerCount > 0;
+                        }
+                    }
+
+                    return false; // no matching worker upgrade found, cannot purchase the active upgrade
+                }
+
                 return true;
             }
+
             return false;
         }
 
