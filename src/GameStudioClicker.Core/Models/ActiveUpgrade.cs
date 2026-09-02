@@ -14,8 +14,9 @@
 
         public ActiveUpgrade? Prerequisite { get; }
         public string? TargetWorkerId { get; }
+        public bool TargetAllWorkers { get; }
 
-        public ActiveUpgrade(string id, string displayName, string description, long cost, int clickMultiplier, int workerProductionMultiplier = 1, string? targetWorkerId = null, ActiveUpgrade? prerequisite = null)
+        public ActiveUpgrade(string id, string displayName, string description, long cost, int clickMultiplier, int workerProductionMultiplier = 1, string? targetWorkerId = null, bool targetAllWorkers = false, ActiveUpgrade? prerequisite = null)
         {
             Id = id;
             DisplayName = displayName;
@@ -24,6 +25,7 @@
             ClickMultiplier = clickMultiplier;
             WorkerProductionMultiplier = workerProductionMultiplier;
             TargetWorkerId = targetWorkerId;
+            TargetAllWorkers = targetAllWorkers;
             IsPurchased = false;
             Prerequisite = prerequisite;
         }

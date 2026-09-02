@@ -53,23 +53,24 @@ small learning-sized tasks before implementation begins.
 - Format large values with suffixes such as `K`, `M`, `B`, and `T`.
 - Reuse the formatter throughout the WPF interface.
 
+### 7. Targeted worker-production upgrades
+
+- Allow active upgrades to target a specific worker by ID.
+- Apply purchased production multipliers only to the targeted worker.
+- Recalculate main passive production after purchasing or loading upgrades.
+- Show each worker's adjusted current production on its card.
+- Add the Intern Training Manual as the first non-click active upgrade.
+
 ## Next milestones
 
-### 1. Add active upgrades with different effects
+### 1. Finish targeted-upgrade rules and feedback
 
-Active upgrades currently focus on multiplying click production. Add effects that
-interact with other parts of the game so upgrade choices feel more varied.
-
-Possible first effects:
-
-- Increase Intern production.
-- Increase all employee production.
-- Improve both manual and passive production.
-- Reduce or modify worker costs.
-
-Start with one narrowly scoped effect, such as doubling Intern production. Extend the
-current active-upgrade model gradually rather than creating a large effect framework
-up front.
+- Require ownership of a targeted worker before its active upgrade can be purchased.
+- Explain unmet active-upgrade and worker requirements in the upgrade tooltip.
+- Update worker descriptions when targeted or global multipliers change their
+  production per employee.
+- Keep the worker card's current-production value as the total contribution from all
+  owned workers of that type.
 
 ### 2. Balance the existing gameplay
 
@@ -135,4 +136,3 @@ system before adding an entire statistics screen.
 - Sound effects and music controls.
 - A fuller studio-progression theme.
 - Prestige or a new-game-plus system after the main progression loop is established.
-
