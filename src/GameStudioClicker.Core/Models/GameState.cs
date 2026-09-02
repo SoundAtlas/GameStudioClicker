@@ -58,7 +58,7 @@ namespace GameStudioClicker.Core.Models
                 id: "intern_training_manual",
                 displayName: "Intern Training Manual",
                 description: "Doubles Intern Productivity",
-                cost: 2000,
+                cost: 1200,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "intern",
@@ -68,7 +68,7 @@ namespace GameStudioClicker.Core.Models
                 id: "external_ssd",
                 displayName: "External SSD",
                 description: "Doubles Lines of Code / Click",
-                cost: 1000,
+                cost: 1500,
                 clickMultiplier: 2,
                 prerequisite: webcam);
 
@@ -76,7 +76,7 @@ namespace GameStudioClicker.Core.Models
                 id: "second_monitor",
                 displayName: "Second Monitor",
                 description: "Doubles Lines of Code / Click",
-                cost: 1500,
+                cost: 2250,
                 clickMultiplier: 2,
                 prerequisite: externalSSD);
 
@@ -240,7 +240,7 @@ namespace GameStudioClicker.Core.Models
                 id: "technical_strategy_summit",
                 displayName: "Technical Strategy Summit",
                 description: "Triples Lead Developer Productivity",
-                cost: 175000000,
+                cost: 300000000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "lead_developer",
