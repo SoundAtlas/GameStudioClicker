@@ -480,15 +480,20 @@ namespace GameStudioClicker.Core.Models
 
         public long GetWorkerLinesPerSecond(WorkerUpgrade worker)
         {
-            long linesPerSecond = worker.TotalLinesPerSecond;
+            return worker.WorkerCount * GetWorkerLinesPerSecondPerEmployee(worker);
+        }
+
+        public long GetWorkerLinesPerSecondPerEmployee(WorkerUpgrade worker)
+        {
+            long linesPerSecond = worker.BaseLinesPerSecond;
             foreach (ActiveUpgrade activeUpgrade in ActiveUpgrades)
             {
-                if (activeUpgrade.IsPurchased && (activeUpgrade.TargetWorkerId == worker.Id || activeUpgrade.TargetAllWorkers))
+                if (activeUpgrade.IsPurchased &&
+                    (activeUpgrade.TargetWorkerId == worker.Id || activeUpgrade.TargetAllWorkers))
                 {
                     linesPerSecond *= activeUpgrade.WorkerProductionMultiplier;
                 }
             }
-
             return linesPerSecond;
         }
 

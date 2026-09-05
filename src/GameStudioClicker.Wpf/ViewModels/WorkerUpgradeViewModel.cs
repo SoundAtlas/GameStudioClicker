@@ -10,10 +10,13 @@ namespace GameStudioClicker.Wpf.ViewModels
         public string Id => _workerUpgrade.Id;
         public string DisplayName => _workerUpgrade.DisplayName;
         public string Description =>
-            $"Produces {CompactNumberFormatter.Format(_workerUpgrade.BaseLinesPerSecond)} lines of code per second";
+            $"Produces {CompactNumberFormatter.Format(LinesPerSecondPerEmployee)} lines of code / second";
         public long CurrentCost => _workerUpgrade.CurrentCost;
-        public long CurrentLinesPerSecond => _gameState.GetWorkerLinesPerSecond(_workerUpgrade);
+        public long CurrentLinesPerSecond =>
+            _gameState.GetWorkerLinesPerSecond(_workerUpgrade);
         public int WorkerCount => _workerUpgrade.WorkerCount;
+        public long LinesPerSecondPerEmployee =>
+            _gameState.GetWorkerLinesPerSecondPerEmployee(_workerUpgrade);
         public long TotalLinesPerSecond => _workerUpgrade.TotalLinesPerSecond;
         public bool IsUnlocked => _workerUpgrade.IsUnlocked;
         public bool IsVisible => _workerUpgrade.IsVisible;
@@ -43,6 +46,8 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(IsMystery));
             OnPropertyChanged(nameof(UnlockRequirementText));
             OnPropertyChanged(nameof(CurrentLinesPerSecond));
+            OnPropertyChanged(nameof(LinesPerSecondPerEmployee));
+            OnPropertyChanged(nameof(Description));
         }
     }
 }
