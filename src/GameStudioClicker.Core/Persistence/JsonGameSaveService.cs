@@ -26,9 +26,24 @@ namespace GameStudioClicker.Core.Persistence
                 return null;
             }
 
-            string json = File.ReadAllText(filePath);
+            try
+            {
+                string json = File.ReadAllText(filePath);
 
-            return JsonSerializer.Deserialize<GameSaveData>(json);
+                GameSaveData? saveData = JsonSerializer.Deserialize<GameSaveData>(json);
+
+                return saveData == null ? throw new JsonException("Save data was null") : saveData;
+            }
+            catch (JsonException)
+            {
+                string timeStamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff");
+
+                string corruptFilePath = $"{filePath}.corrupt-{timeStamp}";
+
+                File.Move(filePath, corruptFilePath);
+
+                return null;
+            }
         }
     }
 }

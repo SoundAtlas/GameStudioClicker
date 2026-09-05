@@ -365,13 +365,20 @@ namespace GameStudioClicker.Core.Models
                 throw new ArgumentNullException(nameof(saveData), "Save data cannot be null.");
             }
 
+            // Use empty collections if the save data is missing them to avoid null reference exceptions.
+            List<string> purchasedActiveUpgradeIds =
+                saveData.PurchasedActiveUpgradeIds ?? [];
+            Dictionary<string, int> workerUpgradeCounts =
+                saveData.WorkerUpgradeCounts ?? [];
+
             // Clamp persisted values in case the save file was edited or corrupted.
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
 
             // Restore the one-time purchase state of every active upgrade.
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
-                bool isPurchased = saveData.PurchasedActiveUpgradeIds.Contains(upgrade.Id);
+
+                bool isPurchased = purchasedActiveUpgradeIds.Contains(upgrade.Id);
                 upgrade.RestorePurchaseState(isPurchased);
             }
 
@@ -389,7 +396,7 @@ namespace GameStudioClicker.Core.Models
             foreach (WorkerUpgrade upgrade in WorkerUpgrades)
             {
                 // Missing dictionary entries default to zero through TryGetValue.
-                saveData.WorkerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
+                workerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
                 upgrade.RestoreWorkerCount(savedCount);
             }
 
