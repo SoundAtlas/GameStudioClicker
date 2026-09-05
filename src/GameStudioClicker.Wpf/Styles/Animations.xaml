@@ -1,0 +1,126 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Slightly enlarges a control while it is hovered. -->
+    <Storyboard x:Key="SubtleHoverScaleInStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            To="1.01"
+            Duration="0:0:0.12"
+            DecelerationRatio="0.4" />
+
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+            To="1.01"
+            Duration="0:0:0.12"
+            DecelerationRatio="0.4" />
+    </Storyboard>
+    <!-- Returns a hovered control to its normal size. -->
+    <Storyboard x:Key="SubtleHoverScaleOutStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            To="1"
+            Duration="0:0:0.12"
+            FillBehavior="Stop" />
+
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+            To="1"
+            Duration="0:0:0.12"
+            FillBehavior="Stop" />
+    </Storyboard>
+
+
+    <!-- Reveals an element horizontally from its left edge. -->
+    <Storyboard x:Key="LeftToRightFillInStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            To="1"
+            Duration="0:0:0.2"
+            DecelerationRatio="0.4" />
+    </Storyboard>
+    <!-- Hides a horizontally revealed element. -->
+    <Storyboard x:Key="LeftToRightFillOutStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            To="0"
+            Duration="0:0:0.01"
+            FillBehavior="Stop" />
+    </Storyboard>
+
+
+    <!-- Briefly pulses an element to announce that it became available. -->
+    <Storyboard x:Key="AvailabilityPulseStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            From="1"
+            To="1.12"
+            Duration="0:0:0.15"
+            AutoReverse="True"
+            FillBehavior="Stop" />
+
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+            From="1"
+            To="1.12"
+            Duration="0:0:0.15"
+            AutoReverse="True"
+            FillBehavior="Stop" />
+    </Storyboard>
+
+    <!-- Animates the appearance and disappearance of the offline earnings notification. -->
+    <Storyboard x:Key="OfflineEarningsStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="Opacity"
+            From="0"
+            To="1"
+            Duration="0:0:0.3" />
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+            From="16"
+            To="0"
+            Duration="0:0:0.5"/>
+        <DoubleAnimation
+            Storyboard.TargetProperty="Opacity"
+            From="1"
+            To="0"
+            Duration="0:0:0.5"
+            BeginTime="0:0:6.4" />
+    </Storyboard>
+
+
+    <!--
+    A transparent highlight band used by PassingHighlightSweepStoryboard.
+    x:Shared=False gives each control its own independently animated brush.
+    -->
+    <LinearGradientBrush
+        x:Key="PassingHighlightBrush"
+        x:Shared="False"
+        StartPoint="0,0.5"
+        EndPoint="1,0.5">
+
+        <GradientStop Color="#003F3F46"
+                      Offset="0" />
+
+        <GradientStop Color="#6652525B"
+                      Offset="0.5" />
+
+        <GradientStop Color="#003F3F46"
+                      Offset="1" />
+
+        <LinearGradientBrush.RelativeTransform>
+            <TranslateTransform X="-1" />
+        </LinearGradientBrush.RelativeTransform>
+    </LinearGradientBrush>
+
+    <!-- Moves a gradient highlight band completely across a Border. -->
+    <Storyboard x:Key="PassingHighlightSweepStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="(Border.Background).(Brush.RelativeTransform).(TranslateTransform.X)"
+            From="-1"
+            To="1"
+            Duration="0:0:0.4"
+            FillBehavior="Stop" />
+    </Storyboard>
+
+</ResourceDictionary>

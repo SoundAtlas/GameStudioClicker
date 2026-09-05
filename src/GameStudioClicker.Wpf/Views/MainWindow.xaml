@@ -86,9 +86,6 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.96" />
-                            </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Opacity" Value="0.85" />
@@ -283,16 +280,25 @@
                             Background="#2F2F33"
                             BorderBrush="#45454B"
                             BorderThickness="1"
-                            CornerRadius="6">
+                            CornerRadius="6"
+                            Opacity="0">
+
+                        <Border.RenderTransform>
+                            <TranslateTransform X="16" />
+                        </Border.RenderTransform>
+
 
                         <Border.Style>
                             <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="Visibility" Value="Hidden" />
 
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding HasOfflineEarnings}"
-                                                 Value="False">
-                                        <Setter Property="Visibility" Value="Hidden" />
+                                                 Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Storyboard="{StaticResource OfflineEarningsStoryboard}"/>
+                                        </DataTrigger.EnterActions>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -371,25 +377,7 @@
                                                         </MultiDataTrigger.Conditions>
 
                                                         <MultiDataTrigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation
-                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                                        From="1"
-                                                                        To="1.12"
-                                                                        Duration="0:0:0.15"
-                                                                        AutoReverse="True"
-                                                                        FillBehavior="Stop" />
-
-                                                                    <DoubleAnimation
-                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                                        From="1"
-                                                                        To="1.12"
-                                                                        Duration="0:0:0.15"
-                                                                        AutoReverse="True"
-                                                                        FillBehavior="Stop" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
+                                                            <BeginStoryboard Storyboard="{StaticResource AvailabilityPulseStoryboard}" />
                                                         </MultiDataTrigger.EnterActions>
                                                     </MultiDataTrigger>
                                                 </Style.Triggers>
@@ -474,9 +462,15 @@
                             <!-- The whole worker card purchases the represented worker. -->
                             <Button Height="150"
                                     Margin="6"
+                                    RenderTransformOrigin="0.5,0.5"
                                     Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
                                     RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                     CommandParameter="{Binding}">
+
+                                <Button.RenderTransform>
+                                    <ScaleTransform ScaleX="1"
+                                                    ScaleY="1" />
+                                </Button.RenderTransform>
 
                                 <!-- Hidden future workers do not show an empty card. -->
                                 <Button.Style>
@@ -491,6 +485,25 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                             </DataTrigger>
+
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver"
+                                                               Value="True" />
+
+                                                    <Condition Property="IsEnabled"
+                                                               Value="True" />
+
+                                                </MultiTrigger.Conditions>
+
+                                                <MultiTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleInStoryboard}"/>
+                                                </MultiTrigger.EnterActions>
+
+                                                <MultiTrigger.ExitActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleOutStoryboard}"/>
+                                                </MultiTrigger.ExitActions>
+                                            </MultiTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
@@ -515,7 +528,7 @@
 
                                 <!-- Card contents are retained while the surrounding button handles hiring. -->
                                 <Border x:Name="WorkerCard"
-                                        Padding="12"
+                                        Padding="0"
                                         BorderBrush="#3F3F46"
                                         BorderThickness="1"
                                         CornerRadius="8">
@@ -526,8 +539,52 @@
                                     </Border.Background>
 
                                     <Grid>
+
+                                        <Border x:Name="HoverSweep"
+                                                Background="#2D2D30"
+                                                CornerRadius="8"
+                                                RenderTransformOrigin="0,0.5"
+                                                IsHitTestVisible="False">
+
+                                            <!-- ScaleX 0 means the neutral hover background starts hidden. -->
+                                            <Border.RenderTransform>
+                                                <ScaleTransform ScaleX="0"
+                                                                ScaleY="1" />
+                                            </Border.RenderTransform>
+
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <!-- Animate only when this worker can currently be purchased -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsMouseOver,
+                                                                           RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                                                                           Value="True" />
+
+                                                                <Condition Binding="{Binding IsEnabled,
+                                                                           RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                                                                           Value="True" />
+
+                                                            </MultiDataTrigger.Conditions>
+
+                                                            <!-- Gradually fill the card from left to right-->
+                                                            <MultiDataTrigger.EnterActions>
+                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillInStoryboard}"/>
+                                                            </MultiDataTrigger.EnterActions>
+
+                                                            <MultiDataTrigger.ExitActions>
+                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillOutStoryboard}"/>
+                                                            </MultiDataTrigger.ExitActions>
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+
+
                                         <!-- Details and purchase controls for an unlocked worker. -->
-                                        <StackPanel>
+                                        <StackPanel Margin="12">
                                             <StackPanel.Style>
                                                 <Style TargetType="StackPanel">
                                                     <Setter Property="Visibility"
@@ -580,7 +637,7 @@
                                         <!-- Limited information for the next locked worker. -->
                                         <StackPanel HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    Margin="0,12">
+                                                    Margin="12">
                                             <StackPanel.Style>
                                                 <Style TargetType="StackPanel">
                                                     <Setter Property="Visibility"

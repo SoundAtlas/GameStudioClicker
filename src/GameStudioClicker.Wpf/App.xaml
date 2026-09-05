@@ -5,6 +5,13 @@
              xmlns:converters="clr-namespace:GameStudioClicker.Wpf.Converters"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-            <converters:CompactNumberConverter x:Key="CompactNumberConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Animations.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:CompactNumberConverter
+                x:Key="CompactNumberConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
