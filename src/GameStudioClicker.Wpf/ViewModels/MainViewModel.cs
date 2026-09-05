@@ -11,7 +11,11 @@ namespace GameStudioClicker.Wpf.ViewModels
         private readonly GameState _gameState;
         private readonly DispatcherTimer _passiveTimer;
         private readonly DispatcherTimer _offlineMessageTimer;
-        private bool _showOfflineEarnings;
+        private readonly DispatcherTimer _saveConfirmationMessageTimer;
+
+        // Save confirmation notification
+        private bool _showSaveConfirmation;
+        public bool HasSaveConfirmation => _showSaveConfirmation;
 
         // Production displayed by the main coding panel
         public long LinesOfCode => _gameState.LinesOfCode;
@@ -19,6 +23,7 @@ namespace GameStudioClicker.Wpf.ViewModels
         public long LinesPerSecond => _gameState.LinesPerSecond;
 
         // Offline earnings notification
+        private bool _showOfflineEarnings;
         public bool HasOfflineEarnings => _showOfflineEarnings;
         public long OfflineLinesEarned { get; }
         public string OfflineEarningsMessage =>
@@ -31,6 +36,9 @@ namespace GameStudioClicker.Wpf.ViewModels
         public RelayCommand WriteCodeCommand { get; }
         public RelayCommand PurchaseActiveUpgradeCommand { get; }
         public RelayCommand PurchaseWorkerUpgradeCommand { get; }
+
+        public event EventHandler? SaveRequested;
+
 
         // Construction and setup
         public MainViewModel(GameState gameState, long offlineLinesEarned = 0)
@@ -72,6 +80,14 @@ namespace GameStudioClicker.Wpf.ViewModels
             };
             _passiveTimer.Tick += PassiveTimer_Tick;
 
+            // This timer hides the one-time save confirmation notification.
+            _saveConfirmationMessageTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1.5)
+            };
+            _saveConfirmationMessageTimer.Tick += SaveConfirmationMessage_Tick;
+
+
             WriteCodeCommand = new RelayCommand(ExecuteWriteCode);
             PurchaseActiveUpgradeCommand =
                 new RelayCommand(
@@ -90,6 +106,14 @@ namespace GameStudioClicker.Wpf.ViewModels
             _passiveTimer.Start();
         }
 
+        private void SaveConfirmationMessage_Tick(object? sender, EventArgs e)
+        {
+            _saveConfirmationMessageTimer.Stop();
+
+            _showSaveConfirmation = false;
+            OnPropertyChanged(nameof(HasSaveConfirmation));
+        }
+
         private bool CanExecutePurchaseWorkerUpgrade(object? parameter)
         {
             if (parameter is WorkerUpgradeViewModel upgradeViewModel)
@@ -106,6 +130,8 @@ namespace GameStudioClicker.Wpf.ViewModels
             {
                 OnPropertyChanged(nameof(LinesOfCode));
                 OnPropertyChanged(nameof(LinesPerSecond));
+
+                SaveRequested?.Invoke(this, new EventArgs());
 
                 RefreshWorkerUpgradeStates();
                 RefreshActiveUpgradeStates();
@@ -130,6 +156,8 @@ namespace GameStudioClicker.Wpf.ViewModels
                 OnPropertyChanged(nameof(LinesOfCode));
                 OnPropertyChanged(nameof(LinesPerClick));
                 OnPropertyChanged(nameof(LinesPerSecond));
+
+                SaveRequested?.Invoke(this, new EventArgs());
 
                 RefreshWorkerUpgradeStates();
                 RefreshActiveUpgradeStates();
@@ -203,6 +231,17 @@ namespace GameStudioClicker.Wpf.ViewModels
                     visibleUpgradeCount++;
                 }
             }
+        }
+
+        public void ShowSaveConfirmation()
+        {
+            // Implementation for showing save confirmation
+            _showSaveConfirmation = true;
+            OnPropertyChanged(nameof(HasSaveConfirmation));
+
+            // restarts timer
+            _saveConfirmationMessageTimer.Stop();
+            _saveConfirmationMessageTimer.Start();
         }
     }
 }

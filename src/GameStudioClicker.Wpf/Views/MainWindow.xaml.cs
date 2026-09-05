@@ -12,6 +12,8 @@ public partial class MainWindow : Window
 {
     // Long-lived objects shared by the window lifecycle and its view model.
     private readonly GameState _gameState;
+
+    private readonly MainViewModel _mainViewModel;
     private readonly JsonGameSaveService _jsonGameSaveService;
     private readonly DispatcherTimer _autosaveTimer;
 
@@ -53,14 +55,21 @@ public partial class MainWindow : Window
             }
         }
 
-        var viewModel = new MainViewModel(_gameState, offlineLinesEarned);
+        _mainViewModel = new MainViewModel(_gameState, offlineLinesEarned);
+
+        _mainViewModel.SaveRequested += SaveRequested;
 
         _autosaveTimer.Start();
 
         // Saving is tied to the window lifecycle rather than a manual UI command.
         Closing += MainWindowClosing;
 
-        DataContext = viewModel;
+        DataContext = _mainViewModel;
+    }
+
+    private void SaveRequested(object? sender, EventArgs e)
+    {
+        SaveGame();
     }
 
     private void AutoSaveTimer_Tick(object? sender, EventArgs e)
@@ -81,5 +90,9 @@ public partial class MainWindow : Window
         var saveData = _gameState.CreateSaveData();
         saveData.SavedAtUtc = DateTime.UtcNow;
         _jsonGameSaveService.SaveToFile(saveData, SaveFilePath);
+
+
+        // Show save confirmation message (can be enabled later if desired)
+        // _mainViewModel.ShowSaveConfirmation();
     }
 }

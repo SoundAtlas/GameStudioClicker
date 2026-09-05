@@ -105,6 +105,39 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Border Grid.Row="0"
+                Panel.ZIndex="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Padding="10,6"
+                Background="#27272A"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                CornerRadius="6">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasSaveConfirmation}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <TextBlock Text="Game Saved!"
+                       FontSize="13"
+                       FontWeight="SemiBold"
+                       Foreground="#86EFAC" />
+
+        </Border>
+
+
+
         <!-- Header Section -->
 
         <StackPanel Grid.Row="0">
