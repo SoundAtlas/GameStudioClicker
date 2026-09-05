@@ -13,7 +13,7 @@
         Foreground="#F4F4F5">
 
     <Window.Resources>
-
+        <!-- Shared appearance and interaction states for clickable game actions. -->
         <Style x:Key="PrimaryButtonStyle"
                TargetType="Button">
             <Setter Property="Background" Value="#3F3F46" />
@@ -36,6 +36,7 @@
                                 VerticalAlignment="Center" />
                         </Border>
 
+                        <!-- Visual states belong to the reusable button template. -->
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="ButtonBorder"
@@ -67,6 +68,7 @@
             </Setter>
         </Style>
 
+        <!-- Global tooltip appearance used by active-upgrade details. -->
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="Background"
                     Value="#27272A" />
@@ -101,10 +103,13 @@
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
+            <!-- Header and notifications. -->
             <RowDefinition Height="Auto" />
+            <!-- Main game interface. -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Optional save confirmation overlay; currently kept hidden by ViewModel usage. -->
         <Border Grid.Row="0"
                 Panel.ZIndex="1"
                 HorizontalAlignment="Right"
@@ -133,23 +138,19 @@
                        FontSize="13"
                        FontWeight="SemiBold"
                        Foreground="#86EFAC" />
-
         </Border>
 
-
-
-        <!-- Header Section -->
-
+        <!-- Header -->
         <StackPanel Grid.Row="0">
-
-            <!-- Welcome Message -->
+            <!-- Game title -->
             <TextBlock Text="Game Studio Clicker!"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        FontSize="45"
                        FontWeight="Bold"
                        Margin="0,20,0,10" />
-            <!-- Offline Earnings Message -->
+
+            <!-- Temporary message shown when offline progress is applied. -->
             <Border Padding="12"
                     Margin="0,0,0,16"
                     HorizontalAlignment="Center"
@@ -178,50 +179,52 @@
                            TextWrapping="Wrap"
                            TextAlignment="Center" />
             </Border>
-
         </StackPanel>
 
+        <!-- Main two-column game layout -->
         <Grid Grid.Row="1" Margin="0,24,0,0">
-            <Grid.ColumnDefinitions >
+            <Grid.ColumnDefinitions>
+                <!-- Manual production and totals. -->
                 <ColumnDefinition Width="2*" />
+                <!-- Purchasable upgrades and workers. -->
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Coding Panel -->
-
+            <!-- Manual coding and current production -->
             <Border Grid.Column="0"
                     Padding="10"
                     BorderThickness="1"
                     Background="#27272A"
                     BorderBrush="#3F3F46"
                     CornerRadius="8">
-
                 <StackPanel>
-
-                    <!-- Lines of Code Written -->
+                    <!-- Current resource total -->
                     <StackPanel Orientation="Vertical"
                                 HorizontalAlignment="Center"
                                 Margin="0,0,0,10">
                         <TextBlock Text="Lines of Code Written: "
                                    FontSize="24"
-                                   FontWeight="Bold"/>
+                                   FontWeight="Bold" />
                         <TextBlock Text="{Binding LinesOfCode,
-                                   Converter={StaticResource CompactNumberConverter}}"
+                                          Converter={StaticResource CompactNumberConverter}}"
                                    FontSize="24"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
 
-                    <!-- Write Code Button -->
-                    <Button Content="Write Code"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Width="150"
-                            Height="50"
-                            FontSize="16"
-                            Command="{Binding WriteCodeCommand}"
-                            Style="{StaticResource PrimaryButtonStyle}" />
+                    <!-- Button surface also hosts temporary +X visuals created in code-behind. -->
+                    <Grid x:Name="ClickFeedbackLayer">
+                        <Button Content="Write Code"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Width="150"
+                                Height="50"
+                                FontSize="16"
+                                Command="{Binding WriteCodeCommand}"
+                                Click="WriteCodeButton_Click"
+                                Style="{StaticResource PrimaryButtonStyle}" />
+                    </Grid>
 
-                    <!-- Current Production Info -->
+                    <!-- Current production summary -->
                     <TextBlock Text="Current Production"
                                HorizontalAlignment="Center"
                                FontSize="24"
@@ -233,33 +236,28 @@
                                 Margin="0,0,0,10">
                         <TextBlock Text="Lines of Code / Click: "
                                    FontSize="16"
-                                   FontWeight="Bold"
-                                   />
+                                   FontWeight="Bold" />
                         <TextBlock Text="{Binding LinesPerClick, Converter={StaticResource CompactNumberConverter}}"
-                                   HorizontalAlignment="Center"/>
-
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical"
                                 HorizontalAlignment="Center">
                         <TextBlock Text="Lines of Code / Second: "
                                    FontSize="16"
-                                   FontWeight="Bold"/>
+                                   FontWeight="Bold" />
                         <TextBlock Text="{Binding LinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
-
                 </StackPanel>
-
             </Border>
 
+            <!-- Scrollable progression area -->
             <ScrollViewer Grid.Column="1"
                           Margin="24,0,0,0"
                           VerticalScrollBarVisibility="Auto">
-
                 <StackPanel>
-
-                    <!-- Compact active upgrades -->
+                    <!-- Compact, one-time active upgrades -->
                     <StackPanel Margin="0,0,0,16">
                         <TextBlock Text="Active Upgrades"
                                    FontSize="18"
@@ -267,6 +265,7 @@
                                    Margin="0,0,0,8" />
 
                         <ItemsControl ItemsSource="{Binding ActiveUpgrades}">
+                            <!-- Arrange compact upgrade buttons from left to right. -->
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" />
@@ -275,17 +274,25 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
+                                    <!-- One active-upgrade button -->
                                     <Button Width="60"
                                             Height="60"
-                                            Margin="0,0,8,8"
+                                            Margin="4,4,8,8"
                                             Padding="4"
                                             ToolTipService.InitialShowDelay="150"
                                             ToolTipService.BetweenShowDelay="0"
                                             ToolTipService.ShowDuration="30000"
                                             ToolTipService.ShowOnDisabled="True"
+                                            RenderTransformOrigin="0.5,0.5"
                                             Command="{Binding DataContext.PurchaseActiveUpgradeCommand,
-                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                              RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                             CommandParameter="{Binding}">
+
+                                        <!-- Used by the one-time affordability pulse. -->
+                                        <Button.RenderTransform>
+                                            <ScaleTransform ScaleX="1"
+                                                            ScaleY="1" />
+                                        </Button.RenderTransform>
 
                                         <Button.Style>
                                             <Style TargetType="Button"
@@ -294,11 +301,44 @@
                                                         Value="Visible" />
 
                                                 <Style.Triggers>
+                                                    <!-- Purchased or distant upgrades are removed by the ViewModel. -->
                                                     <DataTrigger Binding="{Binding IsVisible}"
                                                                  Value="False">
                                                         <Setter Property="Visibility"
                                                                 Value="Collapsed" />
                                                     </DataTrigger>
+
+                                                    <!-- Pulse once when a visible upgrade becomes purchasable. -->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsVisible}"
+                                                                       Value="True" />
+                                                            <Condition Binding="{Binding CanPurchaseActiveUpgrade}"
+                                                                       Value="True" />
+                                                        </MultiDataTrigger.Conditions>
+
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                        From="1"
+                                                                        To="1.12"
+                                                                        Duration="0:0:0.15"
+                                                                        AutoReverse="True"
+                                                                        FillBehavior="Stop" />
+
+                                                                    <DoubleAnimation
+                                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                        From="1"
+                                                                        To="1.12"
+                                                                        Duration="0:0:0.15"
+                                                                        AutoReverse="True"
+                                                                        FillBehavior="Stop" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
@@ -310,7 +350,7 @@
 
                                         <Button.ToolTip>
                                             <ToolTip DataContext="{Binding PlacementTarget.DataContext,
-                                                     RelativeSource={RelativeSource Self}}">
+                                                                            RelativeSource={RelativeSource Self}}">
                                                 <StackPanel MaxWidth="260">
                                                     <TextBlock Text="{Binding DisplayName}"
                                                                FontSize="16"
@@ -327,7 +367,7 @@
                                                         <Run Text=" Lines of Code" />
                                                     </TextBlock>
 
-
+                                                    <!-- Only visible while an upgrade or worker requirement is unmet. -->
                                                     <TextBlock Text="{Binding RequirementText}"
                                                                Foreground="#FCA5A5"
                                                                FontWeight="SemiBold"
@@ -343,7 +383,6 @@
                                                                                  Value="True">
                                                                         <Setter Property="Visibility"
                                                                                 Value="Visible" />
-
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -357,19 +396,44 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-                    <!-- Generic worker cards -->
+
+                    <!-- Repeatable worker upgrades -->
                     <ItemsControl ItemsSource="{Binding WorkerUpgrades}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Padding="12"
+                                <!-- One worker card, shown either unlocked or as a mystery preview. -->
+                                <Border x:Name="WorkerCard"
+                                        Padding="12"
                                         Margin="0,0,0,12"
-                                        Background="#27272A"
                                         BorderBrush="#3F3F46"
                                         BorderThickness="1"
                                         CornerRadius="8"
                                         Height="190">
 
-                                    <!-- Hide workers that are too far ahead -->
+                                    <Border.Background>
+                                        <!-- Explicit brush enables the purchase color animation. -->
+                                        <SolidColorBrush Color="#27272A" />
+                                    </Border.Background>
+
+                                    <!-- Brief confirmation flash when the Hire button succeeds. -->
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Button.Click">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+                                                        Storyboard.TargetName="WorkerCard"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        From="#27272A"
+                                                        To="#2D3330"
+                                                        Duration="0:0:0.1"
+                                                        AutoReverse="True"
+                                                        FillBehavior="Stop" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+
+                                    <!-- Hide worker types that are too far ahead in progression. -->
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Visibility"
@@ -386,7 +450,7 @@
                                     </Border.Style>
 
                                     <Grid>
-                                        <!-- Unlocked worker details -->
+                                        <!-- Details and purchase controls for an unlocked worker. -->
                                         <StackPanel>
                                             <StackPanel.Style>
                                                 <Style TargetType="StackPanel">
@@ -441,11 +505,11 @@
                                                     HorizontalAlignment="Center"
                                                     Style="{StaticResource PrimaryButtonStyle}"
                                                     Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
-                                                    RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                                     CommandParameter="{Binding}" />
                                         </StackPanel>
 
-                                        <!-- Locked mystery preview -->
+                                        <!-- Limited information for the next locked worker. -->
                                         <StackPanel HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Margin="0,12">
@@ -475,7 +539,7 @@
                                                 <TextBlock Text="{Binding UnlockRequirementText}"
                                                            HorizontalAlignment="Center"
                                                            Foreground="#71717A"
-                                                           Margin="0,6,0,0"/>
+                                                           Margin="0,6,0,0" />
 
                                                 <TextBlock HorizontalAlignment="Center"
                                                            Foreground="#71717A"
@@ -485,14 +549,12 @@
                                                     <Run Text=" Lines of Code" />
                                                 </TextBlock>
                                             </StackPanel>
-
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
                 </StackPanel>
             </ScrollViewer>
         </Grid>

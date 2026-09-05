@@ -62,6 +62,8 @@ namespace GameStudioClicker.Wpf.ViewModels
 
         public bool HasUnmetRequirement => !string.IsNullOrEmpty(RequirementText);
 
+        public bool CanPurchaseActiveUpgrade =>
+            _gameState.CanPurchaseActiveUpgrade(_activeUpgrade);
 
 
         // Internal property to access the underlying ActiveUpgrade model
@@ -79,6 +81,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(IsAvailable));
             OnPropertyChanged(nameof(HasUnmetRequirement));
             OnPropertyChanged(nameof(RequirementText));
+            OnPropertyChanged(nameof(CanPurchaseActiveUpgrade));
         }
 
         public void UpdateVisibility(bool isVisible)

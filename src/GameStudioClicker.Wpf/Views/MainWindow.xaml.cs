@@ -1,9 +1,13 @@
 using GameStudioClicker.Core.Models;
 using GameStudioClicker.Core.Persistence;
+using GameStudioClicker.Wpf.Formatting;
 using GameStudioClicker.Wpf.ViewModels;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.Views;
@@ -94,5 +98,65 @@ public partial class MainWindow : Window
 
         // Show save confirmation message (can be enabled later if desired)
         // _mainViewModel.ShowSaveConfirmation();
+    }
+
+    private bool _nextFeedbackMovesRight = true;
+    // Animation for the "Write Code" button click feedback.
+    private void WriteCodeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel viewModel)
+        {
+            return;
+        }
+
+
+        TextBlock feedbackText = new TextBlock
+        {
+            Text = $"+{CompactNumberFormatter.Format(viewModel.LinesPerClick)}",
+            Foreground = Brushes.PowderBlue,
+            FontSize = 16,
+            FontWeight = FontWeights.SemiBold,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            IsHitTestVisible = false
+        };
+
+        Panel.SetZIndex(feedbackText, 1);
+
+        var movement = new TranslateTransform();
+        feedbackText.RenderTransform = movement;
+
+        ClickFeedbackLayer.Children.Add(feedbackText);
+
+        double horizontalDistance = _nextFeedbackMovesRight ? 50 : -50;
+        _nextFeedbackMovesRight = !_nextFeedbackMovesRight;
+
+        var duration = new Duration(TimeSpan.FromSeconds(0.65));
+
+        var fadeAnimation = new DoubleAnimation(1, 0, duration);
+        var hortizontalAnimation = new DoubleAnimation(0, horizontalDistance, duration);
+        var verticalAnimation = new DoubleAnimation(0, -50, duration)
+        {
+            EasingFunction = new CubicEase
+            {
+                EasingMode = EasingMode.EaseOut
+            }
+        };
+
+        fadeAnimation.Completed += (_, _) =>
+            ClickFeedbackLayer.Children.Remove(feedbackText);
+
+        feedbackText.BeginAnimation(
+            UIElement.OpacityProperty,
+            fadeAnimation);
+
+        movement.BeginAnimation(
+            TranslateTransform.XProperty,
+            hortizontalAnimation);
+
+        movement.BeginAnimation(
+            TranslateTransform.YProperty,
+            verticalAnimation);
+
     }
 }

@@ -179,6 +179,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             _gameState.GeneratePassiveLines();
             OnPropertyChanged(nameof(LinesOfCode));
             RefreshPurchaseCommands();
+            RefreshActiveUpgradeStates();
         }
 
         // Manual production command handler
@@ -188,6 +189,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             OnPropertyChanged(nameof(LinesOfCode));
 
             RefreshPurchaseCommands();
+            RefreshActiveUpgradeStates();
         }
 
         // Command state helpers
