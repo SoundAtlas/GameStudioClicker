@@ -48,9 +48,11 @@ public class JsonGameSaveServiceTests
     {
         // Arrange
         var service = new JsonGameSaveService();
+        DateTime savedAtUtc = new(2026, 9, 5, 18, 30, 0, DateTimeKind.Utc);
         var saveData = new GameSaveData
         {
             LinesOfCode = 456,
+            SavedAtUtc = savedAtUtc,
             WorkerUpgradeCounts = new Dictionary<string, int>
             {
                 ["intern"] = 5,
@@ -75,6 +77,7 @@ public class JsonGameSaveServiceTests
             // Assert
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
+            Assert.AreEqual(savedAtUtc, loadedSaveData.SavedAtUtc);
             Assert.AreEqual(5, loadedSaveData.WorkerUpgradeCounts["intern"]);
             Assert.AreEqual(2, loadedSaveData.WorkerUpgradeCounts["junior_developer"]);
             CollectionAssert.AreEqual(
@@ -104,5 +107,45 @@ public class JsonGameSaveServiceTests
 
         // Assert
         Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    public void LoadFromFile_WhenJsonIsMalformed_PreservesCorruptFileAndReturnsNull()
+    {
+        var service = new JsonGameSaveService();
+        string filePath = Path.Combine(
+            Path.GetTempPath(),
+            $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        string corruptPattern = $"{Path.GetFileName(filePath)}.corrupt-*";
+        const string malformedJson = "{ not valid json";
+
+        try
+        {
+            File.WriteAllText(filePath, malformedJson);
+
+            GameSaveData? result = service.LoadFromFile(filePath);
+            string[] corruptFiles = Directory.GetFiles(
+                Path.GetDirectoryName(filePath)!,
+                corruptPattern);
+
+            Assert.IsNull(result);
+            Assert.IsFalse(File.Exists(filePath));
+            Assert.HasCount(1, corruptFiles);
+            Assert.AreEqual(malformedJson, File.ReadAllText(corruptFiles[0]));
+        }
+        finally
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            foreach (string corruptFile in Directory.GetFiles(
+                         Path.GetDirectoryName(filePath)!,
+                         corruptPattern))
+            {
+                File.Delete(corruptFile);
+            }
+        }
     }
 }

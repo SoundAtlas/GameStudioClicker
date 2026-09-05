@@ -1,49 +1,48 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
-namespace GameStudioClicker.Core.Persistence
+namespace GameStudioClicker.Core.Persistence;
+
+public class JsonGameSaveService
 {
-    public class JsonGameSaveService
+    // Converts a save snapshot to readable JSON.
+    public string SerializeGameSaveData(GameSaveData saveData)
     {
-        // Converts the save snapshot to readable JSON.
-        public string SerializeGameSaveData(GameSaveData saveData)
+        return JsonSerializer.Serialize(
+            saveData,
+            new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    // Writes a complete snapshot, replacing the previous save file.
+    public void SaveToFile(GameSaveData saveData, string filePath)
+    {
+        string json = SerializeGameSaveData(saveData);
+        File.WriteAllText(filePath, json);
+    }
+
+    // A missing file represents a new game and is not treated as an error.
+    public GameSaveData? LoadFromFile(string filePath)
+    {
+        if (!File.Exists(filePath))
         {
-            return JsonSerializer.Serialize(saveData, new JsonSerializerOptions { WriteIndented = true });
+            return null;
         }
 
-        // Writes a complete snapshot, replacing the previous save file.
-        public void SaveToFile(GameSaveData saveData, string filePath)
+        try
         {
-            string json = SerializeGameSaveData(saveData);
+            string json = File.ReadAllText(filePath);
+            GameSaveData? saveData = JsonSerializer.Deserialize<GameSaveData>(json);
 
-            File.WriteAllText(filePath, json);
+            return saveData == null
+                ? throw new JsonException("Save data was null")
+                : saveData;
         }
-
-        // A missing file represents a new game and is not treated as an error.
-        public GameSaveData? LoadFromFile(string filePath)
+        catch (JsonException)
         {
-            if (!File.Exists(filePath))
-            {
-                return null;
-            }
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff");
+            string corruptFilePath = $"{filePath}.corrupt-{timestamp}";
 
-            try
-            {
-                string json = File.ReadAllText(filePath);
-
-                GameSaveData? saveData = JsonSerializer.Deserialize<GameSaveData>(json);
-
-                return saveData == null ? throw new JsonException("Save data was null") : saveData;
-            }
-            catch (JsonException)
-            {
-                string timeStamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff");
-
-                string corruptFilePath = $"{filePath}.corrupt-{timeStamp}";
-
-                File.Move(filePath, corruptFilePath);
-
-                return null;
-            }
+            File.Move(filePath, corruptFilePath);
+            return null;
         }
     }
 }

@@ -1,71 +1,77 @@
 # Game Studio Clicker
 
-Game Studio Clicker is a small C# and WPF idle/clicker game built as a learning project. The player writes Lines of Code manually, buys one-time hardware upgrades, and hires repeatable workers for passive production.
+Game Studio Clicker is a playable C# and WPF idle/clicker prototype built as a
+learning project. The player writes Lines of Code manually, purchases one-time
+upgrades, and hires employees who produce code automatically.
 
-The project is an early playable prototype focused on learning C#, WPF, MVVM, persistence, and gradual refactoring.
+The project focuses on readable C#, practical MVVM, JSON persistence, incremental
+refactoring, and learning how game rules connect to a responsive desktop interface.
 
 ## Current features
 
-- Write code manually, starting at one line per click.
-- Purchase one-time hardware upgrades that multiply click production.
-- Display the first two unpurchased active upgrades while hiding upgrades further ahead.
-- Disable active upgrades when they are unaffordable or their prerequisite has not been purchased.
-- Remove active upgrades from the store after purchase.
-- Hire repeatable workers that generate Lines of Code every second.
-- Increase a worker's cost after each purchase.
-- Unlock later worker types by owning enough of the previous worker.
-- Show the next locked worker as a `???` preview with its cost, unlock requirement, and progress.
-- Keep worker-card sizes consistent when changing between mystery and unlocked states.
-- Disable purchases automatically when the player cannot afford them.
-- Display click and passive production separately.
-- Use a two-panel dark interface with reusable button and tooltip styling.
-- Save progress automatically as readable JSON when the game closes.
-- Load saved progress automatically when the game starts.
-- Persist active-upgrade IDs and worker counts through generic collections.
-- Award up to 24 hours of passive production while the game is closed.
-- Show a temporary notification summarizing offline earnings.
-- Keep game rules separate from the WPF interface with an MVVM-style design.
+### Production and progression
 
-## Current progression
+- Write one Line of Code per click at the start of a new game.
+- Purchase chained active upgrades that multiply click production.
+- Purchase targeted upgrades for Interns, Junior Developers, Senior Developers,
+  and Lead Developers.
+- Purchase a late-game global upgrade that affects every worker type.
+- Require ownership of the targeted worker type before its production upgrades
+  can be purchased.
+- Preview upcoming active upgrades and explain unmet requirements in tooltips.
+- Hire repeatable workers whose costs double after every purchase.
+- Unlock later worker types through ownership requirements.
+- Show the next locked worker as a mystery card with unlock progress.
 
-### Active upgrades
-
-Active upgrades are strong, one-time purchases. The current hardware progression is:
-
-| Upgrade | Cost | Effect |
-|---|---:|---:|
-| Mouse Pad | 100 | Click production x2 |
-| Gaming Mouse | 400 | Click production x2 |
-| Mechanical Keyboard | 700 | Click production x2 |
-| Headset | 800 | Click production x2 |
-| Webcam | 900 | Click production x2 |
-| External SSD | 1,000 | Click production x2 |
-| Second Monitor | 1,500 | Click production x2 |
-| Ultrawide Monitor | 3,000 | Click production x3 |
-
-The current upgrades form a prerequisite chain. The UI previews two unpurchased upgrades at a time, with unavailable upgrades shown disabled.
-
-### Workers
-
-Workers are repeatable purchases. Their current cost doubles after every hire.
-
-| Worker | Base cost | Production | Unlock requirement |
+| Worker | Base cost | Base production | Unlock requirement |
 |---|---:|---:|---|
-| Intern | 50 | 2 lines/second | None |
-| Junior Developer | 2,000 | 20 lines/second | Own 5 Interns |
-| Senior Developer | 20,000 | 2,000 lines/second | Own 5 Junior Developers |
+| Intern | 50 | 2/second | None |
+| Junior Developer | 2,000 | 20/second | Own 5 Interns |
+| Senior Developer | 20,000 | 2,000/second | Own 5 Junior Developers |
+| Lead Developer | 200,000 | 20,000/second | Own 1 Senior Developer |
 
-These values are provisional and still need balancing.
+All economy values are provisional. Current playtest observations are recorded in
+[`BALANCING_NOTES.md`](BALANCING_NOTES.md).
 
-## Save data
+### Saving and offline progress
 
-The game saves automatically when the main window closes and loads automatically on startup. On Windows, the save file is stored at:
+- Load progress automatically on startup.
+- Save every 30 seconds, after purchases, and when the window closes.
+- Persist Lines of Code, purchased active-upgrade IDs, worker counts, and the last
+  save time as readable JSON.
+- Award up to 24 hours of passive production while the game is closed.
+- Preserve malformed saves with a timestamped `.corrupt-*` suffix and start safely.
+- Tolerate missing save collections and clamp negative persisted values.
+
+On Windows, the save file is stored at:
 
 ```text
 %LocalAppData%\GameStudioClicker\game_save.json
 ```
 
-The save contains the current Lines of Code, purchased active-upgrade IDs, worker counts, and a UTC timestamp used to calculate offline progress. Offline production is limited to 24 hours per session away.
+### Interface and feedback
+
+- Use a dark three-part dashboard for the title, manual production, and active
+  upgrades.
+- Show workers in a compact two-column layout with the whole card acting as Hire.
+- Keep scrolling limited to the worker progression area.
+- Show concurrent floating click values that alternate left and right.
+- Pulse newly affordable active upgrades.
+- Animate worker hover, press, and purchase feedback.
+- Animate offline earnings without shifting the dashboard.
+- Keep reusable WPF Storyboards in `Styles/Animations.xaml`.
+
+## Architecture
+
+- `GameStudioClicker.Core` contains platform-independent models, game rules, and
+  persistence data.
+- `GameStudioClicker.Wpf` contains the Windows interface, ViewModels, commands,
+  formatting, timers, and window lifecycle integration.
+- `GameStudioClicker.Tests` contains focused MSTest coverage for game rules,
+  ViewModels, commands, and JSON persistence.
+
+The Model owns economy rules and derived production. ViewModels adapt that state for
+binding and commands. The View owns layout and purely visual animation behavior.
 
 ## Requirements
 
@@ -86,22 +92,10 @@ dotnet run --project src/GameStudioClicker.Wpf
 dotnet test GameStudioClicker.sln
 ```
 
-The test project covers Core rules, commands, ViewModels, and JSON persistence. Some tests still need to be updated after the latest active-upgrade and worker refactors.
+## Next milestone
 
-## Solution structure
+The next planned system is persistent lifetime statistics, beginning with one useful
+value such as Lifetime Lines of Code generated. Gameplay balancing is intentionally
+deferred and tracked separately in `BALANCING_NOTES.md`.
 
-- `src/GameStudioClicker.Core` contains platform-independent game state and rules.
-- `src/GameStudioClicker.Core/Models/ActiveUpgrade.cs` represents one-time active upgrades.
-- `src/GameStudioClicker.Core/Models/WorkerUpgrade.cs` represents repeatable passive workers.
-- `src/GameStudioClicker.Core/Persistence` contains save-data and JSON persistence classes.
-- `src/GameStudioClicker.Wpf` contains the Windows UI, commands, timers, and ViewModels.
-- `tests/GameStudioClicker.Tests` contains MSTest coverage.
-
-## Planned improvements
-
-- Rebalance active-upgrade prices, click multipliers, worker prices, and worker production.
-- Allow active upgrades to affect systems other than click production, such as Intern productivity.
-- Improve the visual distinction between an unaffordable upgrade and one blocked by a prerequisite.
-- Add proper artwork or icons for active upgrades and workers.
-- Finish removing legacy worker save fields and update tests for the generic worker system.
-- Continue improving saving, code structure, and general polish in later milestones.
+See [`ROADMAP.md`](ROADMAP.md) for the complete milestone history and planned work.

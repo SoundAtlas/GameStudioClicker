@@ -140,7 +140,7 @@ namespace GameStudioClicker.Core.Models
                 clickMultiplier: 2,
                 prerequisite: highEndWorkstation);
 
-            ActiveUpgrade architechtureWorkshop = new ActiveUpgrade(
+            ActiveUpgrade architectureWorkshop = new ActiveUpgrade(
                 id: "architecture_workshop",
                 displayName: "Architecture Workshop",
                 description: "Doubles Senior Developer Productivity",
@@ -257,8 +257,6 @@ namespace GameStudioClicker.Core.Models
                 prerequisite: technicalStrategySummit);
 
             // Additional hardware upgrades can extend this ordered progression.
-
-
             ActiveUpgrades = new List<ActiveUpgrade>
             {
                 mousePad,
@@ -276,7 +274,7 @@ namespace GameStudioClicker.Core.Models
                 highEndWorkstation,
                 internMentorshipProgram,
                 homeServer,
-                architechtureWorkshop,
+                architectureWorkshop,
                 aiWorkstation,
                 rackServer,
                 pairProgrammingSessions,
@@ -330,181 +328,7 @@ namespace GameStudioClicker.Core.Models
             };
         }
 
-        // Persistence
-
-        // Creates an independent snapshot containing only values that need to be saved.
-        public GameSaveData CreateSaveData()
-        {
-            var saveData = new GameSaveData
-            {
-                LinesOfCode = this.LinesOfCode,
-            };
-
-            foreach (var upgrade in ActiveUpgrades)
-            {
-                if (upgrade.IsPurchased)
-                {
-                    saveData.PurchasedActiveUpgradeIds.Add(upgrade.Id);
-                }
-            }
-
-            foreach (var workerUpgrade in WorkerUpgrades)
-            {
-                saveData.WorkerUpgradeCounts[workerUpgrade.Id] = workerUpgrade.WorkerCount;
-            }
-
-            return saveData;
-        }
-
-        // Restores saved values and rebuilds production rates and future upgrade costs.
-        public void RestoreFromSaveData(GameSaveData saveData)
-        {
-            // Reject null save data before reading any values from it.
-            if (saveData == null)
-            {
-                throw new ArgumentNullException(nameof(saveData), "Save data cannot be null.");
-            }
-
-            // Use empty collections if the save data is missing them to avoid null reference exceptions.
-            List<string> purchasedActiveUpgradeIds =
-                saveData.PurchasedActiveUpgradeIds ?? [];
-            Dictionary<string, int> workerUpgradeCounts =
-                saveData.WorkerUpgradeCounts ?? [];
-
-            // Clamp persisted values in case the save file was edited or corrupted.
-            LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
-
-            // Restore the one-time purchase state of every active upgrade.
-            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
-            {
-
-                bool isPurchased = purchasedActiveUpgradeIds.Contains(upgrade.Id);
-                upgrade.RestorePurchaseState(isPurchased);
-            }
-
-            // Apply click multipliers from purchased active upgrades.
-            LinesPerClick = 1;
-            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
-            {
-                if (upgrade.IsPurchased)
-                {
-                    LinesPerClick *= upgrade.ClickMultiplier;
-                }
-            }
-
-            // Restore worker counts; each worker rebuilds its own current cost.
-            foreach (WorkerUpgrade upgrade in WorkerUpgrades)
-            {
-                // Missing dictionary entries default to zero through TryGetValue.
-                workerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
-                upgrade.RestoreWorkerCount(savedCount);
-            }
-
-            RecalculateLinesPerSecond();
-        }
-
-        public bool CanAffordUpgrade(long cost)
-        {
-            return LinesOfCode >= cost;
-        }
-
-        public bool CanPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
-        {
-            if (ActiveUpgrades.Contains(activeUpgrade) &&
-                activeUpgrade.IsAvailable &&
-                CanAffordUpgrade(activeUpgrade.Cost))
-            {
-                // check if an active upgrade targets a specific worker
-                if (activeUpgrade.TargetWorkerId != null)
-                {
-                    // find the worker upgrade with the matching ID
-                    foreach (WorkerUpgrade workerUpgrade in WorkerUpgrades)
-                    {
-                        if (workerUpgrade.Id == activeUpgrade.TargetWorkerId)
-                        {
-                            return workerUpgrade.WorkerCount > 0;
-                        }
-                    }
-
-                    return false; // no matching worker upgrade found, cannot purchase the active upgrade
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool TryPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
-        {
-            if (CanPurchaseActiveUpgrade(activeUpgrade))
-            {
-                LinesOfCode -= activeUpgrade.Cost;
-                LinesPerClick *= activeUpgrade.ClickMultiplier;
-                activeUpgrade.MarkAsPurchased();
-                RecalculateLinesPerSecond();
-                return true;
-            }
-            return false;
-        }
-
-        public bool CanPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
-        {
-            if (WorkerUpgrades.Contains(workerUpgrade) &&
-                workerUpgrade.IsUnlocked &&
-                CanAffordUpgrade(workerUpgrade.CurrentCost))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool TryPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
-        {
-            if (CanPurchaseWorkerUpgrade(workerUpgrade))
-            {
-                LinesOfCode -= workerUpgrade.CurrentCost;
-                workerUpgrade.AddWorker();
-
-                RecalculateLinesPerSecond();
-                return true;
-            }
-            return false;
-        }
-
-        private void RecalculateLinesPerSecond()
-        {
-            long calculatedLinesPerSecond = 0;
-            foreach (WorkerUpgrade worker in WorkerUpgrades)
-            {
-                long linesPerSecond = GetWorkerLinesPerSecond(worker);
-
-                calculatedLinesPerSecond += linesPerSecond;
-            }
-
-            LinesPerSecond = calculatedLinesPerSecond;
-        }
-
-        public long GetWorkerLinesPerSecond(WorkerUpgrade worker)
-        {
-            return worker.WorkerCount * GetWorkerLinesPerSecondPerEmployee(worker);
-        }
-
-        public long GetWorkerLinesPerSecondPerEmployee(WorkerUpgrade worker)
-        {
-            long linesPerSecond = worker.BaseLinesPerSecond;
-            foreach (ActiveUpgrade activeUpgrade in ActiveUpgrades)
-            {
-                if (activeUpgrade.IsPurchased &&
-                    (activeUpgrade.TargetWorkerId == worker.Id || activeUpgrade.TargetAllWorkers))
-                {
-                    linesPerSecond *= activeUpgrade.WorkerProductionMultiplier;
-                }
-            }
-            return linesPerSecond;
-        }
-
-        // Code generation
+        // Resource generation
         public void WriteCode()
         {
             LinesOfCode += LinesPerClick;
@@ -537,6 +361,177 @@ namespace GameStudioClicker.Core.Models
             LinesOfCode += offlineLines;
 
             return offlineLines;
+        }
+
+        // Purchase rules and actions
+        public bool CanAffordUpgrade(long cost)
+        {
+            return LinesOfCode >= cost;
+        }
+
+        public bool CanPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
+        {
+            if (ActiveUpgrades.Contains(activeUpgrade) &&
+                activeUpgrade.IsAvailable &&
+                CanAffordUpgrade(activeUpgrade.Cost))
+            {
+                if (activeUpgrade.TargetWorkerId != null)
+                {
+                    foreach (WorkerUpgrade workerUpgrade in WorkerUpgrades)
+                    {
+                        if (workerUpgrade.Id == activeUpgrade.TargetWorkerId)
+                        {
+                            return workerUpgrade.WorkerCount > 0;
+                        }
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryPurchaseActiveUpgrade(ActiveUpgrade activeUpgrade)
+        {
+            if (CanPurchaseActiveUpgrade(activeUpgrade))
+            {
+                LinesOfCode -= activeUpgrade.Cost;
+                LinesPerClick *= activeUpgrade.ClickMultiplier;
+                activeUpgrade.MarkAsPurchased();
+                RecalculateLinesPerSecond();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CanPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
+        {
+            if (WorkerUpgrades.Contains(workerUpgrade) &&
+                workerUpgrade.IsUnlocked &&
+                CanAffordUpgrade(workerUpgrade.CurrentCost))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryPurchaseWorkerUpgrade(WorkerUpgrade workerUpgrade)
+        {
+            if (CanPurchaseWorkerUpgrade(workerUpgrade))
+            {
+                LinesOfCode -= workerUpgrade.CurrentCost;
+                workerUpgrade.AddWorker();
+                RecalculateLinesPerSecond();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        // Worker production queries
+        public long GetWorkerLinesPerSecond(WorkerUpgrade worker)
+        {
+            return worker.WorkerCount * GetWorkerLinesPerSecondPerEmployee(worker);
+        }
+
+        public long GetWorkerLinesPerSecondPerEmployee(WorkerUpgrade worker)
+        {
+            long linesPerSecond = worker.BaseLinesPerSecond;
+
+            foreach (ActiveUpgrade activeUpgrade in ActiveUpgrades)
+            {
+                if (activeUpgrade.IsPurchased &&
+                    (activeUpgrade.TargetWorkerId == worker.Id || activeUpgrade.TargetAllWorkers))
+                {
+                    linesPerSecond *= activeUpgrade.WorkerProductionMultiplier;
+                }
+            }
+
+            return linesPerSecond;
+        }
+
+        // Persistence
+        public GameSaveData CreateSaveData()
+        {
+            var saveData = new GameSaveData
+            {
+                LinesOfCode = this.LinesOfCode
+            };
+
+            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            {
+                if (upgrade.IsPurchased)
+                {
+                    saveData.PurchasedActiveUpgradeIds.Add(upgrade.Id);
+                }
+            }
+
+            foreach (WorkerUpgrade workerUpgrade in WorkerUpgrades)
+            {
+                saveData.WorkerUpgradeCounts[workerUpgrade.Id] = workerUpgrade.WorkerCount;
+            }
+
+            return saveData;
+        }
+
+        // Derived production rates and costs are rebuilt from persistent values.
+        public void RestoreFromSaveData(GameSaveData saveData)
+        {
+            if (saveData == null)
+            {
+                throw new ArgumentNullException(nameof(saveData), "Save data cannot be null.");
+            }
+
+            List<string> purchasedActiveUpgradeIds =
+                saveData.PurchasedActiveUpgradeIds ?? [];
+            Dictionary<string, int> workerUpgradeCounts =
+                saveData.WorkerUpgradeCounts ?? [];
+
+            LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
+
+            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            {
+                bool isPurchased = purchasedActiveUpgradeIds.Contains(upgrade.Id);
+                upgrade.RestorePurchaseState(isPurchased);
+            }
+
+            LinesPerClick = 1;
+            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            {
+                if (upgrade.IsPurchased)
+                {
+                    LinesPerClick *= upgrade.ClickMultiplier;
+                }
+            }
+
+            foreach (WorkerUpgrade upgrade in WorkerUpgrades)
+            {
+                // Missing worker IDs represent a saved count of zero.
+                workerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
+                upgrade.RestoreWorkerCount(savedCount);
+            }
+
+            RecalculateLinesPerSecond();
+        }
+
+        private void RecalculateLinesPerSecond()
+        {
+            long calculatedLinesPerSecond = 0;
+
+            foreach (WorkerUpgrade worker in WorkerUpgrades)
+            {
+                long linesPerSecond = GetWorkerLinesPerSecond(worker);
+                calculatedLinesPerSecond += linesPerSecond;
+            }
+
+            LinesPerSecond = calculatedLinesPerSecond;
         }
     }
 }

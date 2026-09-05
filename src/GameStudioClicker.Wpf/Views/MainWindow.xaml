@@ -86,7 +86,6 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Opacity" Value="0.85" />
                             </Trigger>
@@ -173,16 +172,16 @@
                        Foreground="#86EFAC" />
         </Border>
 
-        <!-- Main two-column game layout -->
+        <!-- Main two-column game layout. -->
         <Grid Grid.Row="1" Margin="0,12,0,0">
             <Grid.RowDefinitions>
-                <!-- Production Summary -->
+                <!-- Production summary. -->
                 <RowDefinition Height="Auto" />
-                <!-- Progression content -->
+                <!-- Progression content. -->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- Compact production and active-upgrade dashboard -->
+            <!-- Compact production and active-upgrade dashboard. -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <!-- Game identity -->
@@ -208,7 +207,7 @@
                                FontWeight="Bold" />
                 </StackPanel>
 
-                <!-- Manual coding and current production -->
+                <!-- Manual coding and current production. -->
                 <Border Grid.Column="1"
                         Width="280"
                         HorizontalAlignment="Center"
@@ -221,7 +220,7 @@
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
-                        <!-- Current resource total -->
+                        <!-- Current resource total. -->
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Center">
                             <TextBlock Text="{Binding LinesOfCode,
@@ -234,7 +233,7 @@
                                        FontWeight="Bold" />
                         </StackPanel>
 
-                        <!-- Main click action and floating +X feedback -->
+                        <!-- Main click action and floating +X feedback. -->
                         <Grid x:Name="ClickFeedbackLayer"
                               Height="70"
                               Margin="0,4,0,4">
@@ -249,7 +248,7 @@
                                     Style="{StaticResource PrimaryButtonStyle}" />
                         </Grid>
 
-                        <!-- Passive production -->
+                        <!-- Passive production. -->
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Center">
                             <TextBlock Text="{Binding LinesPerSecond,
@@ -286,8 +285,6 @@
                         <Border.RenderTransform>
                             <TranslateTransform X="16" />
                         </Border.RenderTransform>
-
-
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Setter Property="Visibility" Value="Hidden" />
@@ -297,7 +294,7 @@
                                                  Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
                                         <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource OfflineEarningsStoryboard}"/>
+                                            <BeginStoryboard Storyboard="{StaticResource OfflineEarningsStoryboard}" />
                                         </DataTrigger.EnterActions>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -312,7 +309,7 @@
                                    TextAlignment="Center" />
                     </Border>
 
-                    <!-- Compact, one-time active upgrades -->
+                    <!-- Compact, one-time active upgrades. -->
                     <StackPanel Grid.Row="1"
                                 Margin="0,8,0,0"
                                 VerticalAlignment="Bottom"
@@ -438,16 +435,15 @@
                         </ItemsControl>
                     </StackPanel>
                 </Grid>
-
             </Grid>
 
-            <!-- Scrollable progression area -->
+            <!-- Scrollable progression area. -->
             <ScrollViewer Grid.Row="1"
                           Margin="0,16,0,0"
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto">
 
-                <!-- Repeatable worker upgrades -->
+                <!-- Repeatable worker upgrades. -->
                 <ItemsControl ItemsSource="{Binding WorkerUpgrades}"
                               VerticalAlignment="Top">
                     <!-- Keep worker cards in two equal-width columns. -->
@@ -497,11 +493,11 @@
                                                 </MultiTrigger.Conditions>
 
                                                 <MultiTrigger.EnterActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleInStoryboard}"/>
+                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleInStoryboard}" />
                                                 </MultiTrigger.EnterActions>
 
                                                 <MultiTrigger.ExitActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleOutStoryboard}"/>
+                                                    <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleOutStoryboard}" />
                                                 </MultiTrigger.ExitActions>
                                             </MultiTrigger>
                                         </Style.Triggers>
@@ -539,7 +535,6 @@
                                     </Border.Background>
 
                                     <Grid>
-
                                         <Border x:Name="HoverSweep"
                                                 Background="#2D2D30"
                                                 CornerRadius="8"
@@ -555,7 +550,7 @@
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Style.Triggers>
-                                                        <!-- Animate only when this worker can currently be purchased -->
+                                                        <!-- Animate only when this worker can currently be purchased. -->
                                                         <MultiDataTrigger>
                                                             <MultiDataTrigger.Conditions>
                                                                 <Condition Binding="{Binding IsMouseOver,
@@ -565,24 +560,21 @@
                                                                 <Condition Binding="{Binding IsEnabled,
                                                                            RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                                                                            Value="True" />
-
                                                             </MultiDataTrigger.Conditions>
 
-                                                            <!-- Gradually fill the card from left to right-->
+                                                            <!-- Gradually fill the card from left to right. -->
                                                             <MultiDataTrigger.EnterActions>
-                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillInStoryboard}"/>
+                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillInStoryboard}" />
                                                             </MultiDataTrigger.EnterActions>
 
                                                             <MultiDataTrigger.ExitActions>
-                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillOutStoryboard}"/>
+                                                                <BeginStoryboard Storyboard="{StaticResource LeftToRightFillOutStoryboard}" />
                                                             </MultiDataTrigger.ExitActions>
                                                         </MultiDataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
                                         </Border>
-
-
                                         <!-- Details and purchase controls for an unlocked worker. -->
                                         <StackPanel Margin="12">
                                             <StackPanel.Style>
@@ -631,7 +623,6 @@
                                                 <TextBlock Text="{Binding CurrentLinesPerSecond, Converter={StaticResource CompactNumberConverter}}" />
                                                 <TextBlock Text=" Lines of Code / Second" />
                                             </StackPanel>
-
                                         </StackPanel>
 
                                         <!-- Limited information for the next locked worker. -->
@@ -681,7 +672,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
             </ScrollViewer>
         </Grid>
     </Grid>

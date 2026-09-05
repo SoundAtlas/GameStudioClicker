@@ -30,7 +30,7 @@ public class MainViewModelTests
         // Act: No action needed, we are testing the initial state
 
         // Assert
-        Assert.AreEqual(1_000L, viewModel.LinesPerClick);
+        Assert.AreEqual(1L, viewModel.LinesPerClick);
     }
 
     [TestMethod]
@@ -72,8 +72,11 @@ public class MainViewModelTests
     {
         // Arrange
         var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100
+        });
         var viewModel = new MainViewModel(gameState);
-        viewModel.WriteCodeCommand.Execute(null);
 
         // Act
         ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
@@ -89,8 +92,11 @@ public class MainViewModelTests
     {
         // Arrange
         var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100
+        });
         var viewModel = new MainViewModel(gameState);
-        viewModel.WriteCodeCommand.Execute(null);
 
         ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
         ActiveUpgradeViewModel gamingMouse = GetActiveUpgrade(viewModel, "gaming_mouse");
@@ -99,8 +105,8 @@ public class MainViewModelTests
         viewModel.PurchaseActiveUpgradeCommand.Execute(mousePad);
 
         // Assert
-        Assert.AreEqual(900L, viewModel.LinesOfCode);
-        Assert.AreEqual(2_000L, viewModel.LinesPerClick);
+        Assert.AreEqual(0L, viewModel.LinesOfCode);
+        Assert.AreEqual(2L, viewModel.LinesPerClick);
         Assert.IsFalse(mousePad.IsAvailable);
         Assert.IsTrue(gamingMouse.IsAvailable);
     }
@@ -110,8 +116,11 @@ public class MainViewModelTests
     {
         // Arrange
         var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100
+        });
         var viewModel = new MainViewModel(gameState);
-        viewModel.WriteCodeCommand.Execute(null);
 
         ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
 
@@ -128,9 +137,11 @@ public class MainViewModelTests
     {
         // Arrange
         var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100
+        });
         var viewModel = new MainViewModel(gameState);
-
-        viewModel.WriteCodeCommand.Execute(null);
 
         ActiveUpgradeViewModel mousePad = GetActiveUpgrade(viewModel, "mouse_pad");
         ActiveUpgradeViewModel gamingMouse = GetActiveUpgrade(viewModel, "gaming_mouse");
@@ -158,7 +169,7 @@ public class MainViewModelTests
         viewModel.WriteCodeCommand.Execute(null);
 
         // Assert
-        Assert.AreEqual(1_000L, viewModel.LinesOfCode);
+        Assert.AreEqual(1L, viewModel.LinesOfCode);
     }
 
     [TestMethod]

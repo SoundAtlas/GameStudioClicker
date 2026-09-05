@@ -1,18 +1,14 @@
 # Game Studio Clicker Roadmap
 
 This file tracks completed milestones and the next planned areas of development.
-It is intentionally broader than a task list: each milestone should be broken into
-small learning-sized tasks before implementation begins.
+Each milestone should be broken into learning-sized tasks before implementation.
 
 ## Development notes
 
-- The unusually high starting `LinesPerClick` value is intentional during development
-  so progression and number formatting can be tested quickly. Do not treat it as a bug
-  or permanent game balance.
-- Balance values are provisional until the balancing milestone.
+- Balance values remain provisional until the dedicated balancing milestone.
 - Keep new systems simple and expand the architecture gradually.
-- Add tests selectively for important game rules and regressions. The user does not
-  want unit-test writing assigned to them.
+- Add tests selectively for important game rules and regressions.
+- The user does not want unit-test writing assigned to them.
 
 ## Completed milestones
 
@@ -22,11 +18,12 @@ small learning-sized tasks before implementation begins.
 - Display current Lines of Code and production values.
 - Keep game rules separate from the WPF interface.
 
-### 2. Active hardware upgrades
+### 2. Active upgrades
 
-- Purchase one-time upgrades that improve click production.
-- Support upgrade prerequisites and affordability checks.
+- Purchase one-time upgrades that improve click or worker production.
+- Support upgrade prerequisites, affordability checks, and ownership requirements.
 - Hide purchased upgrades and preview upcoming upgrades.
+- Explain unmet requirements in tooltips.
 
 ### 3. Passive production and workers
 
@@ -34,6 +31,7 @@ small learning-sized tasks before implementation begins.
 - Increase worker prices after each purchase.
 - Unlock later worker types through ownership requirements.
 - Show a mystery preview for the next locked worker.
+- Display multiplier-adjusted production per employee and per worker type.
 
 ### 4. Generic upgrade collections
 
@@ -43,78 +41,43 @@ small learning-sized tasks before implementation begins.
 
 ### 5. Saving and offline progress
 
-- Save and load progress as JSON.
-- Store saves in the user's local application-data folder.
+- Save and load progress as JSON in local application data.
+- Save every 30 seconds, after purchases, and when the window closes.
 - Calculate offline employee production with a 24-hour limit.
+- Handle missing values and malformed save files without crashing.
+- Preserve malformed files with a timestamped `.corrupt-*` suffix.
 - Show a temporary offline-earnings message after loading.
 
 ### 6. Compact number formatting
 
-- Format large values with suffixes such as `K`, `M`, `B`, and `T`.
+- Format large values with suffixes such as `K`, `M`, `B`, `T`, `Qa`, and `Qi`.
 - Reuse the formatter throughout the WPF interface.
 
-### 7. Targeted worker-production upgrades
+### 7. Targeted and global worker-production upgrades
 
-- Allow active upgrades to target a specific worker by ID.
-- Apply purchased production multipliers only to the targeted worker.
-- Recalculate main passive production after purchasing or loading upgrades.
-- Show each worker's adjusted current production on its card.
-- Add the Intern Training Manual as the first non-click active upgrade.
+- Target worker-production multipliers by worker ID.
+- Support multipliers that affect every worker type.
+- Recalculate passive production after purchasing or loading upgrades.
+- Require ownership of a targeted worker type before purchasing its upgrades.
+
+### 8. Interface and animation polish
+
+- Use a three-part production dashboard with a compact two-column worker area.
+- Make the entire worker card the hire action.
+- Keep active upgrades separate from the worker-only scroll area.
+- Show concurrent floating `+X` feedback for manual clicks.
+- Pulse newly affordable active upgrades.
+- Add worker-card hover, purchase, and pressed feedback.
+- Animate the offline-earnings notification without shifting the dashboard.
+- Store reusable Storyboards in `Styles/Animations.xaml`.
 
 ## Next milestones
 
-### 1. Finish targeted-upgrade rules and feedback
-
-- Require ownership of a targeted worker before its active upgrade can be purchased.
-- Explain unmet active-upgrade and worker requirements in the upgrade tooltip.
-- Update worker descriptions when targeted or global multipliers change their
-  production per employee.
-- Keep the worker card's current-production value as the total contribution from all
-  owned workers of that type.
-
-### 2. Balance the existing gameplay
-
-Play through the current progression from a fresh save and tune:
-
-- Active-upgrade costs and multipliers.
-- Worker costs and production.
-- Worker cost growth.
-- Worker unlock requirements.
-- The transition from manual clicking to passive production.
-
-The goal is a satisfying early progression where purchases arrive regularly without
-making earlier systems immediately irrelevant.
-
-### 3. Improve saving
-
-Make progress safer and loading more resilient.
-
-Possible steps:
-
-- Add periodic autosaving.
-- Save after important purchases.
-- Handle missing or invalid save values safely.
-- Handle malformed save files without crashing the game.
-- Consider save-data versioning when the format begins changing more often.
-
-### 4. Add animations and satisfying feedback
-
-Improve the feel of actions without changing the underlying economy.
-
-Possible additions:
-
-- Show a brief `+X` effect when the player writes code.
-- Animate the main button when clicked.
-- Highlight newly affordable upgrades.
-- Add purchase feedback to upgrade and worker cards.
-- Add subtle number-change or progress animations.
-- Replace generic active-upgrade icons with distinct artwork later.
-
-Keep animations short and readable so repeated clicking remains comfortable.
-
-### 5. Add statistics and permanent unlock progress
+### 1. Add statistics and permanent unlock progress
 
 Track cumulative values that are not reduced when the player spends Lines of Code.
+Start with one statistic, persist it, and expose it through the ViewModel before
+building a complete statistics interface.
 
 Possible statistics:
 
@@ -126,13 +89,30 @@ Possible statistics:
 - Total upgrades purchased.
 
 Lifetime statistics can later support permanent content reveals, achievements, and
-eventually prestige. Start with one useful statistic and persist it through the save
-system before adding an entire statistics screen.
+eventually prestige.
+
+### 2. Balance the existing gameplay
+
+Balancing is deliberately deferred until the current systems are more complete.
+Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and tune:
+
+- Active-upgrade costs and multipliers.
+- Worker costs, production, and cost growth.
+- Worker unlock requirements.
+- The transition from manual clicking to passive production.
+- Progression variety beyond repeated price and value doubling.
+
+### 3. Evolve save-data compatibility
+
+- Add explicit save-data versioning when the first migration is needed.
+- Preserve compatibility with older saves when statistics are introduced.
+- Consider atomic or backup-based saving if the persistence system grows.
 
 ## Later possibilities
 
 - Achievements.
 - More worker and active-upgrade types.
+- Distinct artwork for active upgrades and workers.
 - Sound effects and music controls.
 - A fuller studio-progression theme.
-- Prestige or a new-game-plus system after the main progression loop is established.
+- Prestige or new-game-plus after the main progression loop is established.

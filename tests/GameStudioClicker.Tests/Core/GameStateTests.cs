@@ -12,7 +12,7 @@ public class GameStateTests
         var gameState = new GameState();
 
         Assert.AreEqual(0L, gameState.LinesOfCode);
-        Assert.AreEqual(1_000L, gameState.LinesPerClick);
+        Assert.AreEqual(1L, gameState.LinesPerClick);
         Assert.AreEqual(0L, gameState.LinesPerSecond);
 
         ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
@@ -32,16 +32,18 @@ public class GameStateTests
     public void TryPurchaseActiveUpgrade_WhenFirstUpgradePurchaseSucceeds_UpdatesState()
     {
         var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 100
+        });
         ActiveUpgrade mousePad = GetActiveUpgrade(gameState, "mouse_pad");
         ActiveUpgrade gamingMouse = GetActiveUpgrade(gameState, "gaming_mouse");
-
-        gameState.WriteCode();
 
         bool result = gameState.TryPurchaseActiveUpgrade(mousePad);
 
         Assert.IsTrue(result);
-        Assert.AreEqual(900L, gameState.LinesOfCode);
-        Assert.AreEqual(2_000L, gameState.LinesPerClick);
+        Assert.AreEqual(0L, gameState.LinesOfCode);
+        Assert.AreEqual(2L, gameState.LinesPerClick);
         Assert.IsTrue(mousePad.IsPurchased);
         Assert.IsFalse(mousePad.IsAvailable);
         Assert.IsTrue(gamingMouse.IsAvailable);
@@ -127,6 +129,50 @@ public class GameStateTests
         gameState.GeneratePassiveLines();
 
         Assert.AreEqual(2L, gameState.LinesOfCode);
+    }
+
+    [TestMethod]
+    public void CanPurchaseTargetedUpgrade_WithoutTargetWorker_ReturnsFalse()
+    {
+        var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 1_200,
+            PurchasedActiveUpgradeIds = ["webcam"]
+        });
+        ActiveUpgrade trainingManual =
+            GetActiveUpgrade(gameState, "intern_training_manual");
+
+        bool result = gameState.CanPurchaseActiveUpgrade(trainingManual);
+
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void TryPurchaseTargetedUpgrade_WithTargetWorker_OnlyMultipliesThatWorker()
+    {
+        var gameState = new GameState();
+        gameState.RestoreFromSaveData(new GameSaveData
+        {
+            LinesOfCode = 1_200,
+            PurchasedActiveUpgradeIds = ["webcam"],
+            WorkerUpgradeCounts = new Dictionary<string, int>
+            {
+                ["intern"] = 1,
+                ["junior_developer"] = 1
+            }
+        });
+        ActiveUpgrade trainingManual =
+            GetActiveUpgrade(gameState, "intern_training_manual");
+        WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
+        WorkerUpgrade juniorDeveloper = GetWorkerUpgrade(gameState, "junior_developer");
+
+        bool result = gameState.TryPurchaseActiveUpgrade(trainingManual);
+
+        Assert.IsTrue(result);
+        Assert.AreEqual(4L, gameState.GetWorkerLinesPerSecondPerEmployee(intern));
+        Assert.AreEqual(20L, gameState.GetWorkerLinesPerSecondPerEmployee(juniorDeveloper));
+        Assert.AreEqual(24L, gameState.LinesPerSecond);
     }
 
     [TestMethod]
@@ -230,6 +276,24 @@ public class GameStateTests
 
         Assert.ThrowsExactly<ArgumentNullException>(
             () => gameState.RestoreFromSaveData(null!));
+    }
+
+    [TestMethod]
+    public void RestoreFromSaveData_WithMissingCollections_UsesEmptyCollections()
+    {
+        var gameState = new GameState();
+        var saveData = new GameSaveData
+        {
+            LinesOfCode = 25,
+            PurchasedActiveUpgradeIds = null!,
+            WorkerUpgradeCounts = null!
+        };
+
+        gameState.RestoreFromSaveData(saveData);
+
+        Assert.AreEqual(25L, gameState.LinesOfCode);
+        Assert.AreEqual(1L, gameState.LinesPerClick);
+        Assert.AreEqual(0L, gameState.LinesPerSecond);
     }
 
     [TestMethod]

@@ -1,4 +1,4 @@
-﻿namespace GameStudioClicker.Core.Persistence
+namespace GameStudioClicker.Core.Persistence
 {
     public class GameSaveData
     {

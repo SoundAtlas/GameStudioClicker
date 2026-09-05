@@ -1,53 +1,64 @@
-﻿namespace GameStudioClicker.Core.Models
+namespace GameStudioClicker.Core.Models;
+
+public class WorkerUpgrade
 {
-    public class WorkerUpgrade
+    public WorkerUpgrade(
+        string id,
+        string displayName,
+        long baseCost,
+        long baseLinesPerSecond,
+        WorkerUpgrade? prerequisite = null,
+        int requiredPrerequisiteCount = 0)
     {
-        public string Id { get; }
-        public string DisplayName { get; }
-        public long BaseCost { get; }
-        public long BaseLinesPerSecond { get; }
-        public long CurrentCost { get; private set; }
-        public int WorkerCount { get; private set; }
-        public long TotalLinesPerSecond => WorkerCount * BaseLinesPerSecond;
-        public bool IsUnlocked => Prerequisite == null || Prerequisite.WorkerCount >= RequiredPrerequisiteCount;
-        public bool IsVisible => IsUnlocked || Prerequisite?.IsUnlocked == true;
-        public bool IsMystery => !IsUnlocked && IsVisible;
-        public WorkerUpgrade? Prerequisite { get; }
-        public int RequiredPrerequisiteCount { get; }
+        Id = id;
+        DisplayName = displayName;
+        BaseCost = baseCost;
+        BaseLinesPerSecond = baseLinesPerSecond;
+        CurrentCost = baseCost;
+        WorkerCount = 0;
+        Prerequisite = prerequisite;
+        RequiredPrerequisiteCount = requiredPrerequisiteCount;
+    }
 
-        public WorkerUpgrade(string id, string displayName, long baseCost, long baseLinesPerSecond, WorkerUpgrade? prerequisite = null, int requiredPrerequisiteCount = 0)
+    // Identity and base economy values
+    public string Id { get; }
+    public string DisplayName { get; }
+    public long BaseCost { get; }
+    public long BaseLinesPerSecond { get; }
+
+    // Current ownership and cost
+    public long CurrentCost { get; private set; }
+    public int WorkerCount { get; private set; }
+    public long TotalLinesPerSecond => WorkerCount * BaseLinesPerSecond;
+
+    // Unlock progression
+    public WorkerUpgrade? Prerequisite { get; }
+    public int RequiredPrerequisiteCount { get; }
+    public bool IsUnlocked =>
+        Prerequisite == null ||
+        Prerequisite.WorkerCount >= RequiredPrerequisiteCount;
+    public bool IsVisible => IsUnlocked || Prerequisite?.IsUnlocked == true;
+    public bool IsMystery => !IsUnlocked && IsVisible;
+
+    public void AddWorker()
+    {
+        WorkerCount++;
+        CurrentCost *= 2;
+    }
+
+    public void RestoreWorkerCount(int workerCount)
+    {
+        WorkerCount = 0;
+        CurrentCost = BaseCost;
+
+        if (workerCount < 0)
         {
-            Id = id;
-            DisplayName = displayName;
-            BaseCost = baseCost;
-            BaseLinesPerSecond = baseLinesPerSecond;
-            CurrentCost = baseCost;
-            WorkerCount = 0;
-            Prerequisite = prerequisite;
-            RequiredPrerequisiteCount = requiredPrerequisiteCount;
+            workerCount = 0;
         }
 
-        public void AddWorker()
+        for (int i = 0; i < workerCount; i++)
         {
-            WorkerCount++;
-            CurrentCost *= 2;
-        }
-
-        public void RestoreWorkerCount(int workerCount)
-        {
-            WorkerCount = 0;
-            CurrentCost = BaseCost;
-
-            // Saved counts cannot reduce the owned worker count below zero.
-            if (workerCount < 0)
-            {
-                workerCount = 0;
-            }
-
-            for (int i = 0; i < workerCount; i++)
-            {
-                AddWorker();
-            }
+            AddWorker();
         }
     }
 }
