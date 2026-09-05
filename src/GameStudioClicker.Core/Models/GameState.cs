@@ -6,7 +6,7 @@ namespace GameStudioClicker.Core.Models
     {
         // Core production state
         public long LinesOfCode { get; private set; }
-        public long LinesPerClick { get; private set; } = 999;
+        public long LinesPerClick { get; private set; } = 1;
         public long LinesPerSecond { get; private set; } = 0;
 
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
