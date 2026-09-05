@@ -68,6 +68,42 @@
             </Setter>
         </Style>
 
+        <!-- Makes an entire worker card behave like one large purchase button. -->
+        <Style x:Key="WorkerCardButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#F4F4F5" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.96" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.85" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Global tooltip appearance used by active-upgrade details. -->
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="Background"
@@ -140,125 +176,142 @@
                        Foreground="#86EFAC" />
         </Border>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0">
-            <!-- Game title -->
-            <TextBlock Text="Game Studio Clicker!"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Top"
-                       FontSize="45"
-                       FontWeight="Bold"
-                       Margin="0,20,0,10" />
-
-            <!-- Temporary message shown when offline progress is applied. -->
-            <Border Padding="12"
-                    Margin="0,0,0,16"
-                    HorizontalAlignment="Center"
-                    Background="#2F2F33"
-                    BorderBrush="#45454B"
-                    BorderThickness="1"
-                    CornerRadius="6">
-
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Visibility" Value="Visible" />
-
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasOfflineEarnings}"
-                                         Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-
-                <TextBlock Text="{Binding OfflineEarningsMessage}"
-                           Foreground="#D4D4D8"
-                           FontSize="14"
-                           FontWeight="SemiBold"
-                           TextWrapping="Wrap"
-                           TextAlignment="Center" />
-            </Border>
-        </StackPanel>
-
         <!-- Main two-column game layout -->
-        <Grid Grid.Row="1" Margin="0,24,0,0">
-            <Grid.ColumnDefinitions>
-                <!-- Manual production and totals. -->
-                <ColumnDefinition Width="2*" />
-                <!-- Purchasable upgrades and workers. -->
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Margin="0,12,0,0">
+            <Grid.RowDefinitions>
+                <!-- Production Summary -->
+                <RowDefinition Height="Auto" />
+                <!-- Progression content -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <!-- Manual coding and current production -->
-            <Border Grid.Column="0"
-                    Padding="10"
-                    BorderThickness="1"
-                    Background="#27272A"
-                    BorderBrush="#3F3F46"
-                    CornerRadius="8">
-                <StackPanel>
-                    <!-- Current resource total -->
-                    <StackPanel Orientation="Vertical"
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,10">
-                        <TextBlock Text="Lines of Code Written: "
-                                   FontSize="24"
-                                   FontWeight="Bold" />
-                        <TextBlock Text="{Binding LinesOfCode,
-                                          Converter={StaticResource CompactNumberConverter}}"
-                                   FontSize="24"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
+            <!-- Compact production and active-upgrade dashboard -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <!-- Game identity -->
+                    <ColumnDefinition Width="*" />
 
-                    <!-- Button surface also hosts temporary +X visuals created in code-behind. -->
-                    <Grid x:Name="ClickFeedbackLayer">
-                        <Button Content="Write Code"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="150"
-                                Height="50"
-                                FontSize="16"
-                                Command="{Binding WriteCodeCommand}"
-                                Click="WriteCodeButton_Click"
-                                Style="{StaticResource PrimaryButtonStyle}" />
-                    </Grid>
+                    <!-- Main game action -->
+                    <ColumnDefinition Width="*" />
 
-                    <!-- Current production summary -->
-                    <TextBlock Text="Current Production"
-                               HorizontalAlignment="Center"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Margin="0,30,0,10" />
+                    <!-- Active upgrades -->
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Vertical"
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,10">
-                        <TextBlock Text="Lines of Code / Click: "
-                                   FontSize="16"
-                                   FontWeight="Bold" />
-                        <TextBlock Text="{Binding LinesPerClick, Converter={StaticResource CompactNumberConverter}}"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
+                <!-- Game title balances the left side of the dashboard. -->
+                <StackPanel Grid.Column="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Game Studio"
+                               FontSize="52"
+                               FontWeight="Bold" />
 
-                    <StackPanel Orientation="Vertical"
-                                HorizontalAlignment="Center">
-                        <TextBlock Text="Lines of Code / Second: "
-                                   FontSize="16"
-                                   FontWeight="Bold" />
-                        <TextBlock Text="{Binding LinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
+                    <TextBlock Text="Clicker!"
+                               FontSize="52"
+                               FontWeight="Bold" />
                 </StackPanel>
-            </Border>
 
-            <!-- Scrollable progression area -->
-            <ScrollViewer Grid.Column="1"
-                          Margin="24,0,0,0"
-                          VerticalScrollBarVisibility="Auto">
-                <StackPanel>
+                <!-- Manual coding and current production -->
+                <Border Grid.Column="1"
+                        Width="280"
+                        HorizontalAlignment="Center"
+                        Padding="10"
+                        BorderThickness="1"
+                        Background="#27272A"
+                        BorderBrush="#3F3F46"
+                        CornerRadius="8">
+
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <!-- Current resource total -->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding LinesOfCode,
+                                       Converter={StaticResource CompactNumberConverter}}"
+                                       FontSize="24"
+                                       FontWeight="Bold" />
+
+                            <TextBlock Text=" Lines of Code"
+                                       FontSize="24"
+                                       FontWeight="Bold" />
+                        </StackPanel>
+
+                        <!-- Main click action and floating +X feedback -->
+                        <Grid x:Name="ClickFeedbackLayer"
+                              Height="70"
+                              Margin="0,4,0,4">
+                            <Button Content="Write Code"
+                                    Width="150"
+                                    Height="50"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Command="{Binding WriteCodeCommand}"
+                                    Click="WriteCodeButton_Click"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
+                        </Grid>
+
+                        <!-- Passive production -->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding LinesPerSecond,
+                                       Converter={StaticResource CompactNumberConverter}}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+
+                            <TextBlock Text=" Lines / second"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Notifications and active upgrades share the right dashboard column. -->
+                <Grid Grid.Column="2"
+                      Margin="24,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Temporary message shown when offline progress is applied. -->
+                    <Border Grid.Row="0"
+                            MaxWidth="360"
+                            Padding="10,8"
+                            HorizontalAlignment="Center"
+                            Background="#2F2F33"
+                            BorderBrush="#45454B"
+                            BorderThickness="1"
+                            CornerRadius="6">
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasOfflineEarnings}"
+                                                 Value="False">
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <TextBlock Text="{Binding OfflineEarningsMessage}"
+                                   Foreground="#D4D4D8"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center" />
+                    </Border>
+
                     <!-- Compact, one-time active upgrades -->
-                    <StackPanel Margin="0,0,0,16">
+                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,0"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center">
+
                         <TextBlock Text="Active Upgrades"
                                    FontSize="18"
                                    FontWeight="Bold"
@@ -285,7 +338,7 @@
                                             ToolTipService.ShowOnDisabled="True"
                                             RenderTransformOrigin="0.5,0.5"
                                             Command="{Binding DataContext.PurchaseActiveUpgradeCommand,
-                                                              RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                             CommandParameter="{Binding}">
 
                                         <!-- Used by the one-time affordability pulse. -->
@@ -350,7 +403,7 @@
 
                                         <Button.ToolTip>
                                             <ToolTip DataContext="{Binding PlacementTarget.DataContext,
-                                                                            RelativeSource={RelativeSource Self}}">
+                                                     RelativeSource={RelativeSource Self}}">
                                                 <StackPanel MaxWidth="260">
                                                     <TextBlock Text="{Binding DisplayName}"
                                                                FontSize="16"
@@ -396,58 +449,81 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+                </Grid>
 
-                    <!-- Repeatable worker upgrades -->
-                    <ItemsControl ItemsSource="{Binding WorkerUpgrades}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <!-- One worker card, shown either unlocked or as a mystery preview. -->
+            </Grid>
+
+            <!-- Scrollable progression area -->
+            <ScrollViewer Grid.Row="1"
+                          Margin="0,16,0,0"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+
+                <!-- Repeatable worker upgrades -->
+                <ItemsControl ItemsSource="{Binding WorkerUpgrades}"
+                              VerticalAlignment="Top">
+                    <!-- Keep worker cards in two equal-width columns. -->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- The whole worker card purchases the represented worker. -->
+                            <Button Height="150"
+                                    Margin="6"
+                                    Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
+                                    RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                    CommandParameter="{Binding}">
+
+                                <!-- Hidden future workers do not show an empty card. -->
+                                <Button.Style>
+                                    <Style TargetType="Button"
+                                           BasedOn="{StaticResource WorkerCardButtonStyle}">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsVisible}"
+                                                         Value="False">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+
+                                <!-- Brief confirmation flash after a successful purchase. -->
+                                <Button.Triggers>
+                                    <EventTrigger RoutedEvent="Button.Click">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="WorkerCard"
+                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    From="#27272A"
+                                                    To="#2D3330"
+                                                    Duration="0:0:0.1"
+                                                    AutoReverse="True"
+                                                    FillBehavior="Stop" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Button.Triggers>
+
+                                <!-- Card contents are retained while the surrounding button handles hiring. -->
                                 <Border x:Name="WorkerCard"
                                         Padding="12"
-                                        Margin="0,0,0,12"
                                         BorderBrush="#3F3F46"
                                         BorderThickness="1"
-                                        CornerRadius="8"
-                                        Height="190">
+                                        CornerRadius="8">
 
                                     <Border.Background>
                                         <!-- Explicit brush enables the purchase color animation. -->
                                         <SolidColorBrush Color="#27272A" />
                                     </Border.Background>
-
-                                    <!-- Brief confirmation flash when the Hire button succeeds. -->
-                                    <Border.Triggers>
-                                        <EventTrigger RoutedEvent="Button.Click">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <ColorAnimation
-                                                        Storyboard.TargetName="WorkerCard"
-                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                        From="#27272A"
-                                                        To="#2D3330"
-                                                        Duration="0:0:0.1"
-                                                        AutoReverse="True"
-                                                        FillBehavior="Stop" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Border.Triggers>
-
-                                    <!-- Hide worker types that are too far ahead in progression. -->
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Visibility"
-                                                    Value="Visible" />
-
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsVisible}"
-                                                             Value="False">
-                                                    <Setter Property="Visibility"
-                                                            Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
 
                                     <Grid>
                                         <!-- Details and purchase controls for an unlocked worker. -->
@@ -499,14 +575,6 @@
                                                 <TextBlock Text=" Lines of Code / Second" />
                                             </StackPanel>
 
-                                            <Button Content="Hire"
-                                                    Width="200"
-                                                    Height="40"
-                                                    HorizontalAlignment="Center"
-                                                    Style="{StaticResource PrimaryButtonStyle}"
-                                                    Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
-                                                                      RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                                    CommandParameter="{Binding}" />
                                         </StackPanel>
 
                                         <!-- Limited information for the next locked worker. -->
@@ -552,10 +620,11 @@
                                         </StackPanel>
                                     </Grid>
                                 </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
             </ScrollViewer>
         </Grid>
     </Grid>
