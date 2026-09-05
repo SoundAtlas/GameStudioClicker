@@ -41,7 +41,7 @@ namespace GameStudioClicker.Wpf.ViewModels
             List<ActiveUpgradeViewModel> activeUpgradeViewModels = new List<ActiveUpgradeViewModel>();
             foreach (var upgrade in _gameState.ActiveUpgrades)
             {
-                activeUpgradeViewModels.Add(new ActiveUpgradeViewModel(upgrade));
+                activeUpgradeViewModels.Add(new ActiveUpgradeViewModel(_gameState, upgrade));
             }
             ActiveUpgrades = activeUpgradeViewModels;
             RefreshActiveUpgradeVisibility();
@@ -108,6 +108,7 @@ namespace GameStudioClicker.Wpf.ViewModels
                 OnPropertyChanged(nameof(LinesPerSecond));
 
                 RefreshWorkerUpgradeStates();
+                RefreshActiveUpgradeStates();
                 RefreshPurchaseCommands();
             }
         }

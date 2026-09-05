@@ -293,6 +293,29 @@
                                                         <Run Text="{Binding Cost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
                                                         <Run Text=" Lines of Code" />
                                                     </TextBlock>
+
+
+                                                    <TextBlock Text="{Binding RequirementText}"
+                                                               Foreground="#FCA5A5"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,8,0,0">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility"
+                                                                        Value="Collapsed" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding HasUnmetRequirement}"
+                                                                                 Value="True">
+                                                                        <Setter Property="Visibility"
+                                                                                Value="Visible" />
+
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
                                                 </StackPanel>
                                             </ToolTip>
                                         </Button.ToolTip>
