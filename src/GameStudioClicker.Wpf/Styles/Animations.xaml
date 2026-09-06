@@ -86,8 +86,8 @@
             BeginTime="0:0:6.4" />
     </Storyboard>
     <!--
-        A transparent highlight band used by PassingHighlightSweepStoryboard.
-        x:Shared=False gives each control its own independently animated brush.
+    A transparent highlight band used by PassingHighlightSweepStoryboard.
+    x:Shared=False gives each control its own independently animated brush.
     -->
     <LinearGradientBrush
         x:Key="PassingHighlightBrush"
@@ -115,4 +115,39 @@
             FillBehavior="Stop" />
     </Storyboard>
 
+    <!-- Briefly flashes the worker card to indicate a purchase. -->
+    <Storyboard x:Key="WorkerCardPurchaseFlashStoryboard">
+        <ColorAnimation
+            Storyboard.TargetName="WorkerCard"
+            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+            From="#27272A"
+            To="#2D3330"
+            Duration="0:0:0.1"
+            AutoReverse="True"
+            FillBehavior="Stop" />
+    </Storyboard>
+
+    <!-- Opens the Statistics panel downwards from its top edge -->
+    <Storyboard x:Key="StatisticsRevealStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Offset)"
+                         To="1"
+                         Duration="0:0:0.3"
+                         DecelerationRatio="0.3" />
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[2].(GradientStop.Offset)"
+                         To="1"
+                         Duration="0:0:0.3"
+                         DecelerationRatio="0.3" />
+    </Storyboard>
+
+    <!-- Closes the Statistics panel upwards to its top edge -->
+    <Storyboard x:Key="StatisticsRevealOutStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Offset)"
+                         To="0"
+                         Duration="0:0:0.25"
+                         DecelerationRatio="0.3" />
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[2].(GradientStop.Offset)"
+                         To="0"
+                         Duration="0:0:0.25"
+                         DecelerationRatio="0.3" />
+    </Storyboard>
 </ResourceDictionary>
