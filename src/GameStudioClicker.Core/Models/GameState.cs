@@ -471,7 +471,8 @@ namespace GameStudioClicker.Core.Models
         {
             var saveData = new GameSaveData
             {
-                LinesOfCode = this.LinesOfCode
+                LinesOfCode = this.LinesOfCode,
+                LifetimeLinesOfCode = this.LifetimeLinesOfCode
             };
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
@@ -504,6 +505,7 @@ namespace GameStudioClicker.Core.Models
                 saveData.WorkerUpgradeCounts ?? [];
 
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
+            LifetimeLinesOfCode = Math.Max(0L, saveData.LifetimeLinesOfCode);
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
