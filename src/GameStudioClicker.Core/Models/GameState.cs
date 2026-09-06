@@ -12,6 +12,9 @@ namespace GameStudioClicker.Core.Models
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
 
+        // Lifetime stats
+        public long LifetimeLinesOfCode { get; private set; }
+
         // Construction
         public GameState()
         {
@@ -331,12 +334,12 @@ namespace GameStudioClicker.Core.Models
         // Resource generation
         public void WriteCode()
         {
-            LinesOfCode += LinesPerClick;
+            AddLinesOfCode(LinesPerClick);
         }
 
         public void GeneratePassiveLines()
         {
-            LinesOfCode += LinesPerSecond;
+            AddLinesOfCode(LinesPerSecond);
         }
 
         public long ApplyOfflineProgress(TimeSpan elapsed)
@@ -358,9 +361,15 @@ namespace GameStudioClicker.Core.Models
 
             long offlineLines = wholeSeconds * LinesPerSecond;
 
-            LinesOfCode += offlineLines;
+            AddLinesOfCode(offlineLines);
 
             return offlineLines;
+        }
+
+        private void AddLinesOfCode(long amount)
+        {
+            LinesOfCode += amount;
+            LifetimeLinesOfCode += amount;
         }
 
         // Purchase rules and actions
