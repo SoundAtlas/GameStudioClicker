@@ -1,7 +1,7 @@
-using System.Windows.Threading;
 using GameStudioClicker.Core.Models;
 using GameStudioClicker.Wpf.Commands;
 using GameStudioClicker.Wpf.Formatting;
+using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.ViewModels;
 
@@ -77,6 +77,7 @@ public class MainViewModel : ViewModelBase
     public long LinesOfCode => _gameState.LinesOfCode;
     public long LinesPerClick => _gameState.LinesPerClick;
     public long LinesPerSecond => _gameState.LinesPerSecond;
+    public long LifetimeLinesOfCode => _gameState.LifetimeLinesOfCode;
 
     // One-time notifications.
     public long OfflineLinesEarned { get; }
@@ -108,6 +109,7 @@ public class MainViewModel : ViewModelBase
     {
         _gameState.WriteCode();
         OnPropertyChanged(nameof(LinesOfCode));
+        OnPropertyChanged(nameof(LifetimeLinesOfCode));
 
         RefreshPurchaseCommands();
         RefreshActiveUpgradeStates();
@@ -170,6 +172,7 @@ public class MainViewModel : ViewModelBase
     {
         _gameState.GeneratePassiveLines();
         OnPropertyChanged(nameof(LinesOfCode));
+        OnPropertyChanged(nameof(LifetimeLinesOfCode));
 
         RefreshPurchaseCommands();
         RefreshActiveUpgradeStates();
