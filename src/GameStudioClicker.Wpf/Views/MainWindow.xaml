@@ -776,37 +776,52 @@
                                                     <StackPanel Grid.Column="1"
                                                                 VerticalAlignment="Center">
 
-
                                                         <TextBlock Text="{Binding DisplayName}"
                                                                    HorizontalAlignment="Center"
                                                                    FontSize="18"
-                                                                   FontWeight="Bold" />
+                                                                   FontWeight="Bold"
+                                                                   Foreground="{StaticResource PrimaryTextBrush}"/>
 
                                                         <TextBlock Text="{Binding Description}"
                                                                    HorizontalAlignment="Center"
                                                                    TextWrapping="Wrap"
-                                                                   Margin="0,4,0,12" />
+                                                                   Margin="0,4,0,12"
+                                                                   Foreground="{StaticResource SecondaryTextBrush}"/>
 
                                                         <StackPanel Orientation="Horizontal"
                                                                     HorizontalAlignment="Center">
-                                                            <TextBlock Text="Cost: " />
-                                                            <TextBlock Text="{Binding CurrentCost, Converter={StaticResource CompactNumberConverter}}" />
-                                                            <TextBlock Text=" Lines of Code" />
+                                                            <TextBlock Text="Cost: "
+                                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                            <TextBlock Text="{Binding CurrentCost, Converter={StaticResource CompactNumberConverter}}"
+                                                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+
+                                                            <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
+                                                                   Width="20"
+                                                                   Height="16"
+                                                                   Margin="4,0,0,0"
+                                                                   VerticalAlignment="Center" />
+
+
                                                         </StackPanel>
 
                                                         <StackPanel Orientation="Horizontal"
                                                                     HorizontalAlignment="Center"
                                                                     Margin="0,4,0,4">
-                                                            <TextBlock Text="Employees: " />
-                                                            <TextBlock Text="{Binding WorkerCount, Converter={StaticResource CompactNumberConverter}}" />
+                                                            <TextBlock Text="Employees: "
+                                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                            <TextBlock Text="{Binding WorkerCount, Converter={StaticResource CompactNumberConverter}}"
+                                                                       Foreground="{StaticResource PrimaryCyanBrush}"/>
                                                         </StackPanel>
 
                                                         <StackPanel Orientation="Horizontal"
                                                                     HorizontalAlignment="Center"
                                                                     Margin="0,0,0,8">
-                                                            <TextBlock Text="Current Production: " />
-                                                            <TextBlock Text="{Binding CurrentLinesPerSecond, Converter={StaticResource CompactNumberConverter}}" />
-                                                            <TextBlock Text=" Lines of Code / Second" />
+                                                            <TextBlock Text="Current Production: "
+                                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                                                            <TextBlock Text="{Binding CurrentLinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
+                                                                       Foreground="{StaticResource SuccessBrush}"/>
+                                                            <TextBlock Text=" Lines of Code / Second"
+                                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
                                                         </StackPanel>
                                                     </StackPanel>
                                                 </Grid>

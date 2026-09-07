@@ -18,6 +18,7 @@ namespace GameStudioClicker.Core.Models
         // Construction
         public GameState()
         {
+            // Era 1: Bedroom Developer
             ActiveUpgrade mousePad = new ActiveUpgrade(
                 id: "mouse_pad",
                 displayName: "Mouse Pad",
@@ -37,43 +38,35 @@ namespace GameStudioClicker.Core.Models
                 id: "mechanical_keyboard",
                 displayName: "Mechanical Keyboard",
                 description: "Doubles Lines of Code / Click",
-                cost: 700,
+                cost: 750,
                 clickMultiplier: 2,
                 prerequisite: gamingMouse);
 
-            ActiveUpgrade headset = new ActiveUpgrade(
-                id: "headset",
-                displayName: "Headset",
-                description: "Doubles Lines of Code / Click",
-                cost: 800,
-                clickMultiplier: 2,
-                prerequisite: mechanicalKeyboard);
-
-            ActiveUpgrade webcam = new ActiveUpgrade(
-                id: "webcam",
-                displayName: "Webcam",
+            ActiveUpgrade noiseCancellingHeadset = new ActiveUpgrade(
+                id: "noise_cancelling_headset",
+                displayName: "Noise Cancelling Headset",
                 description: "Doubles Lines of Code / Click",
                 cost: 900,
                 clickMultiplier: 2,
-                prerequisite: headset);
+                prerequisite: mechanicalKeyboard);
 
-            ActiveUpgrade internTrainingManual = new ActiveUpgrade(
-                id: "intern_training_manual",
-                displayName: "Intern Training Manual",
+            ActiveUpgrade onboardingHandbook = new ActiveUpgrade(
+                id: "onboarding_handbook",
+                displayName: "Onboarding Handbook",
                 description: "Doubles Intern Productivity",
                 cost: 1200,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "intern",
-                prerequisite: webcam);
+                prerequisite: noiseCancellingHeadset);
 
-            ActiveUpgrade externalSSD = new ActiveUpgrade(
-                id: "external_ssd",
-                displayName: "External SSD",
+            ActiveUpgrade graphicsCard = new ActiveUpgrade(
+                id: "graphics_card",
+                displayName: "Graphics Card",
                 description: "Doubles Lines of Code / Click",
                 cost: 1500,
                 clickMultiplier: 2,
-                prerequisite: webcam);
+                prerequisite: noiseCancellingHeadset);
 
             ActiveUpgrade secondMonitor = new ActiveUpgrade(
                 id: "second_monitor",
@@ -81,23 +74,25 @@ namespace GameStudioClicker.Core.Models
                 description: "Doubles Lines of Code / Click",
                 cost: 2250,
                 clickMultiplier: 2,
-                prerequisite: externalSSD);
+                prerequisite: graphicsCard);
 
-            ActiveUpgrade ultrawideMonitor = new ActiveUpgrade(
-                id: "ultrawide_monitor",
-                displayName: "Ultrawide Monitor",
+            ActiveUpgrade ergonomicDeskSetup = new ActiveUpgrade(
+                id: "ergonomic_desk_setup",
+                displayName: "Ergonomic Desk Setup",
                 description: "Triples Lines of Code / Click",
-                cost: 3000,
+                cost: 3500,
                 clickMultiplier: 3,
                 prerequisite: secondMonitor);
 
+
+            // Era 2: Tiny Indie Studio
             ActiveUpgrade developerLaptop = new ActiveUpgrade(
                 id: "developer_laptop",
                 displayName: "Developer Laptop",
                 description: "Doubles Lines of Code / Click",
                 cost: 6000,
                 clickMultiplier: 2,
-                prerequisite: ultrawideMonitor);
+                prerequisite: ergonomicDeskSetup);
 
             ActiveUpgrade codeReviewChecklist = new ActiveUpgrade(
                 id: "code_review_checklist",
@@ -109,9 +104,9 @@ namespace GameStudioClicker.Core.Models
                 targetWorkerId: "junior_developer",
                 prerequisite: developerLaptop);
 
-            ActiveUpgrade developerPc = new ActiveUpgrade(
-                id: "developer_pc",
-                displayName: "Developer PC",
+            ActiveUpgrade professionalIdeLicense = new ActiveUpgrade(
+                id: "professional_ide_license",
+                displayName: "Professional IDE License",
                 description: "Doubles Lines of Code / Click",
                 cost: 25000,
                 clickMultiplier: 2,
@@ -123,7 +118,7 @@ namespace GameStudioClicker.Core.Models
                 description: "Doubles Lines of Code / Click",
                 cost: 50000,
                 clickMultiplier: 2,
-                prerequisite: developerPc);
+                prerequisite: professionalIdeLicense);
 
             ActiveUpgrade internMentorshipProgram = new ActiveUpgrade(
                 id: "intern_mentorship_program",
@@ -135,39 +130,52 @@ namespace GameStudioClicker.Core.Models
                 targetWorkerId: "intern",
                 prerequisite: highEndWorkstation);
 
-            ActiveUpgrade homeServer = new ActiveUpgrade(
-                id: "home_server",
-                displayName: "Home Server",
+            ActiveUpgrade buildServer = new ActiveUpgrade(
+                id: "build_server",
+                displayName: "Build Server",
                 description: "Doubles Lines of Code / Click",
                 cost: 150000,
                 clickMultiplier: 2,
                 prerequisite: highEndWorkstation);
 
+            ActiveUpgrade automatedTestingSuite = new ActiveUpgrade(
+                id: "automated_testing_suite",
+                displayName: "Automated Testing Suite",
+                description: "Triples Lines of Code / Click",
+                cost: 200000,
+                clickMultiplier: 3,
+                prerequisite: buildServer);
+
             ActiveUpgrade architectureWorkshop = new ActiveUpgrade(
                 id: "architecture_workshop",
                 displayName: "Architecture Workshop",
                 description: "Doubles Senior Developer Productivity",
-                cost: 200000,
+                cost: 250000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "senior_developer",
-                prerequisite: homeServer);
+                prerequisite: automatedTestingSuite);
 
-            ActiveUpgrade aiWorkstation = new ActiveUpgrade(
-                id: "ai_workstation",
-                displayName: "AI Workstation",
-                description: "4x Lines of Code / Click",
-                cost: 250000,
-                clickMultiplier: 4,
-                prerequisite: homeServer);
 
-            ActiveUpgrade rackServer = new ActiveUpgrade(
-                id: "rack_server",
-                displayName: "Rack Server",
+
+            // Era 3: Established Game Studio  
+            ActiveUpgrade automatedDevelopmentPipeline = new ActiveUpgrade(
+                id: "automated_development_pipeline",
+                displayName: "Automated Development Pipeline",
+                description: "4x All Worker Productivity",
+                cost: 350000,
+                clickMultiplier: 1,
+                workerProductionMultiplier: 4,
+                targetAllWorkers: true,
+                prerequisite: automatedTestingSuite);
+
+            ActiveUpgrade captureStudio = new ActiveUpgrade(
+                id: "capture_studio",
+                displayName: "Motion-Capture Studio",
                 description: "Doubles Lines of Code / Click",
-                cost: 500000,
+                cost: 400000,
                 clickMultiplier: 2,
-                prerequisite: aiWorkstation);
+                prerequisite: automatedDevelopmentPipeline);
 
             ActiveUpgrade pairProgrammingSessions = new ActiveUpgrade(
                 id: "pair_programming_sessions",
@@ -177,87 +185,72 @@ namespace GameStudioClicker.Core.Models
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "junior_developer",
-                prerequisite: developerLaptop);
+                prerequisite: captureStudio);
 
-            ActiveUpgrade serverRoom = new ActiveUpgrade(
-                id: "server_room",
-                displayName: "Server Room",
+            ActiveUpgrade studioServerRack = new ActiveUpgrade(
+                id: "studio_server_rack",
+                displayName: "Studio Server Rack",
                 description: "Doubles Lines of Code / Click",
                 cost: 1000000,
                 clickMultiplier: 2,
-                prerequisite: rackServer);
+                prerequisite: captureStudio);
 
-            ActiveUpgrade smallDataCenter = new ActiveUpgrade(
-                id: "small_data_center",
-                displayName: "Small Data Center",
-                description: "Triples Lines of Code / Click",
-                cost: 3500000,
-                clickMultiplier: 3,
-                prerequisite: serverRoom);
-
-            ActiveUpgrade enterpriseDataCenter = new ActiveUpgrade(
-                id: "enterprise_data_center",
-                displayName: "Enterprise Data Center",
+            ActiveUpgrade proprietaryGameEngine = new ActiveUpgrade(
+                id: "proprietary_game_engine",
+                displayName: "Proprietary Game Engine",
                 description: "Doubles Lines of Code / Click",
-                cost: 85000000,
+                cost: 1500000,
                 clickMultiplier: 2,
-                prerequisite: smallDataCenter);
+                prerequisite: studioServerRack);
 
-            ActiveUpgrade advancedToolingLicense = new ActiveUpgrade(
-                id: "advanced_tooling_license",
-                displayName: "Advanced Tooling License",
-                description: "Triples Senior Developer Productivity",
-                cost: 100000000,
-                clickMultiplier: 1,
-                workerProductionMultiplier: 3,
-                targetWorkerId: "senior_developer",
-                prerequisite: enterpriseDataCenter);
-
-            ActiveUpgrade hyperscaleDataCenter = new ActiveUpgrade(
-                id: "hyperscale_data_center",
-                displayName: "Hyperscale Data Center",
-                description: "Doubles Lines of Code / Click",
-                cost: 125000000,
-                clickMultiplier: 2,
-                prerequisite: enterpriseDataCenter);
-
-            ActiveUpgrade leadershipCoaching = new ActiveUpgrade(
-                id: "leadership_coaching",
-                displayName: "Leadership Coaching",
+            ActiveUpgrade technicalLeadershipTraining = new ActiveUpgrade(
+                id: "technical_leadership_training",
+                displayName: "Technical Leadership Training",
                 description: "Doubles Lead Developer Productivity",
-                cost: 175000000,
+                cost: 2000000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "lead_developer",
-                prerequisite: hyperscaleDataCenter);
+                prerequisite: proprietaryGameEngine);
 
-            ActiveUpgrade superComputer = new ActiveUpgrade(
-                id: "super_computer",
-                displayName: "Super Computer",
-                description: "5x Lines of Code / Click",
-                cost: 250000000,
-                clickMultiplier: 5,
-                prerequisite: hyperscaleDataCenter);
+            ActiveUpgrade renderFarm = new ActiveUpgrade(
+                id: "render_farm",
+                displayName: "Render Farm",
+                description: "Triples Lines of Code / Click",
+                cost: 2500000,
+                clickMultiplier: 3,
+                prerequisite: proprietaryGameEngine);
 
-            ActiveUpgrade technicalStrategySummit = new ActiveUpgrade(
-                id: "technical_strategy_summit",
-                displayName: "Technical Strategy Summit",
-                description: "Triples Lead Developer Productivity",
-                cost: 300000000,
-                clickMultiplier: 1,
-                workerProductionMultiplier: 3,
-                targetWorkerId: "lead_developer",
-                prerequisite: superComputer);
+            ActiveUpgrade globalCloudInfrastructure = new ActiveUpgrade(
+                id: "global_cloud_infrastructure",
+                displayName: "Global Cloud Infrastructure",
+                description: "Doubles Lines of Code / Click",
+                cost: 3000000,
+                clickMultiplier: 3,
+                prerequisite: renderFarm);
 
-            ActiveUpgrade automatedDevPipeline = new ActiveUpgrade(
-                id: "automated_dev_pipeline",
-                displayName: "Automated Dev Pipeline",
-                description: "4x All Worker Productivity",
-                cost: 350000000,
-                clickMultiplier: 1,
-                workerProductionMultiplier: 4,
-                targetAllWorkers: true,
-                prerequisite: technicalStrategySummit);
+
+            // Era 4 Cutting-Edge Megastudio
+
+            ActiveUpgrade aiWorkstations = new ActiveUpgrade(
+                id: "ai_workstations",
+                displayName: "AI Workstations",
+                description: "4x Lines of Code / Click",
+                cost: 350000,
+                clickMultiplier: 4,
+                prerequisite: automatedTestingSuite);
+
+            //Proprietary Developer Toolkit — Senior Developer targeted
+            //Neural Motion - Capture System
+            //Autonomous QA Swarm
+            //Self - Organizing Dev Teams — Lead Developer targeted
+            //Quantum Build Server
+            //Predictive Game Engine
+            //Adaptive Learning Program — Intern targeted
+
+
+
+
 
             // Additional hardware upgrades can extend this ordered progression.
             ActiveUpgrades = new List<ActiveUpgrade>
@@ -265,31 +258,30 @@ namespace GameStudioClicker.Core.Models
                 mousePad,
                 gamingMouse,
                 mechanicalKeyboard,
-                headset,
-                webcam,
-                internTrainingManual,
-                externalSSD,
+                noiseCancellingHeadset,
+                onboardingHandbook,
+                graphicsCard,
                 secondMonitor,
-                ultrawideMonitor,
+                ergonomicDeskSetup,
+
                 developerLaptop,
                 codeReviewChecklist,
-                developerPc,
+                professionalIdeLicense,
                 highEndWorkstation,
                 internMentorshipProgram,
-                homeServer,
+                buildServer,
+                automatedTestingSuite,
                 architectureWorkshop,
-                aiWorkstation,
-                rackServer,
-                pairProgrammingSessions,
-                serverRoom,
-                smallDataCenter,
-                enterpriseDataCenter,
-                advancedToolingLicense,
-                hyperscaleDataCenter,
-                leadershipCoaching,
-                superComputer,
-                technicalStrategySummit,
-                automatedDevPipeline
+
+                automatedDevelopmentPipeline,
+                codeReviewChecklist,
+                professionalIdeLicense,
+                highEndWorkstation,
+                internMentorshipProgram,
+                buildServer,
+                automatedTestingSuite,
+                architectureWorkshop,
+
             };
 
             WorkerUpgrade intern = new WorkerUpgrade(
