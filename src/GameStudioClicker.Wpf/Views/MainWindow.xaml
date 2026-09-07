@@ -9,8 +9,8 @@
         Width="1200"
         MinHeight="500"
         MinWidth="700"
-        Background="#18181B"
-        Foreground="#F4F4F5">
+        Background="{StaticResource GameBackgroundBrush}"
+        Foreground="{StaticResource PrimaryTextBrush}">
 
     <Window.Resources>
         <!-- Shared appearance and interaction states for clickable game actions. -->

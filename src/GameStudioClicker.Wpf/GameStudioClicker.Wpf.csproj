@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Remove="Assets\**\*.png" />
+    <Resource Include="Assets\**\*.png" />
     <ProjectReference Include="..\GameStudioClicker.Core\GameStudioClicker.Core.csproj" />
   </ItemGroup>
 
