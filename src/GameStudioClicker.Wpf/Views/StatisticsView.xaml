@@ -11,7 +11,7 @@
                 Margin="1"
                 Padding="1"
                 SnapsToDevicePixels="True"
-                Background="#18181B">
+                Background="{StaticResource GameBackgroundBrush}">
 
 
             <!-- The page can grow vertically when achievements are added later. -->
@@ -27,8 +27,8 @@
 
                     <!-- Lifetime statistics -->
                     <Border Padding="18"
-                            Background="#27272A"
-                            BorderBrush="#3F3F46"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="8">
 
@@ -51,7 +51,7 @@
                                        VerticalAlignment="Center"
                                        FontSize="20"
                                        FontWeight="Bold"
-                                       Foreground="PowderBlue" />
+                                       Foreground="{StaticResource PrimaryCyanBrush}" />
                         </Grid>
                     </Border>
 

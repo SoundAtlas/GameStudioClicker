@@ -17,6 +17,11 @@ public class ActiveUpgradeViewModel : ViewModelBase
     public string Id => _activeUpgrade.Id;
     public string DisplayName => _activeUpgrade.DisplayName;
     public string Description => _activeUpgrade.Description;
+    public string? IconPath => Id switch
+    {
+        "mechanical_keyboard" => "/Assets/Upgrades/Active/upgrade_mechanical_keyboard.png",
+        _ => null,
+    };
     public long Cost => _activeUpgrade.Cost;
     public bool IsPurchased => _activeUpgrade.IsPurchased;
     public bool IsAvailable => _activeUpgrade.IsAvailable;

@@ -1,3 +1,7 @@
+using GameStudioClicker.Core.Models;
+using GameStudioClicker.Core.Persistence;
+using GameStudioClicker.Wpf.Formatting;
+using GameStudioClicker.Wpf.ViewModels;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -5,10 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using GameStudioClicker.Core.Models;
-using GameStudioClicker.Core.Persistence;
-using GameStudioClicker.Wpf.Formatting;
-using GameStudioClicker.Wpf.ViewModels;
 
 namespace GameStudioClicker.Wpf.Views;
 

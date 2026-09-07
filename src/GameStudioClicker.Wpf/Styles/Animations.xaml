@@ -94,11 +94,11 @@
         x:Shared="False"
         StartPoint="0,0.5"
         EndPoint="1,0.5">
-        <GradientStop Color="#003F3F46"
+        <GradientStop Color="{StaticResource TransparentBorderColor}"
                       Offset="0" />
-        <GradientStop Color="#6652525B"
+        <GradientStop Color="{StaticResource AvailabilityGlowColor}"
                       Offset="0.5" />
-        <GradientStop Color="#003F3F46"
+        <GradientStop Color="{StaticResource TransparentBorderColor}"
                       Offset="1" />
         <LinearGradientBrush.RelativeTransform>
             <TranslateTransform X="-1" />
@@ -120,8 +120,8 @@
         <ColorAnimation
             Storyboard.TargetName="WorkerCard"
             Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-            From="#27272A"
-            To="#2D3330"
+            From="{StaticResource SurfaceColor}"
+            To="{StaticResource SuccessFlashColor}"
             Duration="0:0:0.1"
             AutoReverse="True"
             FillBehavior="Stop" />

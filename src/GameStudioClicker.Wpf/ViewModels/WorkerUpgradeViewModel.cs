@@ -19,6 +19,11 @@ public class WorkerUpgradeViewModel : ViewModelBase
     public string DisplayName => _workerUpgrade.DisplayName;
     public string Description =>
         $"Produces {CompactNumberFormatter.Format(LinesPerSecondPerEmployee)} lines of code / second";
+    public string? PortraitPath => Id switch
+    {
+        "intern" => "/Assets/Workers/Intern/worker_intern.png",
+        _ => null
+    };
     public long CurrentCost => _workerUpgrade.CurrentCost;
     public int WorkerCount => _workerUpgrade.WorkerCount;
     public long LinesPerSecondPerEmployee =>
