@@ -71,6 +71,22 @@ Each milestone should be broken into learning-sized tasks before implementation.
 - Animate the offline-earnings notification without shifting the dashboard.
 - Store reusable Storyboards in `Styles/Animations.xaml`.
 
+### 9. Modern dark pixel visual refresh
+
+- Establish a deep-navy interface with restrained cyan, purple, pink, and green
+  accents based on the reference material in `Design/style/`.
+- Package game-ready pixel artwork for branding, Lines of Code currency, active
+  upgrades, and every current worker type.
+- Bundle Inter for body text and Press Start 2P for selected display headings.
+- Separate shared theme resources, animations, and control styles into
+  `Theme.xaml`, `Animations.xaml`, and `Controls.xaml`.
+- Make purchasable active upgrades immediately recognizable with a persistent cyan
+  outline and dim unavailable upgrades.
+- Extract active upgrades, worker upgrades, and statistics into focused UserControls
+  while retaining `MainWindow` as the application shell.
+- Give the worker purchase flash its own visual layer so it remains visible while
+  the worker card is hovered and another worker can still be afforded.
+
 ## Current priorities
 
 ### Short term
@@ -78,6 +94,8 @@ Each milestone should be broken into learning-sized tasks before implementation.
 - Expand `StatisticsView` with more useful lifetime and progression statistics.
 - Redesign worker cards to communicate the same information with less text.
 - Implement the first small set of achievements.
+- Complete responsive, minimum-window-size, and high-DPI visual checks.
+- Configure the supplied multi-resolution `.ico` as the executable icon.
 
 ### Longer term
 
@@ -87,87 +105,32 @@ Each milestone should be broken into learning-sized tasks before implementation.
 
 ## Next milestones
 
-### 1. Adopt the Style D visual direction
+### 1. Expand statistics and permanent unlock progress
 
-Gradually reskin the existing interface using `Design/style-d/` as the visual
-source of truth and the game-ready artwork in
-`src/GameStudioClicker.Wpf/Assets/`. Preserve the current gameplay and layout
-behavior while introducing the new look in small, reviewable slices.
-
-#### 1.1 Establish shared theme resources
-
-- Add `Styles/Theme.xaml` and merge it into `App.xaml` before the animation
-  resources.
-- Define semantic brushes for the Style D navy, mint, blue, and warm off-white
-  palette rather than repeating color values throughout individual views.
-- Configure crisp image rendering, layout rounding, and pixel snapping where
-  appropriate.
-- Confirm PNG files under the WPF `Assets` folder are packaged as resources.
-
-#### 1.2 Reskin reusable interface components
-
-- Apply the shared palette to the main window, panels, buttons, worker cards,
-  active-upgrade buttons, tooltips, navigation, and notifications.
-- Use mint for positive actions and currency, blue for technology and selection,
-  and warm off-white for neutral text.
-- Prefer firm edges, restrained shading, and small corner radii; avoid glow,
-  gradients, glossy effects, and excessive shadows.
-- Keep reusable control styles separate from animation Storyboards as the style
-  collection grows.
-
-#### 1.3 Add global branding and currency artwork
-
-- Replace the text-only game heading with the supplied Game Studio Clicker logo.
-- Add the Lines of Code icon to the primary resource display, then evaluate
-  whether smaller cost displays benefit from it without becoming visually busy.
-- Display pixel artwork at whole-number sizes with nearest-neighbor scaling.
-
-#### 1.4 Add artwork to upgrade and worker cards
-
-- Keep image selection in the WPF presentation layer rather than the Core models
-  or save data.
-- Map the Mechanical Keyboard upgrade ID to its supplied artwork.
-- Map the Intern worker ID to its supplied portrait.
-- Preserve generic and mystery fallbacks for entries that do not yet have art.
-- Extend the same ID-to-asset approach as more Style D artwork is added.
-
-#### 1.5 Refine typography, spacing, and remaining surfaces
-
-- Add bundled, appropriately licensed fonts before relying on the pixel and
-  retro typefaces shown in the reference material.
-- Reserve display-style typography for headings and important values while
-  keeping descriptions and tooltips readable.
-- Apply the shared theme to the Statistics view and review existing animation
-  colors against the new palette.
-- Generate a multi-resolution Windows `.ico` from the app-icon artwork and use
-  it for the executable and window.
-
-#### 1.6 Verify the completed reskin
-
-- Build after each visual slice and perform focused manual checks rather than
-  adding unit tests for cosmetic XAML changes.
-- Check the interface at 1200 x 800, the 700 x 500 minimum size, and with high-DPI
-  scaling.
-- Preview artwork on both approved navy backgrounds and compare the finished UI
-  with the Style D reference before considering the milestone complete.
-
-### 2. Add statistics and permanent unlock progress
-
-Track cumulative values that are not reduced when the player spends Lines of Code.
-Start with one statistic, persist it, and expose it through the ViewModel before
-building a complete statistics interface.
+Lifetime Lines of Code is already tracked, persisted, and displayed. Continue with
+additional cumulative values that are not reduced when the player spends resources,
+adding them one at a time through the model, save data, ViewModel, and Statistics
+view.
 
 Possible statistics:
 
-- Lifetime Lines of Code generated.
 - Lines generated manually.
 - Lines generated by employees.
 - Total manual clicks.
 - Total employees hired.
 - Total upgrades purchased.
 
-Lifetime statistics can later support permanent content reveals, achievements, and
-eventually prestige.
+These statistics can support permanent content reveals, achievements, and eventually
+prestige.
+
+### 2. Add the first achievements
+
+- Begin with a small set tied to clear milestones already represented by lifetime
+  statistics and progression state.
+- Decide whether early achievements are recognition-only or provide modest rewards
+  before adding reward logic.
+- Persist earned achievement IDs and present achievements in a compact interface
+  that can grow gradually.
 
 ### 3. Balance the existing gameplay
 
@@ -190,7 +153,7 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
 
 - Expand achievements beyond the initial set.
 - More worker and active-upgrade types.
-- Additional Style D artwork for active upgrades and workers.
+- Additional artwork consistent with the modern dark pixel visual direction.
 - Sound effects and music controls.
 - Broader studio progression building on the future Studio Level system.
 - Prestige or new-game-plus after the main progression loop is established.

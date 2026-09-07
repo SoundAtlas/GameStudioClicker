@@ -51,15 +51,28 @@ On Windows, the save file is stored at:
 
 ### Interface and feedback
 
-- Use a dark three-part dashboard for the title, manual production, and active
-  upgrades.
+- Use a modern dark pixel interface built around deep navy surfaces, crisp pixel
+  artwork, and restrained cyan, purple, pink, and green accents.
+- Display bundled artwork for the game logo, Lines of Code currency, active
+  upgrades, and worker portraits.
+- Bundle Inter for readable interface text and Press Start 2P for selected section
+  headings without requiring fonts to be installed on the player's computer.
+- Use a three-part dashboard for branding, manual production, and active upgrades.
+- Distinguish immediately purchasable active upgrades with a persistent cyan
+  outline while dimming upgrades that cannot currently be bought.
 - Show workers in a compact two-column layout with the whole card acting as Hire.
 - Keep scrolling limited to the worker progression area.
 - Show concurrent floating click values that alternate left and right.
 - Pulse newly affordable active upgrades.
-- Animate worker hover, press, and purchase feedback.
+- Animate worker hover, press, and purchase feedback using independent visual
+  layers so repeated affordable purchases remain visible.
 - Animate offline earnings without shifting the dashboard.
-- Keep reusable WPF Storyboards in `Styles/Animations.xaml`.
+- Keep theme resources, control styles, and reusable Storyboards in separate WPF
+  resource dictionaries.
+
+The current visual reference and asset guidance live in
+[`Design/style/`](Design/style/), while game-ready artwork and bundled fonts live
+under [`src/GameStudioClicker.Wpf/Assets/`](src/GameStudioClicker.Wpf/Assets/).
 
 ## Architecture
 
@@ -69,6 +82,11 @@ On Windows, the save file is stored at:
   formatting, timers, and window lifecycle integration.
 - `GameStudioClicker.Tests` contains focused MSTest coverage for game rules,
   ViewModels, commands, and JSON persistence.
+- `Styles/Theme.xaml`, `Styles/Animations.xaml`, and `Styles/Controls.xaml` separate
+  shared visual resources from individual views.
+- `ActiveUpgradesView`, `WorkerUpgradesView`, and `StatisticsView` own their
+  respective interface sections, leaving `MainWindow` responsible for the overall
+  shell and navigation.
 
 The Model owns economy rules and derived production. ViewModels adapt that state for
 binding and commands. The View owns layout and purely visual animation behavior.
@@ -94,8 +112,10 @@ dotnet test GameStudioClicker.sln
 
 ## Next milestone
 
-The next planned system is persistent lifetime statistics, beginning with one useful
-value such as Lifetime Lines of Code generated. Gameplay balancing is intentionally
-deferred and tracked separately in `BALANCING_NOTES.md`.
+The existing Statistics view tracks persistent Lifetime Lines of Code. The next
+short-term work is to expand it with additional useful statistics, simplify the
+worker cards so they communicate with less text, and introduce the first small set
+of achievements. Gameplay balancing remains intentionally deferred and is tracked
+separately in `BALANCING_NOTES.md`.
 
 See [`ROADMAP.md`](ROADMAP.md) for the complete milestone history and planned work.
