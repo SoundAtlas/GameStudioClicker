@@ -71,6 +71,20 @@ Each milestone should be broken into learning-sized tasks before implementation.
 - Animate the offline-earnings notification without shifting the dashboard.
 - Store reusable Storyboards in `Styles/Animations.xaml`.
 
+## Current priorities
+
+### Short term
+
+- Expand `StatisticsView` with more useful lifetime and progression statistics.
+- Redesign worker cards to communicate the same information with less text.
+- Implement the first small set of achievements.
+
+### Longer term
+
+- Design a Studio Level system driven by experience gain. Decide what earns
+  experience, what leveling represents, and which meaningful benefits or unlocks
+  studio levels provide before implementing the feature.
+
 ## Next milestones
 
 ### 1. Adopt the Style D visual direction
@@ -174,9 +188,9 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
 
 ## Later possibilities
 
-- Achievements.
+- Expand achievements beyond the initial set.
 - More worker and active-upgrade types.
 - Additional Style D artwork for active upgrades and workers.
 - Sound effects and music controls.
-- A fuller studio-progression theme.
+- Broader studio progression building on the future Studio Level system.
 - Prestige or new-game-plus after the main progression loop is established.

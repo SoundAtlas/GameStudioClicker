@@ -12,7 +12,8 @@
         MinHeight="500"
         MinWidth="700"
         Background="{StaticResource GameBackgroundBrush}"
-        Foreground="{StaticResource PrimaryTextBrush}">
+        Foreground="{StaticResource PrimaryTextBrush}"
+        FontFamily="{StaticResource BodyFontFamily}">
 
     <Window.Resources>
         <!-- Shared appearance and interaction states for clickable game actions. -->
@@ -164,6 +165,8 @@
 
         <!-- Global tooltip appearance used by active-upgrade details. -->
         <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="FontFamily"
+                    Value="{StaticResource BodyFontFamily}" />
             <Setter Property="Background"
                     Value="{StaticResource SurfaceBrush}" />
             <Setter Property="Foreground"
@@ -256,21 +259,6 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Game title balances the left side of the dashboard.
-                <StackPanel Grid.Column="0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <TextBlock Text="Game Studio"
-                FontSize="52"
-                FontWeight="Bold" />
-
-                <TextBlock Text="Clicker!"
-                FontSize="52"
-                FontWeight="Bold" />
-                </StackPanel>
-
-                -->
-
                 <Image Grid.Column="0"
                        Source="/Assets/Branding/Logo/logo_game_studio_clicker.png"
                        MaxWidth="300"
@@ -358,6 +346,7 @@
                     <Border Grid.Row="0"
                             MaxWidth="360"
                             Padding="10,8"
+                            Margin="0,0,0,8"
                             HorizontalAlignment="Center"
                             Background="{StaticResource SurfaceBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
@@ -399,9 +388,9 @@
                                 HorizontalAlignment="Center">
 
                         <TextBlock Text="Active Upgrades"
-                                   FontSize="18"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,8" />
+                                   Style="{StaticResource SectionHeadingTextStyle}"
+                                   Margin="0,0,0,8"
+                                   HorizontalAlignment="Center"/>
 
                         <ItemsControl ItemsSource="{Binding ActiveUpgrades}">
                             <!-- Arrange compact upgrade buttons from left to right. -->
@@ -436,8 +425,13 @@
                                         <Button.Style>
                                             <Style TargetType="Button"
                                                    BasedOn="{StaticResource PrimaryButtonStyle}">
+                                                <!-- Default appearance: unlocked, but not currently affordable. -->
                                                 <Setter Property="Visibility"
                                                         Value="Visible" />
+                                                <Setter Property="Opacity"
+                                                        Value="0.45" />
+                                                <Setter Property="BorderThickness"
+                                                        Value="1" />
 
                                                 <Style.Triggers>
                                                     <!-- Purchased or distant upgrades are removed by the ViewModel. -->
@@ -445,6 +439,17 @@
                                                                  Value="False">
                                                         <Setter Property="Visibility"
                                                                 Value="Collapsed" />
+                                                    </DataTrigger>
+
+                                                    <!-- The player can purchase this upgrade right now. -->
+                                                    <DataTrigger Binding="{Binding CanPurchaseActiveUpgrade}"
+                                                                 Value="True">
+                                                        <Setter Property="Opacity"
+                                                                Value="1" />
+                                                        <Setter Property="BorderBrush"
+                                                                Value="{StaticResource PrimaryCyanBrush}" />
+                                                        <Setter Property="BorderThickness"
+                                                                Value="2" />
                                                     </DataTrigger>
 
                                                     <!-- Pulse once when a visible upgrade becomes purchasable. -->

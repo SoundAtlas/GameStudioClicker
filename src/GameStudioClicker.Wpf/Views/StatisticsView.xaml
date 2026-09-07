@@ -21,8 +21,7 @@
                 <StackPanel Margin="12">
                     <!-- Page heading -->
                     <TextBlock Text="Statistics"
-                               FontSize="26"
-                               FontWeight="Bold"
+                               Style="{StaticResource SectionHeadingTextStyle}"
                                Margin="0,0,0,16" />
 
                     <!-- Lifetime statistics -->

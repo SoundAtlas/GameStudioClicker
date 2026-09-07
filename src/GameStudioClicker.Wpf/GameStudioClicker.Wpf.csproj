@@ -3,7 +3,16 @@
   <ItemGroup>
     <None Remove="Assets\**\*.png" />
     <Resource Include="Assets\**\*.png" />
+	  
+    <None Remove="Assets\Fonts\**\*.ttf" />
+    <Resource Include="Assets\Fonts\**\*.ttf" />
+	  
     <ProjectReference Include="..\GameStudioClicker.Core\GameStudioClicker.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Fonts\Inter\" />
+    <Folder Include="Assets\Fonts\PressStart2P\" />
   </ItemGroup>
 
   <PropertyGroup>

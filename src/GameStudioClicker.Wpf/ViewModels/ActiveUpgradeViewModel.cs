@@ -19,7 +19,14 @@ public class ActiveUpgradeViewModel : ViewModelBase
     public string Description => _activeUpgrade.Description;
     public string? IconPath => Id switch
     {
+        "mouse_pad" => "/Assets/Upgrades/Active/upgrade_mouse_pad.png",
+        "gaming_mouse" => "/Assets/Upgrades/Active/upgrade_gaming_mouse.png",
         "mechanical_keyboard" => "/Assets/Upgrades/Active/upgrade_mechanical_keyboard.png",
+        "noise_cancelling_headset" => "/Assets/Upgrades/Active/upgrade_noise_cancelling_headset.png",
+        "onboarding_handbook" => "/Assets/Upgrades/Active/upgrade_onboarding_handbook.png",
+        "graphics_card" => "/Assets/Upgrades/Active/upgrade_graphics_card.png",
+        "second_monitor" => "/Assets/Upgrades/Active/upgrade_second_monitor.png",
+        "ergonomic_desk_setup" => "/Assets/Upgrades/Active/upgrade_ergonomic_desk_setup.png",
         _ => null,
     };
     public long Cost => _activeUpgrade.Cost;
