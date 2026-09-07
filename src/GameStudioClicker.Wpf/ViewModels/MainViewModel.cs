@@ -12,6 +12,8 @@ public class MainViewModel : ViewModelBase
     private readonly DispatcherTimer _offlineMessageTimer;
     private readonly DispatcherTimer _saveConfirmationMessageTimer;
 
+    private bool _isStatisticsViewVisible;
+
     private bool _showOfflineEarnings;
     private bool _showSaveConfirmation;
 
@@ -64,6 +66,7 @@ public class MainViewModel : ViewModelBase
         PurchaseWorkerUpgradeCommand = new RelayCommand(
             ExecutePurchaseWorkerUpgrade,
             CanExecutePurchaseWorkerUpgrade);
+        ToggleStatisticsCommand = new RelayCommand(ExecuteToggleStatistics);
 
         if (_showOfflineEarnings)
         {
@@ -79,6 +82,24 @@ public class MainViewModel : ViewModelBase
     public long LinesPerSecond => _gameState.LinesPerSecond;
     public long LifetimeLinesOfCode => _gameState.LifetimeLinesOfCode;
 
+    // Navigation and view state
+    public bool IsStatisticsViewVisible
+    {
+        get
+        {
+            return _isStatisticsViewVisible;
+        }
+        private set
+        {
+            if (_isStatisticsViewVisible == value)
+            {
+                return;
+            }
+            _isStatisticsViewVisible = value;
+            OnPropertyChanged();
+        }
+    }
+
     // One-time notifications.
     public long OfflineLinesEarned { get; }
     public bool HasOfflineEarnings => _showOfflineEarnings;
@@ -92,6 +113,7 @@ public class MainViewModel : ViewModelBase
     public RelayCommand WriteCodeCommand { get; }
     public RelayCommand PurchaseActiveUpgradeCommand { get; }
     public RelayCommand PurchaseWorkerUpgradeCommand { get; }
+    public RelayCommand ToggleStatisticsCommand { get; }
 
     public event EventHandler? SaveRequested;
 
@@ -167,6 +189,12 @@ public class MainViewModel : ViewModelBase
             RefreshPurchaseCommands();
         }
     }
+
+    private void ExecuteToggleStatistics(object? parameter)
+    {
+        IsStatisticsViewVisible = !IsStatisticsViewVisible;
+    }
+
 
     private void PassiveTimer_Tick(object? sender, EventArgs e)
     {
