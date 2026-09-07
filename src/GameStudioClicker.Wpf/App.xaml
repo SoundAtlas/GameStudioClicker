@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Theme.xaml" />
                 <ResourceDictionary Source="Styles/Animations.xaml" />
+                <ResourceDictionary Source="Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <converters:CompactNumberConverter

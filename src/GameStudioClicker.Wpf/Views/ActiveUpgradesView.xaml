@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="GameStudioClicker.Wpf.Views.ActiveUpgradesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GameStudioClicker.Wpf.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <StackPanel>
+        
+        <TextBlock Text="Active Upgrades"
+                   Style="{StaticResource SectionHeadingTextStyle}"
+                   Margin="0,0,0,8"
+                   HorizontalAlignment="Center"/>
+
+        <ItemsControl ItemsSource="{Binding ActiveUpgrades}">
+            <!-- Arrange compact upgrade buttons from left to right. -->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!-- One active-upgrade button -->
+                    <Button Width="88"
+                            Height="88"
+                            Margin="4,4,8,8"
+                            Padding="6"
+                            ToolTipService.InitialShowDelay="150"
+                            ToolTipService.BetweenShowDelay="0"
+                            ToolTipService.ShowDuration="30000"
+                            ToolTipService.ShowOnDisabled="True"
+                            RenderTransformOrigin="0.5,0.5"
+                            Command="{Binding DataContext.PurchaseActiveUpgradeCommand,
+                            RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                            CommandParameter="{Binding}">
+
+                        <!-- Used by the one-time affordability pulse. -->
+                        <Button.RenderTransform>
+                            <ScaleTransform ScaleX="1"
+                                            ScaleY="1" />
+                        </Button.RenderTransform>
+
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource PrimaryButtonStyle}">
+                                <!-- Default appearance: unlocked, but not currently affordable. -->
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Setter Property="Opacity"
+                                        Value="0.45" />
+                                <Setter Property="BorderThickness"
+                                        Value="1" />
+
+                                <Style.Triggers>
+                                    <!-- Purchased or distant upgrades are removed by the ViewModel. -->
+                                    <DataTrigger Binding="{Binding IsVisible}"
+                                                 Value="False">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                    </DataTrigger>
+
+                                    <!-- The player can purchase this upgrade right now. -->
+                                    <DataTrigger Binding="{Binding CanPurchaseActiveUpgrade}"
+                                                 Value="True">
+                                        <Setter Property="Opacity"
+                                                Value="1" />
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource PrimaryCyanBrush}" />
+                                        <Setter Property="BorderThickness"
+                                                Value="2" />
+                                    </DataTrigger>
+
+                                    <!-- Pulse once when a visible upgrade becomes purchasable. -->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsVisible}"
+                                                       Value="True" />
+                                            <Condition Binding="{Binding CanPurchaseActiveUpgrade}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+
+                                        <MultiDataTrigger.EnterActions>
+                                            <BeginStoryboard Storyboard="{StaticResource AvailabilityPulseStoryboard}" />
+                                        </MultiDataTrigger.EnterActions>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+
+                        <Grid>
+                            <Image Source="{Binding IconPath}"
+                                   Width="88"
+                                   Height="66"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                   SnapsToDevicePixels="True">
+                            </Image>
+
+                            <!-- Temporary generic upgrade icon -->
+                            <TextBlock Text="↑"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center">
+
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IconPath}"
+                                                         Value="{x:Null}">
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
+
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+
+                        <Button.ToolTip>
+                            <ToolTip DataContext="{Binding PlacementTarget.DataContext,
+                                     RelativeSource={RelativeSource Self}}">
+                                <StackPanel MaxWidth="260">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,6" />
+
+                                    <TextBlock Text="{Binding Description}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,0,0,8" />
+
+                                    <TextBlock FontWeight="SemiBold">
+                                        <Run Text="Cost: " />
+                                        <Run Text="{Binding Cost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
+                                        <Run Text=" Lines of Code" />
+                                    </TextBlock>
+
+                                    <!-- Only visible while an upgrade or worker requirement is unmet. -->
+                                    <TextBlock Text="{Binding RequirementText}"
+                                               Foreground="{StaticResource ErrorBrush}"
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap"
+                                               Margin="0,8,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasUnmetRequirement}"
+                                                                 Value="True">
+                                                        <Setter Property="Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </ToolTip>
+                        </Button.ToolTip>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+    </StackPanel>
+</UserControl>

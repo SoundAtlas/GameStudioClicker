@@ -13,6 +13,7 @@
     <Color x:Key="TransparentBorderColor">#001E293B</Color>
     <Color x:Key="AvailabilityGlowColor">#6636BDF8</Color>
     <Color x:Key="SuccessFlashColor">#16382E</Color>
+    <Color x:Key="TransparentSuccessFlashColor">#0016382E</Color>
 
 
     <SolidColorBrush x:Key="GameBackgroundBrush"

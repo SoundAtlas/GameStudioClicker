@@ -1,0 +1,185 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Shared appearance and interaction states for clickable game actions. -->
+    <Style x:Key="PrimaryButtonStyle"
+           TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+
+                    <!-- Visual states belong to the reusable button template. -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource PrimaryCyanBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="{StaticResource PrimaryCyanBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource GameBackgroundBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter TargetName="ButtonBorder"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor"
+                                    Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Primary action button style -->
+    <Style x:Key="PrimaryActionButtonStyle"
+           TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource PrimaryCyanBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GlowBlueBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+
+                    <!-- Visual states belong to the reusable button template. -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource PrimaryTextBrush}" />
+                            <Setter Property="Background"
+                                    Value="{StaticResource GlowBlueBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="{StaticResource PressedPrimaryBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource GameBackgroundBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter TargetName="ButtonBorder"
+                                    Property="BorderBrush"
+                                    Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor"
+                                    Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Makes an entire worker card behave like one large purchase button. -->
+    <Style x:Key="WorkerCardButtonStyle"
+           TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" Value="0.85" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.6" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Global tooltip appearance used by active-upgrade details. -->
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="FontFamily"
+                Value="{StaticResource BodyFontFamily}" />
+        <Setter Property="Background"
+                Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Foreground"
+                Value="{StaticResource PrimaryTextBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{StaticResource BorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Padding"
+                Value="12" />
+        <Setter Property="Placement"
+                Value="Bottom" />
+        <Setter Property="HasDropShadow"
+                Value="True" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolTip}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="6">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -118,11 +118,11 @@
     <!-- Briefly flashes the worker card to indicate a purchase. -->
     <Storyboard x:Key="WorkerCardPurchaseFlashStoryboard">
         <ColorAnimation
-            Storyboard.TargetName="WorkerCard"
+            Storyboard.TargetName="PurchaseFlashOverlay"
             Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-            From="{StaticResource SurfaceColor}"
+            From="{StaticResource TransparentSuccessFlashColor}"
             To="{StaticResource SuccessFlashColor}"
-            Duration="0:0:0.2"
+            Duration="0:0:0.1"
             AutoReverse="True"
             FillBehavior="Stop" />
     </Storyboard>

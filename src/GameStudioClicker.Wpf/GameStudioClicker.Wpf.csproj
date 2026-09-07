@@ -6,6 +6,7 @@
 	  
     <None Remove="Assets\Fonts\**\*.ttf" />
     <Resource Include="Assets\Fonts\**\*.ttf" />
+    
 	  
     <ProjectReference Include="..\GameStudioClicker.Core\GameStudioClicker.Core.csproj" />
   </ItemGroup>
