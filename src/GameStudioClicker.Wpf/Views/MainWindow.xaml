@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Game Studio Clicker"
+        Icon="/Assets/Branding/AppIcon/app_icon_game_studio_clicker.png"
         Height="800"
         Width="1200"
         MinHeight="500"
@@ -49,6 +50,64 @@
                                 <Setter TargetName="ButtonBorder"
                                         Property="Background"
                                         Value="{StaticResource PrimaryCyanBrush}" />
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource GameBackgroundBrush}" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="{StaticResource GameBackgroundBrush}" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource BorderBrush}" />
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource SecondaryTextBrush}" />
+                                <Setter Property="Cursor"
+                                        Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryActionButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryCyanBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource GlowBlueBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+
+                        <!-- Visual states belong to the reusable button template. -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource PrimaryTextBrush}" />
+                                <Setter Property="Background"
+                                        Value="{StaticResource GlowBlueBrush}" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="{StaticResource PressedPrimaryBrush}" />
                                 <Setter Property="Foreground"
                                         Value="{StaticResource GameBackgroundBrush}" />
                             </Trigger>
@@ -259,7 +318,8 @@
                         <!-- Main click action and floating +X feedback. -->
                         <Grid x:Name="ClickFeedbackLayer"
                               Height="70"
-                              Margin="0,4,0,4">
+                              Margin="0,4,0,4"
+                              ClipToBounds="False">
                             <Button Content="Write Code"
                                     Width="150"
                                     Height="50"
@@ -268,7 +328,7 @@
                                     FontSize="16"
                                     Command="{Binding WriteCodeCommand}"
                                     Click="WriteCodeButton_Click"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
+                                    Style="{StaticResource PrimaryActionButtonStyle}" />
                         </Grid>
 
                         <!-- Passive production. -->

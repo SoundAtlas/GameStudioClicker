@@ -22,6 +22,9 @@ public class WorkerUpgradeViewModel : ViewModelBase
     public string? PortraitPath => Id switch
     {
         "intern" => "/Assets/Workers/Intern/worker_intern.png",
+        "junior_developer" => "/Assets/Workers/JuniorDeveloper/worker_junior_developer.png",
+        "senior_developer" => "/Assets/Workers/SeniorDeveloper/worker_senior_developer.png",
+        "lead_developer" => "/Assets/Workers/LeadDeveloper/worker_lead_developer.png",
         _ => null
     };
     public long CurrentCost => _workerUpgrade.CurrentCost;

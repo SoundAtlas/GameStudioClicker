@@ -31,5 +31,7 @@
                      Color="#1E293B"/>
     <SolidColorBrush x:Key="GlowBlueBrush"
                      Color="#36BDF8"/>
+    <SolidColorBrush x:Key="PressedPrimaryBrush"
+                     Color="#0097A8" />
 
 </ResourceDictionary>

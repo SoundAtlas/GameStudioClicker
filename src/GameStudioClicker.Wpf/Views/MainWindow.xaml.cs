@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.Views;
@@ -102,13 +103,21 @@ public partial class MainWindow : Window
         var feedbackText = new TextBlock
         {
             Text = $"+{CompactNumberFormatter.Format(viewModel.LinesPerClick)}",
-            Foreground = Brushes.PowderBlue,
-            FontSize = 16,
-            FontWeight = FontWeights.SemiBold,
+            Foreground = (Brush)FindResource("SuccessBrush"),
+            FontSize = 18,
+            FontWeight = FontWeights.Bold,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            IsHitTestVisible = false
+            IsHitTestVisible = false,
+            Effect = new DropShadowEffect
+            {
+                Color = ((SolidColorBrush)FindResource("GameBackgroundBrush")).Color,
+                BlurRadius = 3,
+                ShadowDepth = 0,
+                Opacity = 1
+            }
         };
+
 
         Panel.SetZIndex(feedbackText, 1);
 
@@ -119,16 +128,24 @@ public partial class MainWindow : Window
         double horizontalDistance = _nextFeedbackMovesRight ? 50 : -50;
         _nextFeedbackMovesRight = !_nextFeedbackMovesRight;
 
-        var duration = new Duration(TimeSpan.FromSeconds(0.65));
-        var fadeAnimation = new DoubleAnimation(1, 0, duration);
-        var horizontalAnimation = new DoubleAnimation(0, horizontalDistance, duration);
-        var verticalAnimation = new DoubleAnimation(0, -50, duration)
+        var movementDuration = new Duration(TimeSpan.FromSeconds(0.85));
+
+        var fadeAnimation = new DoubleAnimation
+            (1, 0, new Duration(TimeSpan.FromSeconds(0.45)))
         {
-            EasingFunction = new CubicEase
-            {
-                EasingMode = EasingMode.EaseOut
-            }
+            BeginTime = TimeSpan.FromSeconds(0.4)
         };
+
+        var horizontalAnimation =
+            new DoubleAnimation(0, horizontalDistance, movementDuration);
+        var verticalAnimation =
+            new DoubleAnimation(0, -40, movementDuration)
+            {
+                EasingFunction = new CubicEase
+                {
+                    EasingMode = EasingMode.EaseOut
+                }
+            };
 
         fadeAnimation.Completed += (_, _) =>
             ClickFeedbackLayer.Children.Remove(feedbackText);
