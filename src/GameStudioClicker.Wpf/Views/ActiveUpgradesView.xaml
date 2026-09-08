@@ -130,21 +130,86 @@
                         <Button.ToolTip>
                             <ToolTip DataContext="{Binding PlacementTarget.DataContext,
                                      RelativeSource={RelativeSource Self}}">
-                                <StackPanel MaxWidth="260">
+                                <StackPanel MinWidth="210"
+                                            MaxWidth="260">
                                     <TextBlock Text="{Binding DisplayName}"
+                                               Margin="0,0,0,8"
                                                FontSize="16"
                                                FontWeight="Bold"
-                                               Margin="0,0,0,6" />
+                                               Foreground="{StaticResource PrimaryTextBrush}" />
 
-                                    <TextBlock Text="{Binding Description}"
-                                               TextWrapping="Wrap"
-                                               Margin="0,0,0,8" />
+                                    <Grid Margin="0,0,0,8">
+                                        <!-- Worker-production upgrades retain their written description. -->
+                                        <TextBlock Text="{Binding Description}"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="{StaticResource SecondaryTextBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding AffectsClickProduction}"
+                                                                     Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
 
-                                    <TextBlock FontWeight="SemiBold">
-                                        <Run Text="Cost: " />
-                                        <Run Text="{Binding Cost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
-                                        <Run Text=" Lines of Code" />
-                                    </TextBlock>
+                                        <!-- Click upgrades use the currency icon in place of its written name. -->
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding AffectsClickProduction}"
+                                                                     Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+
+                                            <TextBlock Text="{Binding ClickEffectText}"
+                                                       Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                            <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
+                                                   Width="18"
+                                                   Height="18"
+                                                   Margin="0,0,4,0"
+                                                   VerticalAlignment="Center"
+                                                   Stretch="Uniform"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                                            <TextBlock Text="/ click"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource SecondaryTextBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Upgrade cost"
+                                                   Margin="0,0,6,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                        <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
+                                               Width="18"
+                                               Height="18"
+                                               Margin="0,0,4,0"
+                                               VerticalAlignment="Center"
+                                               Stretch="Uniform"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                                        <TextBlock Text="{Binding Cost,
+                                                  Mode=OneWay,
+                                                  Converter={StaticResource CompactNumberConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource PrimaryTextBrush}" />
+                                    </StackPanel>
 
                                     <!-- Only visible while an upgrade or worker requirement is unmet. -->
                                     <TextBlock Text="{Binding RequirementText}"

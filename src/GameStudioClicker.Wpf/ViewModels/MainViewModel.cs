@@ -92,7 +92,6 @@ public class MainViewModel : ViewModelBase, IDisposable
                 new StatisticViewModel("Lines Generated While Online", () => gameState.LinesGeneratedWhileOnline),
                 new StatisticViewModel("Lines Generated While Offline", () => gameState.LinesGeneratedWhileOffline)
             ];
-
     }
 
     // Production displayed by the main coding panel.
