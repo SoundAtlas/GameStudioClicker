@@ -89,6 +89,7 @@ public partial class MainWindow : Window
     private void MainWindowClosing(object? sender, CancelEventArgs e)
     {
         _autosaveTimer.Stop();
+        _mainViewModel.Dispose();
         SaveGame();
     }
 
