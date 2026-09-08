@@ -98,7 +98,7 @@ namespace GameStudioClicker.Core.Models
                 id: "code_review_checklist",
                 displayName: "Code Review Checklist",
                 description: "Doubles Junior Developer Productivity",
-                cost: 12000,
+                cost: 12_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "junior_developer",
@@ -108,7 +108,7 @@ namespace GameStudioClicker.Core.Models
                 id: "professional_ide_license",
                 displayName: "Professional IDE License",
                 description: "Doubles Lines of Code / Click",
-                cost: 25000,
+                cost: 25_000,
                 clickMultiplier: 2,
                 prerequisite: developerLaptop);
 
@@ -116,7 +116,7 @@ namespace GameStudioClicker.Core.Models
                 id: "high_end_workstation",
                 displayName: "High-End Workstation",
                 description: "Doubles Lines of Code / Click",
-                cost: 50000,
+                cost: 50_000,
                 clickMultiplier: 2,
                 prerequisite: professionalIdeLicense);
 
@@ -124,7 +124,7 @@ namespace GameStudioClicker.Core.Models
                 id: "intern_mentorship_program",
                 displayName: "Intern Mentorship Program",
                 description: "Triples Intern Productivity",
-                cost: 100000,
+                cost: 100_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "intern",
@@ -134,7 +134,7 @@ namespace GameStudioClicker.Core.Models
                 id: "build_server",
                 displayName: "Build Server",
                 description: "Doubles Lines of Code / Click",
-                cost: 150000,
+                cost: 150_000,
                 clickMultiplier: 2,
                 prerequisite: highEndWorkstation);
 
@@ -142,7 +142,7 @@ namespace GameStudioClicker.Core.Models
                 id: "automated_testing_suite",
                 displayName: "Automated Testing Suite",
                 description: "Triples Lines of Code / Click",
-                cost: 200000,
+                cost: 200_000,
                 clickMultiplier: 3,
                 prerequisite: buildServer);
 
@@ -150,7 +150,7 @@ namespace GameStudioClicker.Core.Models
                 id: "architecture_workshop",
                 displayName: "Architecture Workshop",
                 description: "Doubles Senior Developer Productivity",
-                cost: 250000,
+                cost: 250_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "senior_developer",
@@ -163,7 +163,7 @@ namespace GameStudioClicker.Core.Models
                 id: "automated_development_pipeline",
                 displayName: "Automated Development Pipeline",
                 description: "4x All Worker Productivity",
-                cost: 350000,
+                cost: 350_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 4,
                 targetAllWorkers: true,
@@ -173,7 +173,7 @@ namespace GameStudioClicker.Core.Models
                 id: "capture_studio",
                 displayName: "Motion-Capture Studio",
                 description: "Doubles Lines of Code / Click",
-                cost: 400000,
+                cost: 400_000,
                 clickMultiplier: 2,
                 prerequisite: automatedDevelopmentPipeline);
 
@@ -181,7 +181,7 @@ namespace GameStudioClicker.Core.Models
                 id: "pair_programming_sessions",
                 displayName: "Pair Programming Sessions",
                 description: "Triples Junior Developer Productivity",
-                cost: 750000,
+                cost: 750_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "junior_developer",
@@ -191,7 +191,7 @@ namespace GameStudioClicker.Core.Models
                 id: "studio_server_rack",
                 displayName: "Studio Server Rack",
                 description: "Doubles Lines of Code / Click",
-                cost: 1000000,
+                cost: 1_000_000,
                 clickMultiplier: 2,
                 prerequisite: captureStudio);
 
@@ -199,7 +199,7 @@ namespace GameStudioClicker.Core.Models
                 id: "proprietary_game_engine",
                 displayName: "Proprietary Game Engine",
                 description: "Doubles Lines of Code / Click",
-                cost: 1500000,
+                cost: 1_500_000,
                 clickMultiplier: 2,
                 prerequisite: studioServerRack);
 
@@ -207,7 +207,7 @@ namespace GameStudioClicker.Core.Models
                 id: "technical_leadership_training",
                 displayName: "Technical Leadership Training",
                 description: "Doubles Lead Developer Productivity",
-                cost: 2000000,
+                cost: 2_000_000,
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "lead_developer",
@@ -216,16 +216,16 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrade renderFarm = new ActiveUpgrade(
                 id: "render_farm",
                 displayName: "Render Farm",
-                description: "Triples Lines of Code / Click",
-                cost: 2500000,
-                clickMultiplier: 3,
+                description: "Doubles Lines of Code / Click",
+                cost: 2_500_000,
+                clickMultiplier: 2,
                 prerequisite: proprietaryGameEngine);
 
             ActiveUpgrade globalCloudInfrastructure = new ActiveUpgrade(
                 id: "global_cloud_infrastructure",
                 displayName: "Global Cloud Infrastructure",
-                description: "Doubles Lines of Code / Click",
-                cost: 3000000,
+                description: "Triples Lines of Code / Click",
+                cost: 3_000_000,
                 clickMultiplier: 3,
                 prerequisite: renderFarm);
 
@@ -236,20 +236,71 @@ namespace GameStudioClicker.Core.Models
                 id: "ai_workstations",
                 displayName: "AI Workstations",
                 description: "4x Lines of Code / Click",
-                cost: 350000,
+                cost: 3_500_000,
                 clickMultiplier: 4,
-                prerequisite: automatedTestingSuite);
+                prerequisite: globalCloudInfrastructure);
 
-            //Proprietary Developer Toolkit — Senior Developer targeted
-            //Neural Motion - Capture System
-            //Autonomous QA Swarm
-            //Self - Organizing Dev Teams — Lead Developer targeted
-            //Quantum Build Server
-            //Predictive Game Engine
-            //Adaptive Learning Program — Intern targeted
+            ActiveUpgrade developerToolkit = new ActiveUpgrade(
+                id: "developer_toolkit",
+                displayName: "Proprietary Developer Toolkit",
+                description: "Doubles Senior Developer Productivity",
+                cost: 5_000_000,
+                clickMultiplier: 1,
+                workerProductionMultiplier: 2,
+                targetWorkerId: "senior_developer",
+                prerequisite: aiWorkstations);
 
+            ActiveUpgrade neuralMotionCaptureSystem = new ActiveUpgrade(
+                id: "neural_motion_capture_system",
+                displayName: "Neural Motion-Capture System",
+                description: "Doubles Lines of Code / Click",
+                cost: 7_500_000,
+                clickMultiplier: 2,
+                prerequisite: aiWorkstations);
 
+            ActiveUpgrade autonomousQaSwarm = new ActiveUpgrade(
+                id: "autonomous_qa_swarm",
+                displayName: "Autonomous QA Swarm",
+                description: "Doubles Lines of Code / Click",
+                cost: 10_000_000,
+                clickMultiplier: 2,
+                prerequisite: neuralMotionCaptureSystem);
 
+            ActiveUpgrade selfOrganizingDevTeams = new ActiveUpgrade(
+                id: "self_organizing_dev_teams",
+                displayName: "Self-Organizing Dev Teams",
+                description: "Doubles Lead Developer Productivity",
+                cost: 12_500_000,
+                clickMultiplier: 1,
+                workerProductionMultiplier: 2,
+                targetWorkerId: "lead_developer",
+                prerequisite: autonomousQaSwarm);
+
+            ActiveUpgrade quantumBuildServer = new ActiveUpgrade(
+                id: "quantum_build_server",
+                displayName: "Quantum Build Server",
+                description: "Doubles Lines of Code / Click",
+                cost: 15_000_000,
+                clickMultiplier: 2,
+                prerequisite: autonomousQaSwarm);
+
+            ActiveUpgrade predictiveGameEngine = new ActiveUpgrade(
+                id: "predictive_game_engine",
+                displayName: "Predictive Game Engine",
+                description: "Triples Lines of Code / Click",
+                cost: 20_000_000,
+                clickMultiplier: 3,
+                prerequisite: quantumBuildServer);
+
+            ActiveUpgrade adaptiveLearningProgram = new ActiveUpgrade(
+                id: "adaptive_learning_program",
+                displayName: "Adaptive Learning Program",
+                description: "Triples Intern Productivity",
+                cost: 50_000_000,
+                clickMultiplier: 1,
+                workerProductionMultiplier: 3,
+                targetWorkerId: "intern",
+                prerequisite: predictiveGameEngine);
 
 
             // Additional hardware upgrades can extend this ordered progression.
@@ -274,14 +325,22 @@ namespace GameStudioClicker.Core.Models
                 architectureWorkshop,
 
                 automatedDevelopmentPipeline,
-                codeReviewChecklist,
-                professionalIdeLicense,
-                highEndWorkstation,
-                internMentorshipProgram,
-                buildServer,
-                automatedTestingSuite,
-                architectureWorkshop,
+                captureStudio,
+                pairProgrammingSessions,
+                studioServerRack,
+                proprietaryGameEngine,
+                technicalLeadershipTraining,
+                renderFarm,
+                globalCloudInfrastructure,
 
+                aiWorkstations,
+                developerToolkit,
+                neuralMotionCaptureSystem,
+                autonomousQaSwarm,
+                selfOrganizingDevTeams,
+                quantumBuildServer,
+                predictiveGameEngine,
+                adaptiveLearningProgram
             };
 
             WorkerUpgrade intern = new WorkerUpgrade(
