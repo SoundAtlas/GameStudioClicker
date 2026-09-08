@@ -39,12 +39,28 @@ public class WorkerUpgradeViewModel : ViewModelBase
     public bool IsUnlocked => _workerUpgrade.IsUnlocked;
     public bool IsVisible => _workerUpgrade.IsVisible;
     public bool IsMystery => _workerUpgrade.IsMystery;
-    public string UnlockRequirementText => _workerUpgrade.Prerequisite is null
-        ? string.Empty
-        : $"Requires {_workerUpgrade.RequiredPrerequisiteCount} × " +
-          $"{_workerUpgrade.Prerequisite.DisplayName} " +
-          $"({_workerUpgrade.Prerequisite.WorkerCount}/" +
-          $"{_workerUpgrade.RequiredPrerequisiteCount})";
+    public string UnlockRequirementText
+    {
+        get
+        {
+            WorkerUpgrade? prerequisite = _workerUpgrade.Prerequisite;
+
+            if (prerequisite is null)
+            {
+                return string.Empty;
+            }
+
+            if (_workerUpgrade.IsUnlocked)
+            {
+                return "Hire to reveal";
+            }
+
+            return $"Requires {_workerUpgrade.RequiredPrerequisiteCount} × " +
+                   $"{prerequisite.DisplayName} " +
+                   $"({prerequisite.WorkerCount}/" +
+                   $"{_workerUpgrade.RequiredPrerequisiteCount})";
+        }
+    }
 
     internal WorkerUpgrade Upgrade => _workerUpgrade;
 

@@ -17,6 +17,13 @@ public class ActiveUpgradeViewModel : ViewModelBase
     public string Id => _activeUpgrade.Id;
     public string DisplayName => _activeUpgrade.DisplayName;
     public string Description => _activeUpgrade.Description;
+    public bool AffectsClickProduction => _activeUpgrade.ClickMultiplier > 1;
+    public string ClickEffectText => _activeUpgrade.ClickMultiplier switch
+    {
+        2 => "Doubles",
+        3 => "Triples",
+        _ => $"{_activeUpgrade.ClickMultiplier}x"
+    };
     public string? IconPath => Id switch
     {
         "mouse_pad" => "/Assets/Upgrades/Active/upgrade_mouse_pad.png",

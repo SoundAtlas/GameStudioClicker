@@ -12,19 +12,24 @@
 
         <!-- Repeatable worker upgrades. -->
         <ItemsControl ItemsSource="{Binding WorkerUpgrades}"
+                      Width="1176"
+                      HorizontalAlignment="Center"
                       VerticalAlignment="Top">
-            <!-- Keep worker cards in two equal-width columns. -->
+            <!-- Keep worker cards in three equal-width columns. -->
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="2" />
+                    <WrapPanel/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <!-- The whole worker card purchases the represented worker. -->
-                    <Button Height="150"
+                    <Button Height="110"
+                            Width="380"
                             Margin="6"
+                            ToolTipService.ShowOnDisabled="True"
+                            ToolTipService.InitialShowDelay="150"
                             RenderTransformOrigin="0.5,0.5"
                             Command="{Binding DataContext.PurchaseWorkerUpgradeCommand,
                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
@@ -67,6 +72,13 @@
                                             <BeginStoryboard Storyboard="{StaticResource SubtleHoverScaleOutStoryboard}" />
                                         </MultiTrigger.ExitActions>
                                     </MultiTrigger>
+
+                                    <DataTrigger Binding="{Binding IsMystery}"
+                                                 Value="True">
+                                        <Setter Property="ToolTipService.IsEnabled"
+                                                Value="False" />
+                                    </DataTrigger>
+
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
@@ -77,6 +89,43 @@
                                 <BeginStoryboard Storyboard="{StaticResource WorkerCardPurchaseFlashStoryboard}" />
                             </EventTrigger>
                         </Button.Triggers>
+
+
+                        <Button.ToolTip>
+                            <ToolTip>
+                                <StackPanel MinWidth="210">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               Margin="0,0,0,8"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                    <TextBlock Margin="0,0,0,4"
+                                               Foreground="{StaticResource SecondaryTextBrush}">
+                                        <Run Text="Each employee: " />
+                                        <Run Text="+"
+                                             Foreground="{StaticResource SuccessBrush}" />
+                                        <Run Text="{Binding LinesPerSecondPerEmployee,
+                                             Mode=OneWay,
+                                             Converter={StaticResource CompactNumberConverter}}"
+                                             Foreground="{StaticResource SuccessBrush}" />
+                                        <Run Text=" / sec" />
+                                    </TextBlock>
+
+                                    <TextBlock Foreground="{StaticResource SecondaryTextBrush}">
+                                        <Run Text="Current total: " />
+                                        <Run Text="+"
+                                             Foreground="{StaticResource SuccessBrush}" />
+                                        <Run Text="{Binding CurrentLinesPerSecond,
+                                             Mode=OneWay,
+                                             Converter={StaticResource CompactNumberConverter}}"
+                                             Foreground="{StaticResource SuccessBrush}" />
+                                        <Run Text=" / sec" />
+                                    </TextBlock>
+
+                                </StackPanel>
+                            </ToolTip>
+                        </Button.ToolTip>
 
                         <!-- Card contents are retained while the surrounding button handles hiring. -->
                         <Border x:Name="WorkerCard"
@@ -165,10 +214,12 @@
                                         </Style>
                                     </Grid.Style>
 
+
+
                                     <Image Grid.Column="0"
                                            Source="{Binding PortraitPath}"
-                                           Width="104"
-                                           Height="104"
+                                           Width="72"
+                                           Height="72"
                                            Margin="0,0,12,0"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"
@@ -194,65 +245,91 @@
                                     </Image>
 
 
-                                    <StackPanel Grid.Column="1"
-                                                VerticalAlignment="Center">
+                                    <Grid Grid.Column="1"
+                                          VerticalAlignment="Center">
 
-                                        <TextBlock Text="{Binding DisplayName}"
-                                                   HorizontalAlignment="Center"
-                                                   FontSize="18"
-                                                   FontWeight="Bold"
-                                                   Foreground="{StaticResource PrimaryTextBrush}"/>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                                        <TextBlock Text="{Binding Description}"
-                                                   HorizontalAlignment="Center"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,4,0,12"
-                                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                                        <!-- Worker name and owned count -->
+                                        <Grid Grid.Row="0"
+                                              Margin="0,0,0,8">
 
-                                        <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center">
-                                            <TextBlock Text="Cost: "
-                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                                            <TextBlock Text="{Binding CurrentCost, Converter={StaticResource CompactNumberConverter}}"
-                                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding DisplayName}"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="18"
+                                                       FontWeight="Bold"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                            <Border Grid.Column="1"
+                                                    Margin="12,0,0,0"
+                                                    Padding="7,3"
+                                                    VerticalAlignment="Center"
+                                                    CornerRadius="8">
+
+                                                <TextBlock FontSize="15"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource PrimaryCyanBrush}">
+                                                    <Run Text="× " />
+                                                    <Run Text="{Binding WorkerCount,
+                                                         Mode=OneWay,
+                                                         Converter={StaticResource CompactNumberConverter}}" />
+                                                </TextBlock>
+
+                                            </Border>
+                                        </Grid>
+
+
+
+                                        <!-- Cost of hiring the next employee -->
+                                        <StackPanel Grid.Row="1"
+                                                    Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+
+                                            <TextBlock Text="Next Hire"
+                                                       Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource SecondaryTextBrush}" />
 
                                             <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
-                                                   Width="20"
-                                                   Height="16"
-                                                   Margin="4,0,0,0"
-                                                   VerticalAlignment="Center" />
+                                                   Width="18"
+                                                   Height="18"
+                                                   Margin="0,0,4,0"
+                                                   VerticalAlignment="Center"
+                                                   Stretch="Uniform"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
+                                            <TextBlock Text="{Binding CurrentCost,
+                                                       Mode=OneWay,
+                                                       Converter={StaticResource CompactNumberConverter}}"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="{StaticResource PrimaryTextBrush}" />
 
                                         </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center"
-                                                    Margin="0,4,0,4">
-                                            <TextBlock Text="Employees: "
-                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                                            <TextBlock Text="{Binding WorkerCount, Converter={StaticResource CompactNumberConverter}}"
-                                                       Foreground="{StaticResource PrimaryCyanBrush}"/>
-                                        </StackPanel>
-
-                                        <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center"
-                                                    Margin="0,0,0,8">
-                                            <TextBlock Text="Current Production: "
-                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                                            <TextBlock Text="{Binding CurrentLinesPerSecond, Converter={StaticResource CompactNumberConverter}}"
-                                                       Foreground="{StaticResource SuccessBrush}"/>
-                                            <TextBlock Text=" Lines of Code / Second"
-                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                                        </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
                                 </Grid>
 
                                 <!-- Limited information for the next locked worker. -->
-                                <StackPanel HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Margin="12">
-                                    <StackPanel.Style>
-                                        <Style TargetType="StackPanel">
+                                <Grid Margin="12">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
                                             <Setter Property="Visibility"
                                                     Value="Collapsed" />
 
@@ -264,30 +341,75 @@
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </StackPanel.Style>
+                                    </Grid.Style>
 
-                                    <TextBlock Text="???"
-                                               HorizontalAlignment="Center"
-                                               FontSize="26"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource SecondaryTextBrush}" />
+                                    <!-- Unknown worker portrait placeholder -->
+                                    <Border Grid.Column="0"
+                                            Width="72"
+                                            Height="72"
+                                            Margin="0,0,12,0"
+                                            VerticalAlignment="Center"
+                                            Background="{StaticResource GameBackgroundBrush}"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="6">
 
-                                    <StackPanel Orientation="Vertical"
-                                                HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding UnlockRequirementText}"
+                                        <TextBlock Text="?"
                                                    HorizontalAlignment="Center"
-                                                   Foreground="{StaticResource SecondaryTextBrush}"
-                                                   Margin="0,6,0,0" />
+                                                   VerticalAlignment="Center"
+                                                   FontSize="30"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource SecondaryTextBrush}" />
 
-                                        <TextBlock HorizontalAlignment="Center"
+                                    </Border>
+
+                                    <Grid Grid.Column="1"
+                                          VerticalAlignment="Center">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0"
+                                                   Text="???"
+                                                   FontSize="18"
+                                                   FontWeight="Bold"
                                                    Foreground="{StaticResource SecondaryTextBrush}"
-                                                   Margin="4,6,0,0">
-                                            <Run Text="Cost: " />
-                                            <Run Text="{Binding CurrentCost, Mode=OneWay, Converter={StaticResource CompactNumberConverter}}" />
-                                            <Run Text=" Lines of Code" />
-                                        </TextBlock>
-                                    </StackPanel>
-                                </StackPanel>
+                                                   />
+
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{Binding UnlockRequirementText}"
+                                                   Margin="0,3,0,5"
+                                                   FontSize="12"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                        <StackPanel Grid.Row="2"
+                                                    Orientation="Horizontal">
+
+                                            <TextBlock Text="First hire"
+                                                       Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                            <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
+                                                   Width="18"
+                                                   Height="18"
+                                                   Margin="0,0,4,0"
+                                                   VerticalAlignment="Center"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                                            <TextBlock Text="{Binding CurrentCost,
+                                                       Converter={StaticResource CompactNumberConverter}}"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Border>
                     </Button>

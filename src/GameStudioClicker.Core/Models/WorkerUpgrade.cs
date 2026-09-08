@@ -37,8 +37,9 @@ public class WorkerUpgrade
     public bool IsUnlocked =>
         Prerequisite is null ||
         Prerequisite.WorkerCount >= RequiredPrerequisiteCount;
-    public bool IsVisible => IsUnlocked || Prerequisite?.IsUnlocked == true;
-    public bool IsMystery => !IsUnlocked && IsVisible;
+    public bool IsRevealed => Prerequisite is null || WorkerCount > 0;
+    public bool IsVisible => Prerequisite is null || Prerequisite.IsRevealed;
+    public bool IsMystery => IsVisible && !IsRevealed;
 
     public void AddWorker()
     {

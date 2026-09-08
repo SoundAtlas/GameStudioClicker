@@ -8,9 +8,10 @@
         Title="Game Studio Clicker"
         Icon="/Assets/Branding/AppIcon/app_icon_game_studio_clicker.png"
         Height="800"
-        Width="1200"
-        MinHeight="500"
-        MinWidth="700"
+        Width="1280"
+        MinHeight="800"
+        MinWidth="1280"
+
         Background="{StaticResource GameBackgroundBrush}"
         Foreground="{StaticResource PrimaryTextBrush}"
         FontFamily="{StaticResource BodyFontFamily}">
@@ -79,8 +80,9 @@
 
                 <Image Grid.Column="0"
                        Source="/Assets/Branding/Logo/logo_game_studio_clicker.png"
-                       MaxWidth="300"
-                       MaxHeight="150"
+
+                       MaxWidth="450"
+                       MaxHeight="250"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        Margin="0,0,0,4"
@@ -90,7 +92,7 @@
 
                 <!-- Manual coding and current production. -->
                 <Border Grid.Column="1"
-                        Width="280"
+                        Width="350"
                         HorizontalAlignment="Center"
                         Padding="10"
                         BorderThickness="1"
@@ -143,11 +145,24 @@
                             <TextBlock Text="{Binding LinesPerSecond,
                                        Converter={StaticResource CompactNumberConverter}}"
                                        FontSize="16"
-                                       FontWeight="SemiBold" />
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
 
-                            <TextBlock Text=" Lines / second"
-                                       FontSize="16"
-                                       FontWeight="SemiBold" />
+                            <Image Source="/Assets/Icons/Currency/icon_lines_of_code.png"
+                                   Width="24"
+                                   Height="24"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Margin="6,0,4,0"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                   SnapsToDevicePixels="True"/>
+
+                            <TextBlock Text="/ second"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource SecondaryTextBrush}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
