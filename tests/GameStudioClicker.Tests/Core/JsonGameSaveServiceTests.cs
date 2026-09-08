@@ -94,6 +94,40 @@ public class JsonGameSaveServiceTests
     }
 
     [TestMethod]
+    public void LoadFromFile_WithObsoleteWorkerCountProperties_IgnoresThem()
+    {
+        var service = new JsonGameSaveService();
+        string filePath = Path.Combine(
+            Path.GetTempPath(),
+            $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        const string legacyJson = """
+                                  {
+                                    "LinesOfCode": 456,
+                                    "InternCount": 5,
+                                    "JuniorDeveloperCount": 2
+                                  }
+                                  """;
+
+        try
+        {
+            File.WriteAllText(filePath, legacyJson);
+
+            GameSaveData? loadedSaveData = service.LoadFromFile(filePath);
+
+            Assert.IsNotNull(loadedSaveData);
+            Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
+            Assert.IsEmpty(loadedSaveData.WorkerUpgradeCounts);
+        }
+        finally
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+    }
+
+    [TestMethod]
     public void LoadFromFile_WhenFileDoesNotExist_ReturnsNull()
     {
         // Arrange
