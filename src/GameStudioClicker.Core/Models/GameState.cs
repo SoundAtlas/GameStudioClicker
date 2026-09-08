@@ -18,6 +18,10 @@ namespace GameStudioClicker.Core.Models
         public long LifetimeManualClicks { get; private set; }
         public long LifetimeEmployeesHired { get; private set; }
         public long LifetimeActiveUpgradesPurchased { get; private set; }
+        public long LinesGeneratedManually { get; private set; }
+        public long LinesGeneratedByWorkers { get; private set; }
+        public long LinesGeneratedWhileOnline { get; private set; }
+        public long LinesGeneratedWhileOffline { get; private set; }
 
         // Construction
         public GameState()
@@ -30,12 +34,16 @@ namespace GameStudioClicker.Core.Models
         public void WriteCode()
         {
             AddLinesOfCode(LinesPerClick);
+            LinesGeneratedManually += LinesPerClick;
+            LinesGeneratedWhileOnline += LinesPerClick;
             LifetimeManualClicks++;
         }
 
         public void GeneratePassiveLines()
         {
             AddLinesOfCode(LinesPerSecond);
+            LinesGeneratedByWorkers += LinesPerSecond;
+            LinesGeneratedWhileOnline += LinesPerSecond;
         }
 
         public long ApplyOfflineProgress(TimeSpan elapsed)
@@ -58,6 +66,8 @@ namespace GameStudioClicker.Core.Models
             long offlineLines = wholeSeconds * LinesPerSecond;
 
             AddLinesOfCode(offlineLines);
+            LinesGeneratedByWorkers += offlineLines;
+            LinesGeneratedWhileOffline += offlineLines;
 
             return offlineLines;
         }
@@ -174,6 +184,10 @@ namespace GameStudioClicker.Core.Models
                 LifetimeManualClicks = this.LifetimeManualClicks,
                 LifetimeEmployeesHired = this.LifetimeEmployeesHired,
                 LifetimeActiveUpgradesPurchased = this.LifetimeActiveUpgradesPurchased,
+                LinesGeneratedByWorkers = this.LinesGeneratedByWorkers,
+                LinesGeneratedManually = this.LinesGeneratedManually,
+                LinesGeneratedWhileOnline = this.LinesGeneratedWhileOnline,
+                LinesGeneratedWhileOffline = this.LinesGeneratedWhileOffline,
             };
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
@@ -212,6 +226,10 @@ namespace GameStudioClicker.Core.Models
             LifetimeManualClicks = Math.Max(0L, saveData.LifetimeManualClicks);
             LifetimeEmployeesHired = Math.Max(0L, saveData.LifetimeEmployeesHired);
             LifetimeActiveUpgradesPurchased = Math.Max(0L, saveData.LifetimeActiveUpgradesPurchased);
+            LinesGeneratedManually = Math.Max(0L, saveData.LinesGeneratedManually);
+            LinesGeneratedByWorkers = Math.Max(0L, saveData.LinesGeneratedByWorkers);
+            LinesGeneratedWhileOnline = Math.Max(0L, saveData.LinesGeneratedWhileOnline);
+            LinesGeneratedWhileOffline = Math.Max(0L, saveData.LinesGeneratedWhileOffline);
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
