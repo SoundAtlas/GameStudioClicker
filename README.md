@@ -21,7 +21,8 @@ refactoring, and learning how game rules connect to a responsive desktop interfa
 - Preview upcoming active upgrades and explain unmet requirements in tooltips.
 - Hire repeatable workers whose costs double after every purchase.
 - Unlock later worker types through ownership requirements.
-- Show the next locked worker as a mystery card with unlock progress.
+- Show the next worker as a mystery card with requirement progress, keep its
+  identity hidden when it becomes hireable, and reveal it after the first hire.
 
 | Worker | Base cost | Base production | Unlock requirement |
 |---|---:|---:|---|
@@ -49,6 +50,16 @@ On Windows, the save file is stored at:
 %LocalAppData%\GameStudioClicker\game_save.json
 ```
 
+### Lifetime statistics
+
+- Track Lifetime Lines of Code, manual clicks, employees hired, and active
+  upgrades purchased.
+- Split generated Lines of Code by source (manual or workers) and play state
+  (online or offline).
+- Persist statistics with the rest of the save data and restore them on startup.
+- Present statistics through reusable ViewModels and an `ItemsControl` so new
+  rows do not require duplicated XAML.
+
 ### Interface and feedback
 
 - Use a modern dark pixel interface built around deep navy surfaces, crisp pixel
@@ -60,7 +71,10 @@ On Windows, the save file is stored at:
 - Use a three-part dashboard for branding, manual production, and active upgrades.
 - Distinguish immediately purchasable active upgrades with a persistent cyan
   outline while dimming upgrades that cannot currently be bought.
-- Show workers in a compact two-column layout with the whole card acting as Hire.
+- Show workers in a compact, stable three-column roster with the whole card acting
+  as the hire action.
+- Keep worker cards focused on identity, owned count, and hire cost while moving
+  detailed production information into consistent tooltips.
 - Keep scrolling limited to the worker progression area.
 - Show concurrent floating click values that alternate left and right.
 - Pulse newly affordable active upgrades.
@@ -112,10 +126,10 @@ dotnet test GameStudioClicker.sln
 
 ## Next milestone
 
-The existing Statistics view tracks persistent Lifetime Lines of Code. The next
-short-term work is to expand it with additional useful statistics, simplify the
-worker cards so they communicate with less text, and introduce the first small set
-of achievements. Gameplay balancing remains intentionally deferred and is tracked
-separately in `BALANCING_NOTES.md`.
+The next short-term milestone is the first small set of achievements, built on the
+lifetime statistics and progression state now available. Responsive and high-DPI
+visual checks and executable-icon configuration remain small interface follow-ups.
+Gameplay balancing is still intentionally deferred and tracked separately in
+`BALANCING_NOTES.md`.
 
 See [`ROADMAP.md`](ROADMAP.md) for the complete milestone history and planned work.
