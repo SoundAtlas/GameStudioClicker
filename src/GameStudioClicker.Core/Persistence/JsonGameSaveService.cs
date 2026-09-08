@@ -32,7 +32,7 @@ public class JsonGameSaveService
             string json = File.ReadAllText(filePath);
             GameSaveData? saveData = JsonSerializer.Deserialize<GameSaveData>(json);
 
-            return saveData == null
+            return saveData is null
                 ? throw new JsonException("Save data was null")
                 : saveData;
         }

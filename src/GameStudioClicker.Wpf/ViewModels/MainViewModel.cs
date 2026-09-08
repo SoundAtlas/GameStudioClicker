@@ -36,6 +36,8 @@ public class MainViewModel : ViewModelBase, IDisposable
             workerUpgradeViewModels.Add(new WorkerUpgradeViewModel(_gameState, upgrade));
         }
 
+        Statistics = CreateStatistics(_gameState);
+
         WorkerUpgrades = workerUpgradeViewModels;
 
         OfflineLinesEarned = Math.Max(0, offlineLinesEarned);
@@ -76,11 +78,23 @@ public class MainViewModel : ViewModelBase, IDisposable
         _passiveTimer.Start();
     }
 
+    private static IReadOnlyList<StatisticViewModel> CreateStatistics(
+        GameState gameState)
+    {
+        return
+            [
+                new StatisticViewModel("Lines of Code", () => gameState.LifetimeLinesOfCode),
+                new StatisticViewModel("Manual Clicks", () => gameState.LifetimeManualClicks),
+                new StatisticViewModel("Employees Hired", () => gameState.LifetimeEmployeesHired),
+                new StatisticViewModel("Active Upgrades Purchased", () => gameState.LifetimeActiveUpgradesPurchased)
+            ];
+
+    }
+
     // Production displayed by the main coding panel.
     public long LinesOfCode => _gameState.LinesOfCode;
     public long LinesPerClick => _gameState.LinesPerClick;
     public long LinesPerSecond => _gameState.LinesPerSecond;
-    public long LifetimeLinesOfCode => _gameState.LifetimeLinesOfCode;
 
     // Navigation and view state
     public bool IsStatisticsViewVisible
@@ -110,6 +124,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     // Collections and commands consumed by the view.
     public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
     public IReadOnlyList<WorkerUpgradeViewModel> WorkerUpgrades { get; }
+    public IReadOnlyList<StatisticViewModel> Statistics { get; }
     public RelayCommand WriteCodeCommand { get; }
     public RelayCommand PurchaseActiveUpgradeCommand { get; }
     public RelayCommand PurchaseWorkerUpgradeCommand { get; }
@@ -149,11 +164,10 @@ public class MainViewModel : ViewModelBase, IDisposable
     private void ExecuteWriteCode(object? parameter)
     {
         _gameState.WriteCode();
-        OnPropertyChanged(nameof(LinesOfCode));
-        OnPropertyChanged(nameof(LifetimeLinesOfCode));
-
+        RefreshProductionValues();
         RefreshPurchaseCommands();
         RefreshActiveUpgradeStates();
+        RefreshStatistics();
     }
 
     private bool CanExecutePurchaseActiveUpgrade(object? parameter)
@@ -171,15 +185,14 @@ public class MainViewModel : ViewModelBase, IDisposable
         if (parameter is ActiveUpgradeViewModel upgradeViewModel &&
             _gameState.TryPurchaseActiveUpgrade(upgradeViewModel.Upgrade))
         {
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerClick));
-            OnPropertyChanged(nameof(LinesPerSecond));
+            RefreshProductionValues();
 
             SaveRequested?.Invoke(this, new EventArgs());
 
             RefreshWorkerUpgradeStates();
             RefreshActiveUpgradeStates();
             RefreshPurchaseCommands();
+            RefreshStatistics();
         }
     }
 
@@ -198,14 +211,14 @@ public class MainViewModel : ViewModelBase, IDisposable
         if (parameter is WorkerUpgradeViewModel upgradeViewModel &&
             _gameState.TryPurchaseWorkerUpgrade(upgradeViewModel.Upgrade))
         {
-            OnPropertyChanged(nameof(LinesOfCode));
-            OnPropertyChanged(nameof(LinesPerSecond));
+            RefreshProductionValues();
 
             SaveRequested?.Invoke(this, new EventArgs());
 
             RefreshWorkerUpgradeStates();
             RefreshActiveUpgradeStates();
             RefreshPurchaseCommands();
+            RefreshStatistics();
         }
     }
 
@@ -214,15 +227,14 @@ public class MainViewModel : ViewModelBase, IDisposable
         IsStatisticsViewVisible = !IsStatisticsViewVisible;
     }
 
-
     private void PassiveTimer_Tick(object? sender, EventArgs e)
     {
         _gameState.GeneratePassiveLines();
         OnPropertyChanged(nameof(LinesOfCode));
-        OnPropertyChanged(nameof(LifetimeLinesOfCode));
 
         RefreshPurchaseCommands();
         RefreshActiveUpgradeStates();
+        RefreshStatistics();
     }
 
     private void OfflineMessageTimer_Tick(object? sender, EventArgs e)
@@ -237,6 +249,13 @@ public class MainViewModel : ViewModelBase, IDisposable
         _saveConfirmationMessageTimer.Stop();
         _showSaveConfirmation = false;
         OnPropertyChanged(nameof(HasSaveConfirmation));
+    }
+
+    private void RefreshProductionValues()
+    {
+        OnPropertyChanged(nameof(LinesOfCode));
+        OnPropertyChanged(nameof(LinesPerClick));
+        OnPropertyChanged(nameof(LinesPerSecond));
     }
 
     private void RefreshPurchaseCommands()
@@ -260,6 +279,14 @@ public class MainViewModel : ViewModelBase, IDisposable
         foreach (WorkerUpgradeViewModel upgradeViewModel in WorkerUpgrades)
         {
             upgradeViewModel.RefreshState();
+        }
+    }
+
+    private void RefreshStatistics()
+    {
+        foreach (var statistic in Statistics)
+        {
+            statistic.Refresh();
         }
     }
 

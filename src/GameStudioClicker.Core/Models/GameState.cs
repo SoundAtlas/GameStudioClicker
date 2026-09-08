@@ -15,6 +15,9 @@ namespace GameStudioClicker.Core.Models
 
         // Lifetime stats
         public long LifetimeLinesOfCode { get; private set; }
+        public long LifetimeManualClicks { get; private set; }
+        public long LifetimeEmployeesHired { get; private set; }
+        public long LifetimeActiveUpgradesPurchased { get; private set; }
 
         // Construction
         public GameState()
@@ -27,6 +30,7 @@ namespace GameStudioClicker.Core.Models
         public void WriteCode()
         {
             AddLinesOfCode(LinesPerClick);
+            LifetimeManualClicks++;
         }
 
         public void GeneratePassiveLines()
@@ -103,6 +107,7 @@ namespace GameStudioClicker.Core.Models
                 LinesPerClick *= activeUpgrade.ClickMultiplier;
                 activeUpgrade.MarkAsPurchased();
                 RecalculateLinesPerSecond();
+                LifetimeActiveUpgradesPurchased++;
 
                 return true;
             }
@@ -129,6 +134,7 @@ namespace GameStudioClicker.Core.Models
                 LinesOfCode -= workerUpgrade.CurrentCost;
                 workerUpgrade.AddWorker();
                 RecalculateLinesPerSecond();
+                LifetimeEmployeesHired++;
 
                 return true;
             }
@@ -164,7 +170,10 @@ namespace GameStudioClicker.Core.Models
             var saveData = new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
-                LifetimeLinesOfCode = this.LifetimeLinesOfCode
+                LifetimeLinesOfCode = this.LifetimeLinesOfCode,
+                LifetimeManualClicks = this.LifetimeManualClicks,
+                LifetimeEmployeesHired = this.LifetimeEmployeesHired,
+                LifetimeActiveUpgradesPurchased = this.LifetimeActiveUpgradesPurchased,
             };
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
@@ -186,7 +195,7 @@ namespace GameStudioClicker.Core.Models
         // Derived production rates and costs are rebuilt from persistent values.
         public void RestoreFromSaveData(GameSaveData saveData)
         {
-            if (saveData == null)
+            if (saveData is null)
             {
                 throw new ArgumentNullException(nameof(saveData), "Save data cannot be null.");
             }
@@ -197,7 +206,12 @@ namespace GameStudioClicker.Core.Models
                 saveData.WorkerUpgradeCounts ?? [];
 
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
+
+            // Statistics
             LifetimeLinesOfCode = Math.Max(0L, saveData.LifetimeLinesOfCode);
+            LifetimeManualClicks = Math.Max(0L, saveData.LifetimeManualClicks);
+            LifetimeEmployeesHired = Math.Max(0L, saveData.LifetimeEmployeesHired);
+            LifetimeActiveUpgradesPurchased = Math.Max(0L, saveData.LifetimeActiveUpgradesPurchased);
 
             foreach (ActiveUpgrade upgrade in ActiveUpgrades)
             {
