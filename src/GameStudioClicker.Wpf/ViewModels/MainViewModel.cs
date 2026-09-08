@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase, IDisposable
 {
     private readonly GameState _gameState;
     private readonly DispatcherTimer _passiveTimer;
@@ -13,9 +13,9 @@ public class MainViewModel : ViewModelBase
     private readonly DispatcherTimer _saveConfirmationMessageTimer;
 
     private bool _isStatisticsViewVisible;
-
     private bool _showOfflineEarnings;
     private bool _showSaveConfirmation;
+    private bool _isDisposed;
 
     public MainViewModel(GameState gameState, long offlineLinesEarned = 0)
     {
@@ -125,6 +125,25 @@ public class MainViewModel : ViewModelBase
         // Restarting the timer keeps the message visible after closely spaced saves.
         _saveConfirmationMessageTimer.Stop();
         _saveConfirmationMessageTimer.Start();
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        _isDisposed = true;
+
+        _offlineMessageTimer.Stop();
+        _offlineMessageTimer.Tick -= OfflineMessageTimer_Tick;
+
+        _passiveTimer.Stop();
+        _passiveTimer.Tick -= PassiveTimer_Tick;
+
+        _saveConfirmationMessageTimer.Stop();
+        _saveConfirmationMessageTimer.Tick -= SaveConfirmationMessage_Tick;
     }
 
     private void ExecuteWriteCode(object? parameter)
