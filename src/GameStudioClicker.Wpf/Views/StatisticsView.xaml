@@ -20,7 +20,7 @@
 
                 <StackPanel Margin="12">
                     <!-- Page heading -->
-                    <TextBlock Text="Statistics"
+                    <TextBlock Text="Lifetime Statistics"
                                Style="{StaticResource SectionHeadingTextStyle}"
                                Margin="0,0,0,16" />
 
@@ -31,29 +31,35 @@
                             BorderThickness="1"
                             CornerRadius="8">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <ItemsControl ItemsSource="{Binding Statistics}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- One Reusable statistic row -->
+                                    <Grid Margin="6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0"
-                                       Text="Lifetime Lines of Code"
-                                       VerticalAlignment="Center"
-                                       FontSize="17"
-                                       FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding DisplayName}"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="17"
+                                                   FontWeight="SemiBold" />
 
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding LifetimeLinesOfCode,
-                                       Converter={StaticResource CompactNumberConverter}}"
-                                       Margin="24,0,0,0"
-                                       VerticalAlignment="Center"
-                                       FontSize="20"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource PrimaryCyanBrush}" />
-                        </Grid>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Value,
+                                                   Converter={StaticResource CompactNumberConverter}}"
+                                                   Margin="24,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="20"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource PrimaryCyanBrush}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Border>
-
                     <!-- Future achievement content will go below the statistics cards. -->
                 </StackPanel>
             </ScrollViewer>

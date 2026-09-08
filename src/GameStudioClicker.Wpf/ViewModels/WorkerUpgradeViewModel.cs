@@ -39,7 +39,7 @@ public class WorkerUpgradeViewModel : ViewModelBase
     public bool IsUnlocked => _workerUpgrade.IsUnlocked;
     public bool IsVisible => _workerUpgrade.IsVisible;
     public bool IsMystery => _workerUpgrade.IsMystery;
-    public string UnlockRequirementText => _workerUpgrade.Prerequisite == null
+    public string UnlockRequirementText => _workerUpgrade.Prerequisite is null
         ? string.Empty
         : $"Requires {_workerUpgrade.RequiredPrerequisiteCount} × " +
           $"{_workerUpgrade.Prerequisite.DisplayName} " +

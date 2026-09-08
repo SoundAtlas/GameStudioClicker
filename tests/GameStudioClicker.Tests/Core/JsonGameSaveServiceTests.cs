@@ -52,6 +52,11 @@ public class JsonGameSaveServiceTests
         var saveData = new GameSaveData
         {
             LinesOfCode = 456,
+            LifetimeLinesOfCode = 1_000,
+            LinesGeneratedManually = 400,
+            LinesGeneratedByWorkers = 600,
+            LinesGeneratedWhileOnline = 700,
+            LinesGeneratedWhileOffline = 300,
             SavedAtUtc = savedAtUtc,
             WorkerUpgradeCounts = new Dictionary<string, int>
             {
@@ -77,6 +82,11 @@ public class JsonGameSaveServiceTests
             // Assert
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
+            Assert.AreEqual(1_000L, loadedSaveData.LifetimeLinesOfCode);
+            Assert.AreEqual(400L, loadedSaveData.LinesGeneratedManually);
+            Assert.AreEqual(600L, loadedSaveData.LinesGeneratedByWorkers);
+            Assert.AreEqual(700L, loadedSaveData.LinesGeneratedWhileOnline);
+            Assert.AreEqual(300L, loadedSaveData.LinesGeneratedWhileOffline);
             Assert.AreEqual(savedAtUtc, loadedSaveData.SavedAtUtc);
             Assert.AreEqual(5, loadedSaveData.WorkerUpgradeCounts["intern"]);
             Assert.AreEqual(2, loadedSaveData.WorkerUpgradeCounts["junior_developer"]);

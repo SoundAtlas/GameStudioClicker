@@ -188,6 +188,28 @@ public class GameStateTests
         gameState.GeneratePassiveLines();
 
         Assert.AreEqual(2L, gameState.LinesOfCode);
+        Assert.AreEqual(2L, gameState.LifetimeLinesOfCode);
+        Assert.AreEqual(2L, gameState.LinesGeneratedByWorkers);
+        Assert.AreEqual(2L, gameState.LinesGeneratedWhileOnline);
+        Assert.AreEqual(0L, gameState.LinesGeneratedManually);
+        Assert.AreEqual(0L, gameState.LinesGeneratedWhileOffline);
+    }
+
+    [TestMethod]
+    public void WriteCode_UpdatesManualAndOnlineStatistics()
+    {
+        var gameState = new GameState();
+        long linesPerClick = gameState.LinesPerClick;
+
+        gameState.WriteCode();
+
+        Assert.AreEqual(linesPerClick, gameState.LinesOfCode);
+        Assert.AreEqual(linesPerClick, gameState.LifetimeLinesOfCode);
+        Assert.AreEqual(1L, gameState.LifetimeManualClicks);
+        Assert.AreEqual(linesPerClick, gameState.LinesGeneratedManually);
+        Assert.AreEqual(linesPerClick, gameState.LinesGeneratedWhileOnline);
+        Assert.AreEqual(0L, gameState.LinesGeneratedByWorkers);
+        Assert.AreEqual(0L, gameState.LinesGeneratedWhileOffline);
     }
 
     [TestMethod]
@@ -241,6 +263,14 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 500,
+            LifetimeLinesOfCode = 1_000,
+            LifetimeManualClicks = 50,
+            LifetimeEmployeesHired = 7,
+            LifetimeActiveUpgradesPurchased = 2,
+            LinesGeneratedManually = 400,
+            LinesGeneratedByWorkers = 600,
+            LinesGeneratedWhileOnline = 700,
+            LinesGeneratedWhileOffline = 300,
             WorkerUpgradeCounts = new Dictionary<string, int>
             {
                 ["intern"] = 5,
@@ -256,6 +286,14 @@ public class GameStateTests
         GameSaveData saveData = gameState.CreateSaveData();
 
         Assert.AreEqual(500L, saveData.LinesOfCode);
+        Assert.AreEqual(1_000L, saveData.LifetimeLinesOfCode);
+        Assert.AreEqual(50L, saveData.LifetimeManualClicks);
+        Assert.AreEqual(7L, saveData.LifetimeEmployeesHired);
+        Assert.AreEqual(2L, saveData.LifetimeActiveUpgradesPurchased);
+        Assert.AreEqual(400L, saveData.LinesGeneratedManually);
+        Assert.AreEqual(600L, saveData.LinesGeneratedByWorkers);
+        Assert.AreEqual(700L, saveData.LinesGeneratedWhileOnline);
+        Assert.AreEqual(300L, saveData.LinesGeneratedWhileOffline);
         CollectionAssert.AreEqual(
             new List<string> { "mouse_pad", "gaming_mouse" },
             saveData.PurchasedActiveUpgradeIds);
@@ -372,6 +410,11 @@ public class GameStateTests
 
         Assert.AreEqual(220L, earnedLines);
         Assert.AreEqual(220L, gameState.LinesOfCode);
+        Assert.AreEqual(220L, gameState.LifetimeLinesOfCode);
+        Assert.AreEqual(220L, gameState.LinesGeneratedByWorkers);
+        Assert.AreEqual(220L, gameState.LinesGeneratedWhileOffline);
+        Assert.AreEqual(0L, gameState.LinesGeneratedManually);
+        Assert.AreEqual(0L, gameState.LinesGeneratedWhileOnline);
     }
 
     [TestMethod]

@@ -40,7 +40,7 @@ public class ActiveUpgrade
     // Progression state
     public ActiveUpgrade? Prerequisite { get; }
     public bool IsPurchased { get; private set; }
-    public bool IsUnlocked => Prerequisite == null || Prerequisite.IsPurchased;
+    public bool IsUnlocked => Prerequisite is null || Prerequisite.IsPurchased;
     public bool IsAvailable => IsUnlocked && !IsPurchased;
 
     public void MarkAsPurchased()
