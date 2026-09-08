@@ -29,6 +29,65 @@ public class GameStateTests
     }
 
     [TestMethod]
+    public void NewGameState_ActiveUpgradeIds_AreUnique()
+    {
+        var gameState = new GameState();
+
+        int uniqueIdCount = gameState.ActiveUpgrades
+            .Select(upgrade => upgrade.Id)
+            .Distinct()
+            .Count();
+
+        Assert.AreEqual(gameState.ActiveUpgrades.Count, uniqueIdCount);
+    }
+
+    [TestMethod]
+    public void NewGameState_ActiveUpgrades_AreInExpectedProgressionOrder()
+    {
+        var gameState = new GameState();
+        string[] expectedIds =
+        [
+            "mouse_pad",
+            "gaming_mouse",
+            "mechanical_keyboard",
+            "noise_cancelling_headset",
+            "onboarding_handbook",
+            "graphics_card",
+            "second_monitor",
+            "ergonomic_desk_setup",
+            "developer_laptop",
+            "code_review_checklist",
+            "professional_ide_license",
+            "high_end_workstation",
+            "intern_mentorship_program",
+            "build_server",
+            "automated_testing_suite",
+            "architecture_workshop",
+            "automated_development_pipeline",
+            "capture_studio",
+            "pair_programming_sessions",
+            "studio_server_rack",
+            "proprietary_game_engine",
+            "technical_leadership_training",
+            "render_farm",
+            "global_cloud_infrastructure",
+            "ai_workstations",
+            "developer_toolkit",
+            "neural_motion_capture_system",
+            "autonomous_qa_swarm",
+            "self_organizing_dev_teams",
+            "quantum_build_server",
+            "predictive_game_engine",
+            "adaptive_learning_program"
+        ];
+        string[] actualIds = gameState.ActiveUpgrades
+            .Select(upgrade => upgrade.Id)
+            .ToArray();
+
+        CollectionAssert.AreEqual(expectedIds, actualIds);
+    }
+
+    [TestMethod]
     public void TryPurchaseActiveUpgrade_WhenFirstUpgradePurchaseSucceeds_UpdatesState()
     {
         var gameState = new GameState();
@@ -138,12 +197,12 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 1_200,
-            PurchasedActiveUpgradeIds = ["webcam"]
+            PurchasedActiveUpgradeIds = ["noise_cancelling_headset"]
         });
-        ActiveUpgrade trainingManual =
-            GetActiveUpgrade(gameState, "intern_training_manual");
+        ActiveUpgrade onboardingHandbook =
+            GetActiveUpgrade(gameState, "onboarding_handbook");
 
-        bool result = gameState.CanPurchaseActiveUpgrade(trainingManual);
+        bool result = gameState.CanPurchaseActiveUpgrade(onboardingHandbook);
 
         Assert.IsFalse(result);
     }
@@ -155,19 +214,19 @@ public class GameStateTests
         gameState.RestoreFromSaveData(new GameSaveData
         {
             LinesOfCode = 1_200,
-            PurchasedActiveUpgradeIds = ["webcam"],
+            PurchasedActiveUpgradeIds = ["noise_cancelling_headset"],
             WorkerUpgradeCounts = new Dictionary<string, int>
             {
                 ["intern"] = 1,
                 ["junior_developer"] = 1
             }
         });
-        ActiveUpgrade trainingManual =
-            GetActiveUpgrade(gameState, "intern_training_manual");
+        ActiveUpgrade onboardingHandbook =
+            GetActiveUpgrade(gameState, "onboarding_handbook");
         WorkerUpgrade intern = GetWorkerUpgrade(gameState, "intern");
         WorkerUpgrade juniorDeveloper = GetWorkerUpgrade(gameState, "junior_developer");
 
-        bool result = gameState.TryPurchaseActiveUpgrade(trainingManual);
+        bool result = gameState.TryPurchaseActiveUpgrade(onboardingHandbook);
 
         Assert.IsTrue(result);
         Assert.AreEqual(4L, gameState.GetWorkerLinesPerSecondPerEmployee(intern));
