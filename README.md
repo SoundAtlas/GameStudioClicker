@@ -2,7 +2,8 @@
 
 Game Studio Clicker is a playable C# and WPF idle/clicker prototype built as a
 learning project. The player writes Lines of Code manually, purchases one-time
-upgrades, and hires employees who produce code automatically.
+upgrades, hires employees who produce code automatically, and earns achievements
+for progression milestones.
 
 The project focuses on readable C#, practical MVVM, JSON persistence, incremental
 refactoring, and learning how game rules connect to a responsive desktop interface.
@@ -13,8 +14,8 @@ refactoring, and learning how game rules connect to a responsive desktop interfa
 
 - Write one Line of Code per click at the start of a new game.
 - Purchase chained active upgrades that multiply click production.
-- Purchase targeted upgrades for Interns, Junior Developers, Senior Developers,
-  and Lead Developers.
+- Purchase targeted upgrades for six worker tiers, from Intern through Studio
+  Director.
 - Purchase a late-game global upgrade that affects every worker type.
 - Require ownership of the targeted worker type before its production upgrades
   can be purchased.
@@ -30,16 +31,21 @@ refactoring, and learning how game rules connect to a responsive desktop interfa
 | Junior Developer | 2,000 | 20/second | Own 5 Interns |
 | Senior Developer | 20,000 | 2,000/second | Own 5 Junior Developers |
 | Lead Developer | 200,000 | 20,000/second | Own 1 Senior Developer |
+| Engineering Manager | 2,000,000 | 200,000/second | Own 1 Lead Developer |
+| Studio Director | 20,000,000 | 2,000,000/second | Own 1 Engineering Manager |
 
 All economy values are provisional. Current playtest observations are recorded in
 [`BALANCING_NOTES.md`](BALANCING_NOTES.md).
+
+The starting click power is temporarily elevated during development so new content
+can be reached quickly while testing. It is not a final balance value.
 
 ### Saving and offline progress
 
 - Load progress automatically on startup.
 - Save every 30 seconds, after purchases, and when the window closes.
-- Persist Lines of Code, purchased active-upgrade IDs, worker counts, and the last
-  save time as readable JSON.
+- Persist Lines of Code, purchased active-upgrade IDs, worker counts, earned
+  achievement IDs, and the last save time as readable JSON.
 - Award up to 24 hours of passive production while the game is closed.
 - Preserve malformed saves with a timestamped `.corrupt-*` suffix and start safely.
 - Tolerate missing save collections and clamp negative persisted values.
@@ -60,6 +66,19 @@ On Windows, the save file is stored at:
 - Present statistics through reusable ViewModels and an `ItemsControl` so new
   rows do not require duplicated XAML.
 
+### Achievements
+
+- Track four initial achievements for the first manual click, first employee,
+  first active upgrade, and 1,000 lifetime Lines of Code.
+- Calculate progress from existing lifetime statistics and progression state.
+- Persist earned achievement IDs and restore them without awarding duplicates.
+- Present achievements as a responsive grid of progress tiles on a dedicated
+  page separate from lifetime statistics.
+- Queue achievement unlock notifications so closely spaced unlocks are shown in
+  order.
+- Display animated, Steam-style achievement notifications without moving or
+  blocking the game interface.
+
 ### Interface and feedback
 
 - Use a modern dark pixel interface built around deep navy surfaces, crisp pixel
@@ -71,8 +90,8 @@ On Windows, the save file is stored at:
 - Use a three-part dashboard for branding, manual production, and active upgrades.
 - Distinguish immediately purchasable active upgrades with a persistent cyan
   outline while dimming upgrades that cannot currently be bought.
-- Show workers in a compact, stable three-column roster with the whole card acting
-  as the hire action.
+- Show six workers in a compact two-row, three-column roster with the whole card
+  acting as the hire action.
 - Keep worker cards focused on identity, owned count, and hire cost while moving
   detailed production information into consistent tooltips.
 - Keep scrolling limited to the worker progression area.
@@ -81,6 +100,8 @@ On Windows, the save file is stored at:
 - Animate worker hover, press, and purchase feedback using independent visual
   layers so repeated affordable purchases remain visible.
 - Animate offline earnings without shifting the dashboard.
+- Navigate independently between the worker roster, lifetime statistics, and
+  achievements.
 - Keep theme resources, control styles, and reusable Storyboards in separate WPF
   resource dictionaries.
 
@@ -96,11 +117,14 @@ under [`src/GameStudioClicker.Wpf/Assets/`](src/GameStudioClicker.Wpf/Assets/).
   formatting, timers, and window lifecycle integration.
 - `GameStudioClicker.Tests` contains focused MSTest coverage for game rules,
   ViewModels, commands, and JSON persistence.
+- `IGameSaveRepository` separates game-session logic from the current
+  `JsonGameSaveRepository`, leaving room for another persistence implementation
+  later.
 - `Styles/Theme.xaml`, `Styles/Animations.xaml`, and `Styles/Controls.xaml` separate
   shared visual resources from individual views.
-- `ActiveUpgradesView`, `WorkerUpgradesView`, and `StatisticsView` own their
-  respective interface sections, leaving `MainWindow` responsible for the overall
-  shell and navigation.
+- `ActiveUpgradesView`, `WorkerUpgradesView`, `StatisticsView`, and
+  `AchievementsView` own their respective interface sections, leaving `MainWindow`
+  responsible for the overall shell, page navigation, and global notifications.
 
 The Model owns economy rules and derived production. ViewModels adapt that state for
 binding and commands. The View owns layout and purely visual animation behavior.
@@ -126,10 +150,11 @@ dotnet test GameStudioClicker.sln
 
 ## Next milestone
 
-The next short-term milestone is the first small set of achievements, built on the
-lifetime statistics and progression state now available. Responsive and high-DPI
-visual checks and executable-icon configuration remain small interface follow-ups.
-Gameplay balancing is still intentionally deferred and tracked separately in
-`BALANCING_NOTES.md`.
+The next short-term milestone is to stabilize the new achievements and expanded
+worker roster with focused regression tests and a fresh manual playthrough. The
+temporary development click-power override still needs to be separated from the
+intended game balance before release. Responsive and high-DPI visual checks and
+executable-icon configuration remain small interface follow-ups. Gameplay balancing
+is still intentionally deferred and tracked separately in `BALANCING_NOTES.md`.
 
 See [`ROADMAP.md`](ROADMAP.md) for the complete milestone history and planned work.

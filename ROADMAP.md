@@ -105,11 +105,36 @@ Each milestone should be broken into learning-sized tasks before implementation.
   only when the player completes the first hire.
 - Match active-upgrade tooltip styling to the worker-card tooltip presentation.
 
+### 12. First achievements
+
+- Add four recognition-only achievements tied to manual clicking, hiring an
+  employee, purchasing an active upgrade, and lifetime Lines of Code.
+- Evaluate achievement progress from existing statistics and progression state.
+- Persist earned achievement IDs and restore them safely from JSON save data.
+- Present achievements as progress tiles on a dedicated page separate from
+  lifetime statistics.
+- Add independent navigation for workers, statistics, and achievements.
+- Queue newly earned achievements and show them through an animated, non-blocking
+  unlock notification.
+
+### 13. Expanded worker roster
+
+- Expand the worker progression to six tiers with Engineering Manager and Studio
+  Director.
+- Continue the prerequisite chain, production growth, and provisional cost curve.
+- Add matching worker portraits and use one consistent portrait path convention.
+- Fill the stable worker roster as two rows of three cards.
+
 ## Current priorities
 
 ### Short term
 
-- Implement the first small set of achievements.
+- Add focused regression tests for achievement unlocking, progress, and
+  persistence.
+- Verify queued achievement notifications and the expanded worker progression in
+  a fresh-save playthrough.
+- Keep the temporary elevated click power as a development aid while separating it
+  from the intended starting balance before release.
 - Complete responsive, minimum-window-size, and high-DPI visual checks.
 - Configure the supplied multi-resolution `.ico` as the executable icon.
 
@@ -121,14 +146,13 @@ Each milestone should be broken into learning-sized tasks before implementation.
 
 ## Next milestones
 
-### 1. Add the first achievements
+### 1. Stabilize achievements and the expanded roster
 
-- Begin with a small set tied to clear milestones already represented by lifetime
-  statistics and progression state.
-- Decide whether early achievements are recognition-only or provide modest rewards
-  before adding reward logic.
-- Persist earned achievement IDs and present achievements in a compact interface
-  that can grow gradually.
+- Add focused tests for achievement rules and save compatibility.
+- Confirm notifications appear once, in unlock order, without replaying restored
+  achievements.
+- Check the six-worker layout and achievement grid at the minimum supported window
+  size and common display scaling levels.
 
 ### 2. Balance the existing gameplay
 
@@ -149,7 +173,8 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
 
 ## Later possibilities
 
-- Expand achievements beyond the initial set.
+- Expand achievements beyond the initial recognition-only set and decide whether
+  later achievements should grant rewards.
 - More worker and active-upgrade types.
 - Additional artwork consistent with the modern dark pixel visual direction.
 - Sound effects and music controls.
