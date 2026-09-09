@@ -1,16 +1,19 @@
-using System.Text.Json;
 using GameStudioClicker.Core.Persistence;
+using System.Text.Json;
 
 namespace GameStudioClicker.Tests;
 
 [TestClass]
-public class JsonGameSaveServiceTests
+public class JsonGameSaveRepositoryTests
 {
     [TestMethod]
     public void SerializeGameSaveData_ReturnsReadableJsonWithSavedValues()
     {
         // Arrange
-        var service = new JsonGameSaveService();
+        string filePath = Path.Combine(
+            Path.GetTempPath(),
+            $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        var repository = new JsonGameSaveRepository(filePath);
         var saveData = new GameSaveData
         {
             LinesOfCode = 123,
@@ -26,7 +29,7 @@ public class JsonGameSaveServiceTests
         };
 
         // Act
-        string json = service.SerializeGameSaveData(saveData);
+        string json = repository.SerializeGameSaveData(saveData);
 
         // Assert
         StringAssert.Contains(json, Environment.NewLine);
@@ -44,10 +47,9 @@ public class JsonGameSaveServiceTests
     }
 
     [TestMethod]
-    public void SaveToFileAndLoadFromFile_RoundTripsSaveData()
+    public void SaveAndLoad_RoundTripsSaveData()
     {
         // Arrange
-        var service = new JsonGameSaveService();
         DateTime savedAtUtc = new(2026, 9, 5, 18, 30, 0, DateTimeKind.Utc);
         var saveData = new GameSaveData
         {
@@ -72,12 +74,13 @@ public class JsonGameSaveServiceTests
         string filePath = Path.Combine(
             Path.GetTempPath(),
             $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        var repository = new JsonGameSaveRepository(filePath);
 
         try
         {
             // Act
-            service.SaveToFile(saveData, filePath);
-            GameSaveData? loadedSaveData = service.LoadFromFile(filePath);
+            repository.Save(saveData);
+            GameSaveData? loadedSaveData = repository.Load();
 
             // Assert
             Assert.IsNotNull(loadedSaveData);
@@ -104,12 +107,12 @@ public class JsonGameSaveServiceTests
     }
 
     [TestMethod]
-    public void LoadFromFile_WithObsoleteWorkerCountProperties_IgnoresThem()
+    public void Load_WithObsoleteWorkerCountProperties_IgnoresThem()
     {
-        var service = new JsonGameSaveService();
         string filePath = Path.Combine(
             Path.GetTempPath(),
             $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        var repository = new JsonGameSaveRepository(filePath);
         const string legacyJson = """
                                   {
                                     "LinesOfCode": 456,
@@ -122,7 +125,7 @@ public class JsonGameSaveServiceTests
         {
             File.WriteAllText(filePath, legacyJson);
 
-            GameSaveData? loadedSaveData = service.LoadFromFile(filePath);
+            GameSaveData? loadedSaveData = repository.Load();
 
             Assert.IsNotNull(loadedSaveData);
             Assert.AreEqual(456L, loadedSaveData.LinesOfCode);
@@ -138,28 +141,28 @@ public class JsonGameSaveServiceTests
     }
 
     [TestMethod]
-    public void LoadFromFile_WhenFileDoesNotExist_ReturnsNull()
+    public void Load_WhenFileDoesNotExist_ReturnsNull()
     {
         // Arrange
-        var service = new JsonGameSaveService();
         string filePath = Path.Combine(
             Path.GetTempPath(),
             $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        var repository = new JsonGameSaveRepository(filePath);
 
         // Act
-        GameSaveData? result = service.LoadFromFile(filePath);
+        GameSaveData? result = repository.Load();
 
         // Assert
         Assert.IsNull(result);
     }
 
     [TestMethod]
-    public void LoadFromFile_WhenJsonIsMalformed_PreservesCorruptFileAndReturnsNull()
+    public void Load_WhenJsonIsMalformed_PreservesCorruptFileAndReturnsNull()
     {
-        var service = new JsonGameSaveService();
         string filePath = Path.Combine(
             Path.GetTempPath(),
             $"GameStudioClicker-{Guid.NewGuid():N}.json");
+        var repository = new JsonGameSaveRepository(filePath);
         string corruptPattern = $"{Path.GetFileName(filePath)}.corrupt-*";
         const string malformedJson = "{ not valid json";
 
@@ -167,7 +170,7 @@ public class JsonGameSaveServiceTests
         {
             File.WriteAllText(filePath, malformedJson);
 
-            GameSaveData? result = service.LoadFromFile(filePath);
+            GameSaveData? result = repository.Load();
             string[] corruptFiles = Directory.GetFiles(
                 Path.GetDirectoryName(filePath)!,
                 corruptPattern);

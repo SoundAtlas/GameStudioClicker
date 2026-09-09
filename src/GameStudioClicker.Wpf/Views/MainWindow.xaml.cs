@@ -1,7 +1,9 @@
+using GameStudioClicker.Core.Persistence;
 using GameStudioClicker.Wpf.Formatting;
 using GameStudioClicker.Wpf.Services;
 using GameStudioClicker.Wpf.ViewModels;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,7 +21,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        _gameSessionService = new GameSessionService();
+        string saveDirectoryPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "GameStudioClicker");
+        string saveFilePath = Path.Combine(saveDirectoryPath, "game_save.json");
+
+        IGameSaveRepository saveRepository =
+            new JsonGameSaveRepository(saveFilePath);
+
+        _gameSessionService = new GameSessionService(saveRepository);
         _gameSessionService.Start();
 
         _mainViewModel = new MainViewModel(
