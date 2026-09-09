@@ -7,11 +7,14 @@ namespace GameStudioClicker.Core.Models
     {
         // Core production state
         public long LinesOfCode { get; private set; }
-        public long LinesPerClick { get; private set; } = 999;
+        public long LinesPerClick { get; private set; } = 1000;
         public long LinesPerSecond { get; private set; } = 0;
 
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
+        public IReadOnlyList<Achievement> Achievements { get; }
+
+        public event Action<Achievement>? AchievementEarned;
 
         // Lifetime stats
         public long LifetimeLinesOfCode { get; private set; }
@@ -28,6 +31,7 @@ namespace GameStudioClicker.Core.Models
         {
             ActiveUpgrades = GameContentFactory.CreateActiveUpgrades();
             WorkerUpgrades = GameContentFactory.CreateWorkerUpgrades();
+            Achievements = GameContentFactory.CreateAchievements();
         }
 
         // Resource generation
@@ -37,6 +41,8 @@ namespace GameStudioClicker.Core.Models
             LinesGeneratedManually += LinesPerClick;
             LinesGeneratedWhileOnline += LinesPerClick;
             LifetimeManualClicks++;
+
+            CheckForNewAchievements();
         }
 
         public void GeneratePassiveLines()
@@ -44,6 +50,8 @@ namespace GameStudioClicker.Core.Models
             AddLinesOfCode(LinesPerSecond);
             LinesGeneratedByWorkers += LinesPerSecond;
             LinesGeneratedWhileOnline += LinesPerSecond;
+
+            CheckForNewAchievements();
         }
 
         public long ApplyOfflineProgress(TimeSpan elapsed)
@@ -69,6 +77,7 @@ namespace GameStudioClicker.Core.Models
             LinesGeneratedByWorkers += offlineLines;
             LinesGeneratedWhileOffline += offlineLines;
 
+            CheckForNewAchievements();
             return offlineLines;
         }
 
@@ -119,6 +128,8 @@ namespace GameStudioClicker.Core.Models
                 RecalculateLinesPerSecond();
                 LifetimeActiveUpgradesPurchased++;
 
+                CheckForNewAchievements();
+
                 return true;
             }
 
@@ -146,6 +157,8 @@ namespace GameStudioClicker.Core.Models
                 RecalculateLinesPerSecond();
                 LifetimeEmployeesHired++;
 
+                CheckForNewAchievements();
+
                 return true;
             }
 
@@ -162,7 +175,7 @@ namespace GameStudioClicker.Core.Models
         {
             long linesPerSecond = worker.BaseLinesPerSecond;
 
-            foreach (ActiveUpgrade activeUpgrade in ActiveUpgrades)
+            foreach (var activeUpgrade in ActiveUpgrades)
             {
                 if (activeUpgrade.IsPurchased &&
                     (activeUpgrade.TargetWorkerId == worker.Id || activeUpgrade.TargetAllWorkers))
@@ -172,6 +185,47 @@ namespace GameStudioClicker.Core.Models
             }
 
             return linesPerSecond;
+        }
+
+        // Achievements
+        public IReadOnlyList<Achievement> CheckForNewAchievements()
+        {
+            var newlyEarnedAchievements = new List<Achievement>();
+            foreach (var achievement in Achievements)
+            {
+                if (achievement.IsEarned)
+                {
+                    continue;
+                }
+
+                long progress =
+                    GetAchievementProgress(achievement);
+                if (progress >= achievement.RequirementValue)
+                {
+                    achievement.MarkAsEarned();
+                    newlyEarnedAchievements.Add(achievement);
+                    AchievementEarned?.Invoke(achievement);
+                }
+            }
+
+            return newlyEarnedAchievements;
+        }
+
+        public long GetAchievementProgress(Achievement achievement)
+        {
+            if (achievement is null)
+            {
+                throw new ArgumentNullException(nameof(achievement));
+            }
+
+            return achievement.RequirementType switch
+            {
+                AchievementRequirementType.ManualClicks => LifetimeManualClicks,
+                AchievementRequirementType.LifetimeLinesOfCode => LifetimeLinesOfCode,
+                AchievementRequirementType.EmployeesHired => LifetimeEmployeesHired,
+                AchievementRequirementType.ActiveUpgradesPurchased => LifetimeActiveUpgradesPurchased,
+                _ => throw new ArgumentOutOfRangeException(nameof(achievement.RequirementType)),
+            };
         }
 
         // Persistence
@@ -190,7 +244,7 @@ namespace GameStudioClicker.Core.Models
                 LinesGeneratedWhileOffline = this.LinesGeneratedWhileOffline,
             };
 
-            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            foreach (var upgrade in ActiveUpgrades)
             {
                 if (upgrade.IsPurchased)
                 {
@@ -198,9 +252,17 @@ namespace GameStudioClicker.Core.Models
                 }
             }
 
-            foreach (WorkerUpgrade workerUpgrade in WorkerUpgrades)
+            foreach (var workerUpgrade in WorkerUpgrades)
             {
                 saveData.WorkerUpgradeCounts[workerUpgrade.Id] = workerUpgrade.WorkerCount;
+            }
+
+            foreach (var achievement in Achievements)
+            {
+                if (achievement.IsEarned)
+                {
+                    saveData.EarnedAchievementIds.Add(achievement.Id);
+                }
             }
 
             return saveData;
@@ -218,6 +280,8 @@ namespace GameStudioClicker.Core.Models
                 saveData.PurchasedActiveUpgradeIds ?? [];
             Dictionary<string, int> workerUpgradeCounts =
                 saveData.WorkerUpgradeCounts ?? [];
+            List<string> earnedAchievementIds =
+                saveData.EarnedAchievementIds ?? [];
 
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
 
@@ -231,14 +295,14 @@ namespace GameStudioClicker.Core.Models
             LinesGeneratedWhileOnline = Math.Max(0L, saveData.LinesGeneratedWhileOnline);
             LinesGeneratedWhileOffline = Math.Max(0L, saveData.LinesGeneratedWhileOffline);
 
-            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            foreach (var upgrade in ActiveUpgrades)
             {
                 bool isPurchased = purchasedActiveUpgradeIds.Contains(upgrade.Id);
                 upgrade.RestorePurchaseState(isPurchased);
             }
 
             LinesPerClick = 1;
-            foreach (ActiveUpgrade upgrade in ActiveUpgrades)
+            foreach (var upgrade in ActiveUpgrades)
             {
                 if (upgrade.IsPurchased)
                 {
@@ -246,21 +310,29 @@ namespace GameStudioClicker.Core.Models
                 }
             }
 
-            foreach (WorkerUpgrade upgrade in WorkerUpgrades)
+            foreach (var upgrade in WorkerUpgrades)
             {
                 // Missing worker IDs represent a saved count of zero.
                 workerUpgradeCounts.TryGetValue(upgrade.Id, out int savedCount);
                 upgrade.RestoreWorkerCount(savedCount);
             }
 
+            foreach (var achievement in Achievements)
+            {
+                bool isEarned = earnedAchievementIds.Contains(achievement.Id);
+                achievement.RestoreEarnedState(isEarned);
+            }
+
             RecalculateLinesPerSecond();
+
+            CheckForNewAchievements();
         }
 
         private void RecalculateLinesPerSecond()
         {
             long calculatedLinesPerSecond = 0;
 
-            foreach (WorkerUpgrade worker in WorkerUpgrades)
+            foreach (var worker in WorkerUpgrades)
             {
                 long linesPerSecond = GetWorkerLinesPerSecond(worker);
                 calculatedLinesPerSecond += linesPerSecond;

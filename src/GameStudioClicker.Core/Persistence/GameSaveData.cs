@@ -14,6 +14,7 @@ namespace GameStudioClicker.Core.Persistence
         public long LinesGeneratedWhileOffline { get; set; }
         public List<string> PurchasedActiveUpgradeIds { get; set; } = new List<string>();
         public Dictionary<string, int> WorkerUpgradeCounts { get; set; } = new Dictionary<string, int>();
+        public List<string> EarnedAchievementIds { get; set; } = new List<string>();
 
         // UTC avoids timezone and daylight-saving changes in offline progress calculations.
         public DateTime SavedAtUtc { get; set; }
