@@ -197,7 +197,7 @@ namespace GameStudioClicker.Core.Models
                 }
 
                 long progress =
-                    GetAchievementProgress(achievement.RequirementType);
+                    GetAchievementProgress(achievement);
                 if (progress >= achievement.RequirementValue)
                 {
                     achievement.MarkAsEarned();
@@ -208,15 +208,20 @@ namespace GameStudioClicker.Core.Models
             return newlyEarnedAchievements;
         }
 
-        private long GetAchievementProgress(AchievementRequirementType requirementType)
+        public long GetAchievementProgress(Achievement achievement)
         {
-            return requirementType switch
+            if (achievement is null)
+            {
+                throw new ArgumentNullException(nameof(achievement));
+            }
+
+            return achievement.RequirementType switch
             {
                 AchievementRequirementType.ManualClicks => LifetimeManualClicks,
                 AchievementRequirementType.LifetimeLinesOfCode => LifetimeLinesOfCode,
                 AchievementRequirementType.EmployeesHired => LifetimeEmployeesHired,
                 AchievementRequirementType.ActiveUpgradesPurchased => LifetimeActiveUpgradesPurchased,
-                _ => throw new ArgumentOutOfRangeException(nameof(requirementType)),
+                _ => throw new ArgumentOutOfRangeException(nameof(achievement.RequirementType)),
             };
         }
 

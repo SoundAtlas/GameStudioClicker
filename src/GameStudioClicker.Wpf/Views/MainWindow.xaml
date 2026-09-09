@@ -247,6 +247,12 @@
                                    BasedOn="{StaticResource PrimaryButtonStyle}">
                                 <Setter Property="Margin"
                                         Value="4" />
+                                <Setter Property="Width"
+                                        Value="52" />
+                                <Setter Property="Height"
+                                        Value="52" />
+                                <Setter Property="Padding"
+                                        Value="6" />
 
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsStatisticsViewVisible}"
@@ -262,8 +268,8 @@
 
 
                         <Image Source="/Assets/Icons/Navigation/icon_statistics.png"
-                               Width="32"
-                               Height="32"
+                               Width="40"
+                               Height="40"
                                RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
                     </Button>
@@ -277,6 +283,12 @@
                                    BasedOn="{StaticResource AchievementButtonStyle}">
                                 <Setter Property="Margin"
                                         Value="4" />
+                                <Setter Property="Width"
+                                        Value="52" />
+                                <Setter Property="Height"
+                                        Value="52" />
+                                <Setter Property="Padding"
+                                        Value="6" />
 
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsAchievementsViewVisible}"
@@ -291,8 +303,8 @@
                         </Button.Style>
 
                         <Image Source="/Assets/Icons/Navigation/icon_achievements.png"
-                               Width="32"
-                               Height="32"
+                               Width="40"
+                               Height="40"
                                RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
                     </Button>

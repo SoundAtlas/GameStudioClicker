@@ -8,6 +8,7 @@
         public AchievementRequirementType RequirementType { get; }
         public long RequirementValue { get; }
         public bool IsEarned { get; private set; }
+        public bool IsSecret { get; }
 
         public Achievement(
             string id,

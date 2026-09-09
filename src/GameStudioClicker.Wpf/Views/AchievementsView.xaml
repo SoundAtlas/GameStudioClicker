@@ -7,6 +7,43 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
 
+    <UserControl.Resources>
+        <Style x:Key="AchievementProgressBarStyle"
+               TargetType="{x:Type ProgressBar}">
+            <Setter Property="Height"
+                    Value="8" />
+            <Setter Property="Background"
+                    Value="{StaticResource GameBackgroundBrush}" />
+            <Setter Property="Foreground"
+                    Value="{StaticResource PrimaryCyanBrush}" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid ClipToBounds="True">
+                            <Border x:Name="PART_Track"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="4" />
+
+                            <Border x:Name="PART_Indicator"
+                                    HorizontalAlignment="Left"
+                                    Background="{TemplateBinding Foreground}"
+                                    CornerRadius="4" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEarned}"
+                             Value="True">
+                    <Setter Property="Foreground"
+                            Value="{StaticResource SuccessBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Border Margin="1"
                 Padding="1"
@@ -14,102 +51,129 @@
                 Background="{StaticResource GameBackgroundBrush}"
                 SnapsToDevicePixels="True">
 
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                          VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Achievements}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel ItemWidth="176"
+                                   ItemHeight="176" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                <StackPanel Margin="12">
-                    <!-- Page heading -->
-                    <TextBlock Text="Achievements"
-                               Margin="0,0,0,16"
-                               Style="{StaticResource SectionHeadingTextStyle}" />
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <!-- One square achievement tile -->
+                        <Border Margin="4"
+                                Padding="12"
+                                CornerRadius="6"
+                                Background="{StaticResource SurfaceBrush}"
+                                BorderThickness="1">
 
-                    <!-- Achievement cards -->
-                    <ItemsControl ItemsSource="{Binding Achievements}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="0,0,0,8"
-                                        Padding="12"
-                                        CornerRadius="6"
-                                        Background="{StaticResource SurfaceBrush}"
-                                        BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <!-- Locked appearance -->
+                                    <Setter Property="BorderBrush"
+                                            Value="{StaticResource BorderBrush}" />
+                                    <Setter Property="Opacity"
+                                            Value="0.6" />
 
-                                    <Border.Style>
-                                        <Style TargetType="{x:Type Border}">
-                                            <!-- Locked appearance -->
+                                    <Style.Triggers>
+                                        <!-- Earned appearance -->
+                                        <DataTrigger Binding="{Binding IsEarned}"
+                                                     Value="True">
                                             <Setter Property="BorderBrush"
-                                                    Value="{StaticResource BorderBrush}" />
+                                                    Value="{StaticResource SuccessBrush}" />
                                             <Setter Property="Opacity"
-                                                    Value="0.55" />
+                                                    Value="1" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
 
-                                            <Style.Triggers>
-                                                <!-- Earned appearance -->
-                                                <DataTrigger Binding="{Binding IsEarned}"
-                                                             Value="True">
-                                                    <Setter Property="BorderBrush"
-                                                            Value="{StaticResource SuccessBrush}" />
-                                                    <Setter Property="Opacity"
-                                                            Value="1" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <!-- Achievement name -->
+                                    <RowDefinition Height="Auto" />
 
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                                    <!-- Description -->
+                                    <RowDefinition Height="*" />
 
-                                        <!-- Achievement information -->
-                                        <StackPanel Grid.Column="0"
-                                                    Margin="0,0,16,0"
-                                                    VerticalAlignment="Center">
+                                    <!-- Progress and status -->
+                                    <RowDefinition Height="Auto" />
 
-                                            <TextBlock Text="{Binding DisplayName}"
-                                                       FontSize="15"
-                                                       FontWeight="Bold"
-                                                       Foreground="{StaticResource PrimaryTextBrush}" />
+                                    <!-- Progress bar -->
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                                            <TextBlock Text="{Binding Description}"
-                                                       Margin="0,4,0,0"
-                                                       FontSize="13"
-                                                       Foreground="{StaticResource SecondaryTextBrush}"
-                                                       TextWrapping="Wrap" />
-                                        </StackPanel>
+                                <!-- Always-visible achievement name -->
+                                <TextBlock Grid.Row="0"
+                                           Text="{Binding DisplayName}"
+                                           FontSize="15"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap" />
 
-                                        <!-- Achievement status -->
-                                        <TextBlock Grid.Column="1"
-                                                   VerticalAlignment="Center"
-                                                   FontFamily="{StaticResource DisplayFontFamily}"
-                                                   FontSize="8"
-                                                   FontWeight="Normal">
+                                <!-- Achievement objective -->
+                                <TextBlock Grid.Row="1"
+                                           Text="{Binding Description}"
+                                           Margin="0,8"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap" />
 
-                                            <TextBlock.Style>
-                                                <Style TargetType="{x:Type TextBlock}">
-                                                    <Setter Property="Text"
-                                                            Value="LOCKED" />
-                                                    <Setter Property="Foreground"
-                                                            Value="{StaticResource SecondaryTextBrush}" />
+                                <!-- Progress amount and earned status -->
+                                <Grid Grid.Row="2"
+                                      Margin="0,0,0,6">
 
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEarned}"
-                                                                     Value="True">
-                                                            <Setter Property="Text"
-                                                                    Value="EARNED" />
-                                                            <Setter Property="Foreground"
-                                                                    Value="{StaticResource SuccessBrush}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </ScrollViewer>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding ProgressText}"
+                                               VerticalAlignment="Center"
+                                               FontSize="11"
+                                               Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                    <TextBlock Grid.Column="1"
+                                               VerticalAlignment="Center"
+                                               FontFamily="{StaticResource DisplayFontFamily}"
+                                               FontSize="7">
+
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text"
+                                                        Value="LOCKED" />
+                                                <Setter Property="Foreground"
+                                                        Value="{StaticResource SecondaryTextBrush}" />
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEarned}"
+                                                                 Value="True">
+                                                        <Setter Property="Text"
+                                                                Value="EARNED" />
+                                                        <Setter Property="Foreground"
+                                                                Value="{StaticResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+
+                                <ProgressBar Grid.Row="3"
+                                             Minimum="0"
+                                             Maximum="{Binding RequirementValue, Mode=OneWay}"
+                                             Value="{Binding CurrentProgress, Mode=OneWay}"
+                                             Style="{StaticResource AchievementProgressBarStyle}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Border>
     </Grid>
 </UserControl>

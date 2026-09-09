@@ -152,7 +152,7 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="ButtonBorder"
                                     Property="Background"
-                                    Value="{StaticResource PrimaryCyanBrush}" />
+                                    Value="{StaticResource WarningBrush}" />
                             <Setter Property="Foreground"
                                     Value="{StaticResource GameBackgroundBrush}" />
                         </Trigger>

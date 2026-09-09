@@ -41,7 +41,7 @@ public class MainViewModel : ViewModelBase, IDisposable
         var achievementViewModels = new List<AchievementViewModel>();
         foreach (Achievement achievement in _gameState.Achievements)
         {
-            achievementViewModels.Add(new AchievementViewModel(achievement));
+            achievementViewModels.Add(new AchievementViewModel(_gameState, achievement));
         }
 
         Achievements = achievementViewModels;
