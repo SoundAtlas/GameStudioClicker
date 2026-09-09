@@ -36,9 +36,17 @@ public class MainViewModel : ViewModelBase, IDisposable
             workerUpgradeViewModels.Add(new WorkerUpgradeViewModel(_gameState, upgrade));
         }
 
-        Statistics = CreateStatistics(_gameState);
-
         WorkerUpgrades = workerUpgradeViewModels;
+
+        var achievementViewModels = new List<AchievementViewModel>();
+        foreach (Achievement achievement in _gameState.Achievements)
+        {
+            achievementViewModels.Add(new AchievementViewModel(achievement));
+        }
+
+        Achievements = achievementViewModels;
+
+        Statistics = CreateStatistics(_gameState);
 
         OfflineLinesEarned = Math.Max(0, offlineLinesEarned);
         _showOfflineEarnings = OfflineLinesEarned > 0;
@@ -127,6 +135,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     // Collections and commands consumed by the view.
     public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
     public IReadOnlyList<WorkerUpgradeViewModel> WorkerUpgrades { get; }
+    public IReadOnlyList<AchievementViewModel> Achievements { get; }
     public IReadOnlyList<StatisticViewModel> Statistics { get; }
     public RelayCommand WriteCodeCommand { get; }
     public RelayCommand PurchaseActiveUpgradeCommand { get; }
@@ -167,10 +176,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     private void ExecuteWriteCode(object? parameter)
     {
         _gameState.WriteCode();
-        RefreshProductionValues();
-        RefreshPurchaseCommands();
-        RefreshActiveUpgradeStates();
-        RefreshStatistics();
+        RefreshAll();
     }
 
     private bool CanExecutePurchaseActiveUpgrade(object? parameter)
@@ -188,14 +194,10 @@ public class MainViewModel : ViewModelBase, IDisposable
         if (parameter is ActiveUpgradeViewModel upgradeViewModel &&
             _gameState.TryPurchaseActiveUpgrade(upgradeViewModel.Upgrade))
         {
-            RefreshProductionValues();
 
             SaveRequested?.Invoke(this, new EventArgs());
 
-            RefreshWorkerUpgradeStates();
-            RefreshActiveUpgradeStates();
-            RefreshPurchaseCommands();
-            RefreshStatistics();
+            RefreshAll();
         }
     }
 
@@ -214,14 +216,9 @@ public class MainViewModel : ViewModelBase, IDisposable
         if (parameter is WorkerUpgradeViewModel upgradeViewModel &&
             _gameState.TryPurchaseWorkerUpgrade(upgradeViewModel.Upgrade))
         {
-            RefreshProductionValues();
-
             SaveRequested?.Invoke(this, new EventArgs());
 
-            RefreshWorkerUpgradeStates();
-            RefreshActiveUpgradeStates();
-            RefreshPurchaseCommands();
-            RefreshStatistics();
+            RefreshAll();
         }
     }
 
@@ -233,11 +230,8 @@ public class MainViewModel : ViewModelBase, IDisposable
     private void PassiveTimer_Tick(object? sender, EventArgs e)
     {
         _gameState.GeneratePassiveLines();
-        OnPropertyChanged(nameof(LinesOfCode));
 
-        RefreshPurchaseCommands();
-        RefreshActiveUpgradeStates();
-        RefreshStatistics();
+        RefreshAll();
     }
 
     private void OfflineMessageTimer_Tick(object? sender, EventArgs e)
@@ -285,12 +279,30 @@ public class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private void RefreshAchievements()
+    {
+        foreach (AchievementViewModel achievement in Achievements)
+        {
+            achievement.RefreshState();
+        }
+    }
+
     private void RefreshStatistics()
     {
         foreach (var statistic in Statistics)
         {
             statistic.Refresh();
         }
+    }
+
+    private void RefreshAll()
+    {
+        RefreshProductionValues();
+        RefreshWorkerUpgradeStates();
+        RefreshActiveUpgradeStates();
+        RefreshPurchaseCommands();
+        RefreshAchievements();
+        RefreshStatistics();
     }
 
     private void RefreshActiveUpgradeVisibility()

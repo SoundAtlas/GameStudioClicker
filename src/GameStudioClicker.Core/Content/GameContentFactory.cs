@@ -371,5 +371,44 @@ namespace GameStudioClicker.Core.Content
                 leadDeveloper
             };
         }
+
+        internal static IReadOnlyList<Achievement> CreateAchievements()
+        {
+            Achievement helloWorld = new Achievement(
+                id: "hello_world",
+                displayName: "Hello World",
+                description: "Write your first line of code.",
+                requirementType: AchievementRequirementType.ManualClicks,
+                requirementValue: 1);
+
+            Achievement firstHire = new Achievement(
+                id: "first_hire",
+                displayName: "First Hire",
+                description: "Hire your first employee.",
+                requirementType: AchievementRequirementType.EmployeesHired,
+                requirementValue: 1);
+
+            Achievement firstUpgrade = new Achievement(
+                id: "first_upgrade",
+                displayName: "First Upgrade",
+                description: "Purchase your first active upgrade.",
+                requirementType: AchievementRequirementType.ActiveUpgradesPurchased,
+                requirementValue: 1);
+
+            Achievement shippingCode = new Achievement(
+                id: "shipping_code",
+                displayName: "Shipping Code",
+                description: "Generate 1,000 lines of code.",
+                requirementType: AchievementRequirementType.LifetimeLinesOfCode,
+                requirementValue: 1_000);
+
+            return new List<Achievement>
+            {
+                helloWorld,
+                firstHire,
+                firstUpgrade,
+                shippingCode,
+            };
+        }
     }
 }
