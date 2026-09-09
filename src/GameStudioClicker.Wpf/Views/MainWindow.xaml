@@ -234,33 +234,71 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0"
-                        Content="Statistics"
-                        HorizontalAlignment="Right"
-                        Command="{Binding ToggleStatisticsCommand}"
-                        ToolTip="Show or hide statistics">
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
 
-                    <Button.Style>
-                        <Style TargetType="Button"
-                               BasedOn="{StaticResource PrimaryButtonStyle}">
-                            <Setter Property="Margin"
-                                    Value="4" />
+                    <!-- Statistics navigation -->
+                    <Button Command="{Binding ToggleStatisticsCommand}"
+                            ToolTip="Show or hide statistics">
 
-                            <Style.Triggers>
-                                <!-- Highlight the buttons while statics is open -->
-                                <DataTrigger Binding="{Binding IsStatisticsViewVisible}"
-                                             Value="True">
-                                    <Setter Property="Background"
-                                            Value="{StaticResource BorderBrush}" />
-                                    <Setter Property="BorderBrush"
-                                            Value="{StaticResource PrimaryCyanBrush}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource PrimaryButtonStyle}">
+                                <Setter Property="Margin"
+                                        Value="4" />
 
-                <!-- Both Worker and Statistics occupy this same region. -->
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsStatisticsViewVisible}"
+                                                 Value="True">
+                                        <Setter Property="Background"
+                                                Value="{StaticResource BorderBrush}" />
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource PrimaryCyanBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+
+                        <Image Source="/Assets/Icons/Navigation/icon_statistics.png"
+                               Width="32"
+                               Height="32"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                    </Button>
+
+                    <!-- Achievements navigation -->
+                    <Button Command="{Binding ToggleAchievementsCommand}"
+                            ToolTip="Show or hide achievements">
+
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource AchievementButtonStyle}">
+                                <Setter Property="Margin"
+                                        Value="4" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAchievementsViewVisible}"
+                                                 Value="True">
+                                        <Setter Property="Background"
+                                                Value="{StaticResource BorderBrush}" />
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource WarningBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <Image Source="/Assets/Icons/Navigation/icon_achievements.png"
+                               Width="32"
+                               Height="32"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                    </Button>
+                </StackPanel>
+
+                <!-- All navigation views occupy this same region. -->
                 <Grid Grid.Row="1"
                       Margin="0,12,0,0"
                       ClipToBounds="False">
@@ -312,6 +350,50 @@
                             </Style>
                         </views:StatisticsView.Style>
                     </views:StatisticsView>
+
+                    <!-- Achievements page -->
+                    <views:AchievementsView Panel.ZIndex="2">
+                        <views:AchievementsView.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,-0.01"
+                                                 EndPoint="0,1">
+
+                                <!-- Visible area above the moving boundary -->
+                                <GradientStop Color="White"
+                                              Offset="0" />
+                                <GradientStop Color="White"
+                                              Offset="0" />
+
+                                <!-- Hidden area below the moving boundary -->
+                                <GradientStop Color="Transparent"
+                                              Offset="0" />
+                                <GradientStop Color="Transparent"
+                                              Offset="1" />
+                            </LinearGradientBrush>
+                        </views:AchievementsView.OpacityMask>
+
+                        <views:AchievementsView.Style>
+                            <Style TargetType="{x:Type views:AchievementsView}">
+                                <Setter Property="IsHitTestVisible"
+                                        Value="False" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAchievementsViewVisible}"
+                                                 Value="True">
+                                        <Setter Property="IsHitTestVisible"
+                                                Value="True" />
+
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealStoryboard}" />
+                                        </DataTrigger.EnterActions>
+
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealOutStoryboard}" />
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:AchievementsView.Style>
+                    </views:AchievementsView>
 
                 </Grid>
                 <!-- Shared content region -->

@@ -12,7 +12,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer _offlineMessageTimer;
     private readonly DispatcherTimer _saveConfirmationMessageTimer;
 
-    private bool _isStatisticsViewVisible;
+    private GamePage _selectedPage = GamePage.Workers;
     private bool _showOfflineEarnings;
     private bool _showSaveConfirmation;
     private bool _isDisposed;
@@ -77,6 +77,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             ExecutePurchaseWorkerUpgrade,
             CanExecutePurchaseWorkerUpgrade);
         ToggleStatisticsCommand = new RelayCommand(ExecuteToggleStatistics);
+        ToggleAchievementsCommand = new RelayCommand(ExecuteToggleAchievements);
 
         if (_showOfflineEarnings)
         {
@@ -85,6 +86,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
         _passiveTimer.Start();
     }
+
 
     private static IReadOnlyList<StatisticViewModel> CreateStatistics(
         GameState gameState)
@@ -108,22 +110,10 @@ public class MainViewModel : ViewModelBase, IDisposable
     public long LinesPerSecond => _gameState.LinesPerSecond;
 
     // Navigation and view state
-    public bool IsStatisticsViewVisible
-    {
-        get
-        {
-            return _isStatisticsViewVisible;
-        }
-        private set
-        {
-            if (_isStatisticsViewVisible == value)
-            {
-                return;
-            }
-            _isStatisticsViewVisible = value;
-            OnPropertyChanged();
-        }
-    }
+    public bool IsStatisticsViewVisible =>
+        _selectedPage == GamePage.Statistics;
+    public bool IsAchievementsViewVisible =>
+        _selectedPage == GamePage.Achievements;
 
     // One-time notifications.
     public long OfflineLinesEarned { get; }
@@ -141,6 +131,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     public RelayCommand PurchaseActiveUpgradeCommand { get; }
     public RelayCommand PurchaseWorkerUpgradeCommand { get; }
     public RelayCommand ToggleStatisticsCommand { get; }
+    public RelayCommand ToggleAchievementsCommand { get; }
 
     public event EventHandler? SaveRequested;
 
@@ -224,7 +215,12 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     private void ExecuteToggleStatistics(object? parameter)
     {
-        IsStatisticsViewVisible = !IsStatisticsViewVisible;
+        TogglePage(GamePage.Statistics);
+    }
+
+    private void ExecuteToggleAchievements(object? parameter)
+    {
+        TogglePage(GamePage.Achievements);
     }
 
     private void PassiveTimer_Tick(object? sender, EventArgs e)
@@ -287,6 +283,12 @@ public class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private void RefreshViewStates()
+    {
+        OnPropertyChanged(nameof(IsStatisticsViewVisible));
+        OnPropertyChanged(nameof(IsAchievementsViewVisible));
+    }
+
     private void RefreshStatistics()
     {
         foreach (var statistic in Statistics)
@@ -322,5 +324,20 @@ public class MainViewModel : ViewModelBase, IDisposable
                 visibleUpgradeCount++;
             }
         }
+    }
+
+    private void TogglePage(GamePage page)
+    {
+        // If the user clicks the currently selected page, return to the default Workers page. Otherwise change to the clicked page.
+        GamePage nextPage =
+            _selectedPage == page ? GamePage.Workers : page;
+
+        if (_selectedPage == nextPage)
+        {
+            return;
+        }
+
+        _selectedPage = nextPage;
+        RefreshViewStates();
     }
 }

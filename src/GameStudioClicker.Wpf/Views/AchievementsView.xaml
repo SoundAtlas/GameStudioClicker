@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="GameStudioClicker.Wpf.Views.AchievementsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <Grid>
+        <Border Margin="1"
+                Padding="1"
+                CornerRadius="8"
+                Background="{StaticResource GameBackgroundBrush}"
+                SnapsToDevicePixels="True">
+
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel Margin="12">
+                    <!-- Page heading -->
+                    <TextBlock Text="Achievements"
+                               Margin="0,0,0,16"
+                               Style="{StaticResource SectionHeadingTextStyle}" />
+
+                    <!-- Achievement cards -->
+                    <ItemsControl ItemsSource="{Binding Achievements}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8"
+                                        Padding="12"
+                                        CornerRadius="6"
+                                        Background="{StaticResource SurfaceBrush}"
+                                        BorderThickness="1">
+
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <!-- Locked appearance -->
+                                            <Setter Property="BorderBrush"
+                                                    Value="{StaticResource BorderBrush}" />
+                                            <Setter Property="Opacity"
+                                                    Value="0.55" />
+
+                                            <Style.Triggers>
+                                                <!-- Earned appearance -->
+                                                <DataTrigger Binding="{Binding IsEarned}"
+                                                             Value="True">
+                                                    <Setter Property="BorderBrush"
+                                                            Value="{StaticResource SuccessBrush}" />
+                                                    <Setter Property="Opacity"
+                                                            Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Achievement information -->
+                                        <StackPanel Grid.Column="0"
+                                                    Margin="0,0,16,0"
+                                                    VerticalAlignment="Center">
+
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       FontSize="15"
+                                                       FontWeight="Bold"
+                                                       Foreground="{StaticResource PrimaryTextBrush}" />
+
+                                            <TextBlock Text="{Binding Description}"
+                                                       Margin="0,4,0,0"
+                                                       FontSize="13"
+                                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+
+                                        <!-- Achievement status -->
+                                        <TextBlock Grid.Column="1"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource DisplayFontFamily}"
+                                                   FontSize="8"
+                                                   FontWeight="Normal">
+
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Text"
+                                                            Value="LOCKED" />
+                                                    <Setter Property="Foreground"
+                                                            Value="{StaticResource SecondaryTextBrush}" />
+
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEarned}"
+                                                                     Value="True">
+                                                            <Setter Property="Text"
+                                                                    Value="EARNED" />
+                                                            <Setter Property="Foreground"
+                                                                    Value="{StaticResource SuccessBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
