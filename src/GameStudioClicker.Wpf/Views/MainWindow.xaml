@@ -222,7 +222,7 @@
                 </Grid>
             </Grid>
 
-            <!-- Switchable Workers and Statistics area. -->
+            <!-- Switchable navigation area. -->
             <Grid Grid.Row="1"
                   Margin="0,16,0,0">
 
@@ -351,11 +351,11 @@
                                                 Value="True" />
 
                                         <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealStoryboard}" />
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealStoryboard}" />
                                         </DataTrigger.EnterActions>
 
                                         <DataTrigger.ExitActions>
-                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealOutStoryboard}" />
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealOutStoryboard}" />
                                         </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -395,11 +395,11 @@
                                                 Value="True" />
 
                                         <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealStoryboard}" />
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealStoryboard}" />
                                         </DataTrigger.EnterActions>
 
                                         <DataTrigger.ExitActions>
-                                            <BeginStoryboard Storyboard="{StaticResource StatisticsRevealOutStoryboard}" />
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealOutStoryboard}" />
                                         </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>

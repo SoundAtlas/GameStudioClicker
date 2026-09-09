@@ -6,6 +6,6 @@
         LifetimeLinesOfCode,
         ActiveUpgradesPurchased,
         EmployeesHired,
-        // Add more requirement types as needed
+
     }
 }

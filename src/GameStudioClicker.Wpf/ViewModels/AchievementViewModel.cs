@@ -19,7 +19,6 @@ namespace GameStudioClicker.Wpf.ViewModels
         public string Description => _achievement.Description;
         public long RequirementValue => _achievement.RequirementValue;
         public bool IsEarned => _achievement.IsEarned;
-        public bool IsSecret => _achievement.IsSecret;
         public long CurrentProgress =>
             Math.Min(_gameState.GetAchievementProgress(_achievement), RequirementValue);
         public string ProgressText =>
