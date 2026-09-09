@@ -150,4 +150,32 @@
                          Duration="0:0:0.25"
                          DecelerationRatio="0.3" />
     </Storyboard>
+
+    <!-- Achievement animation -->
+    <Storyboard x:Key="AchievementNotificationStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="0"
+                         To="1"
+                         Duration="0:0:0.25"/>
+
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                         From="380"
+                         To="0"
+                         Duration="0:0:0.35"
+                         DecelerationRatio="0.5"/>
+
+        <!-- Exit -->
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="1"
+                         To="0"
+                         BeginTime="0:0:3.6"
+                         Duration="0:0:0.3"/>
+
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                         From="0"
+                         To="24"
+                         BeginTime="0:0:3.6"
+                         Duration="0:0:0.3"
+                         AccelerationRatio="0.4"/>
+    </Storyboard>
 </ResourceDictionary>

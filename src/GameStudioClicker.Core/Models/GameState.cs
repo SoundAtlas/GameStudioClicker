@@ -7,12 +7,14 @@ namespace GameStudioClicker.Core.Models
     {
         // Core production state
         public long LinesOfCode { get; private set; }
-        public long LinesPerClick { get; private set; } = 999;
+        public long LinesPerClick { get; private set; } = 1000;
         public long LinesPerSecond { get; private set; } = 0;
 
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
         public IReadOnlyList<Achievement> Achievements { get; }
+
+        public event Action<Achievement>? AchievementEarned;
 
         // Lifetime stats
         public long LifetimeLinesOfCode { get; private set; }
@@ -202,6 +204,7 @@ namespace GameStudioClicker.Core.Models
                 {
                     achievement.MarkAsEarned();
                     newlyEarnedAchievements.Add(achievement);
+                    AchievementEarned?.Invoke(achievement);
                 }
             }
 

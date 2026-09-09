@@ -12,6 +12,12 @@ public class MainViewModel : ViewModelBase, IDisposable
     private readonly DispatcherTimer _offlineMessageTimer;
     private readonly DispatcherTimer _saveConfirmationMessageTimer;
 
+    // Achievement notification system
+    private readonly DispatcherTimer _achievementNotificationTimer;
+    private readonly Queue<Achievement> _achievementNotificationQueue = new();
+    private Achievement? _currentAchievementNotification;
+
+    // View state
     private GamePage _selectedPage = GamePage.Workers;
     private bool _showOfflineEarnings;
     private bool _showSaveConfirmation;
@@ -69,6 +75,13 @@ public class MainViewModel : ViewModelBase, IDisposable
         };
         _saveConfirmationMessageTimer.Tick += SaveConfirmationMessage_Tick;
 
+        _achievementNotificationTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(4)
+        };
+        _achievementNotificationTimer.Tick += AchievementNotificationTimer_Tick;
+        _gameState.AchievementEarned += GameState_AchievementEarned;
+
         WriteCodeCommand = new RelayCommand(ExecuteWriteCode);
         PurchaseActiveUpgradeCommand = new RelayCommand(
             ExecutePurchaseActiveUpgrade,
@@ -121,6 +134,12 @@ public class MainViewModel : ViewModelBase, IDisposable
     public string OfflineEarningsMessage =>
         $"Your Employees wrote {CompactNumberFormatter.Format(OfflineLinesEarned)} lines of code while you were away!";
     public bool HasSaveConfirmation => _showSaveConfirmation;
+    public bool HasAchievementNotification =>
+        _currentAchievementNotification != null;
+    public string AchievementNotificationName =>
+        _currentAchievementNotification?.DisplayName ?? string.Empty;
+    public string AchievementNotificationDescription =>
+        _currentAchievementNotification?.Description ?? string.Empty;
 
     // Collections and commands consumed by the view.
     public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
@@ -162,6 +181,11 @@ public class MainViewModel : ViewModelBase, IDisposable
 
         _saveConfirmationMessageTimer.Stop();
         _saveConfirmationMessageTimer.Tick -= SaveConfirmationMessage_Tick;
+
+        _gameState.AchievementEarned -= GameState_AchievementEarned;
+
+        _achievementNotificationTimer.Stop();
+        _achievementNotificationTimer.Tick -= AchievementNotificationTimer_Tick;
     }
 
     private void ExecuteWriteCode(object? parameter)
@@ -244,6 +268,55 @@ public class MainViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(HasSaveConfirmation));
     }
 
+    private void GameState_AchievementEarned(Achievement achievement)
+    {
+        _achievementNotificationQueue.Enqueue(achievement);
+
+        if (_currentAchievementNotification is null)
+        {
+            ShowNextAchievementNotification();
+        }
+    }
+
+    private void AchievementNotificationTimer_Tick(object? sender, EventArgs e)
+    {
+        // Each notification should only remain visible for one timer interval.
+        _achievementNotificationTimer.Stop();
+
+        // Hide the current notification and reset the XAML DataTrigger.
+        // The trigger must become false before the next notification is shown,
+        // otherwise its entrance animation will not run again.
+        _currentAchievementNotification = null;
+        RefreshAchievementNotificationState();
+
+
+        if (_achievementNotificationQueue.Count > 0)
+        {
+            // Show the next notification on the next UI pass. This gives WPF time
+            // to process the hidden state before HasAchievementNotification becomes
+            // true again and restarts the entrance animation.
+            Dispatcher.CurrentDispatcher.BeginInvoke(
+                new Action(ShowNextAchievementNotification));
+        }
+    }
+
+    private void ShowNextAchievementNotification()
+    {
+        _achievementNotificationTimer.Stop();
+
+        _currentAchievementNotification =
+            _achievementNotificationQueue.Count > 0
+                ? _achievementNotificationQueue.Dequeue()
+                : null;
+
+        RefreshAchievementNotificationState();
+
+        if (_currentAchievementNotification is not null)
+        {
+            _achievementNotificationTimer.Start();
+        }
+    }
+
     private void RefreshProductionValues()
     {
         OnPropertyChanged(nameof(LinesOfCode));
@@ -281,6 +354,13 @@ public class MainViewModel : ViewModelBase, IDisposable
         {
             achievement.RefreshState();
         }
+    }
+
+    private void RefreshAchievementNotificationState()
+    {
+        OnPropertyChanged(nameof(HasAchievementNotification));
+        OnPropertyChanged(nameof(AchievementNotificationName));
+        OnPropertyChanged(nameof(AchievementNotificationDescription));
     }
 
     private void RefreshViewStates()

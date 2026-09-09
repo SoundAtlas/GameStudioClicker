@@ -56,6 +56,81 @@
                        Foreground="{StaticResource SuccessBrush}" />
         </Border>
 
+        <!-- Achievement notification overlay. -->
+        <Border Grid.RowSpan="2"
+                Panel.ZIndex="10"
+                Width="360"
+                Margin="0,0,8,8"
+                Padding="14"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                IsHitTestVisible="False"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource WarningBrush}"
+                BorderThickness="2"
+                CornerRadius="8">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Visibility"
+                            Value="Collapsed"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasAchievementNotification}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Visible"/>
+
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource AchievementNotificationStoryboard}"/>
+                            </DataTrigger.EnterActions>
+                            
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Border.RenderTransform>
+                <TranslateTransform/>
+            </Border.RenderTransform>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="52"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0"
+                       Width="44"
+                       Height="44"
+                       VerticalAlignment="Center"
+                       Source="/Assets/Icons/Navigation/icon_achievements.png"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+
+                <StackPanel Grid.Column="1"
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="ACHIEVEMENT UNLOCKED"
+                               FontFamily="{StaticResource DisplayFontFamily}"
+                               FontSize="9"
+                               Foreground="{StaticResource WarningBrush}"/>
+
+                    <TextBlock Text="{Binding AchievementNotificationName}"
+                               Margin="0,7,0,3"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryTextBrush}"
+                               TextWrapping="Wrap"/>
+
+                    <TextBlock Text="{Binding AchievementNotificationDescription}"
+                               FontSize="12"
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               TextWrapping="Wrap"/>
+
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
         <!-- Main two-column game layout. -->
         <Grid Grid.Row="1" Margin="0,12,0,0">
             <Grid.RowDefinitions>
