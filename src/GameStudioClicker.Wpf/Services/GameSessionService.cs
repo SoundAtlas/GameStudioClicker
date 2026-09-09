@@ -1,15 +1,12 @@
 ﻿using GameStudioClicker.Core.Models;
 using GameStudioClicker.Core.Persistence;
-using System.IO;
 using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.Services
 {
     public sealed class GameSessionService : IDisposable
     {
-        private readonly string _saveDirectoryPath;
-        private readonly string _saveFilePath;
-        private readonly JsonGameSaveService _jsonGameSaveService;
+        private readonly IGameSaveRepository _gameSaveRepository;
 
         private readonly DispatcherTimer _autosaveTimer;
         private bool _isDisposed;
@@ -17,15 +14,11 @@ namespace GameStudioClicker.Wpf.Services
         public GameState GameState { get; }
         public long OfflineLinesEarned { get; private set; }
 
-        public GameSessionService(string? saveDirectoryPath = null)
+        public GameSessionService(IGameSaveRepository gameSaveRepository)
         {
-            _saveDirectoryPath = saveDirectoryPath ??
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "GameStudioClicker");
+            _gameSaveRepository = gameSaveRepository ??
+                throw new ArgumentNullException(nameof(gameSaveRepository));
 
-            _saveFilePath = Path.Combine(_saveDirectoryPath, "game_save.json");
-
-            _jsonGameSaveService = new JsonGameSaveService();
             GameState = new GameState();
 
             _autosaveTimer = new DispatcherTimer
@@ -42,12 +35,10 @@ namespace GameStudioClicker.Wpf.Services
 
         private void Load()
         {
-            // Reset in case there is no usable save file. 
+            // Reset in case there is no usable saved data. 
             OfflineLinesEarned = 0;
-            // Ensure the save directory exists
-            Directory.CreateDirectory(_saveDirectoryPath);
 
-            GameSaveData? saveData = _jsonGameSaveService.LoadFromFile(_saveFilePath);
+            GameSaveData? saveData = _gameSaveRepository.Load();
             // If Save Data is null, return immediately - start a new game
             if (saveData is null)
             {
@@ -70,11 +61,9 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Save()
         {
-            Directory.CreateDirectory(_saveDirectoryPath);
-
             GameSaveData saveData = GameState.CreateSaveData();
             saveData.SavedAtUtc = DateTime.UtcNow;
-            _jsonGameSaveService.SaveToFile(saveData, _saveFilePath);
+            _gameSaveRepository.Save(saveData);
         }
 
         public void Start()

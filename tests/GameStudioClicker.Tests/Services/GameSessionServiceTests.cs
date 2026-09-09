@@ -10,12 +10,7 @@ public class GameSessionServiceTests
     [TestMethod]
     public void Start_WithExistingSave_RestoresStateAndAppliesOfflineProgress()
     {
-        string saveDirectoryPath = CreateTemporarySaveDirectoryPath();
-        string saveFilePath = Path.Combine(saveDirectoryPath, "game_save.json");
-        Directory.CreateDirectory(saveDirectoryPath);
-
-        var saveService = new JsonGameSaveService();
-        saveService.SaveToFile(
+        var repository = new InMemoryGameSaveRepository(
             new GameSaveData
             {
                 LinesOfCode = 100,
@@ -25,10 +20,9 @@ public class GameSessionServiceTests
                     ["intern"] = 1
                 },
                 SavedAtUtc = DateTime.UtcNow - TimeSpan.FromHours(30)
-            },
-            saveFilePath);
+            });
 
-        var session = new GameSessionService(saveDirectoryPath);
+        var session = new GameSessionService(repository);
 
         try
         {
@@ -43,16 +37,14 @@ public class GameSessionServiceTests
         finally
         {
             session.Dispose();
-            DeleteTemporarySaveDirectory(saveDirectoryPath);
         }
     }
 
     [TestMethod]
     public void Save_WritesCurrentGameStateAndTimestamp()
     {
-        string saveDirectoryPath = CreateTemporarySaveDirectoryPath();
-        string saveFilePath = Path.Combine(saveDirectoryPath, "game_save.json");
-        var session = new GameSessionService(saveDirectoryPath);
+        var repository = new InMemoryGameSaveRepository();
+        var session = new GameSessionService(repository);
 
         try
         {
@@ -69,8 +61,7 @@ public class GameSessionServiceTests
 
             session.Save();
 
-            var saveService = new JsonGameSaveService();
-            GameSaveData? savedData = saveService.LoadFromFile(saveFilePath);
+            GameSaveData? savedData = repository.SavedData;
             Assert.IsNotNull(savedData);
             Assert.AreEqual(456L, savedData.LinesOfCode);
             Assert.AreEqual(789L, savedData.LifetimeLinesOfCode);
@@ -81,16 +72,14 @@ public class GameSessionServiceTests
         finally
         {
             session.Dispose();
-            DeleteTemporarySaveDirectory(saveDirectoryPath);
         }
     }
 
     [TestMethod]
     public void Dispose_WhenCalledTwice_RemainsSafeAndSavesFinalState()
     {
-        string saveDirectoryPath = CreateTemporarySaveDirectoryPath();
-        string saveFilePath = Path.Combine(saveDirectoryPath, "game_save.json");
-        var session = new GameSessionService(saveDirectoryPath);
+        var repository = new InMemoryGameSaveRepository();
+        var session = new GameSessionService(repository);
 
         try
         {
@@ -102,30 +91,33 @@ public class GameSessionServiceTests
             session.Dispose();
             session.Dispose();
 
-            var saveService = new JsonGameSaveService();
-            GameSaveData? savedData = saveService.LoadFromFile(saveFilePath);
+            GameSaveData? savedData = repository.SavedData;
             Assert.IsNotNull(savedData);
             Assert.AreEqual(321L, savedData.LinesOfCode);
         }
         finally
         {
             session.Dispose();
-            DeleteTemporarySaveDirectory(saveDirectoryPath);
         }
     }
 
-    private static string CreateTemporarySaveDirectoryPath()
+    private sealed class InMemoryGameSaveRepository : IGameSaveRepository
     {
-        return Path.Combine(
-            Path.GetTempPath(),
-            $"GameStudioClicker-{Guid.NewGuid():N}");
-    }
-
-    private static void DeleteTemporarySaveDirectory(string saveDirectoryPath)
-    {
-        if (Directory.Exists(saveDirectoryPath))
+        public InMemoryGameSaveRepository(GameSaveData? savedData = null)
         {
-            Directory.Delete(saveDirectoryPath, recursive: true);
+            SavedData = savedData;
+        }
+
+        public GameSaveData? SavedData { get; private set; }
+
+        public GameSaveData? Load()
+        {
+            return SavedData;
+        }
+
+        public void Save(GameSaveData saveData)
+        {
+            SavedData = saveData;
         }
     }
 }
