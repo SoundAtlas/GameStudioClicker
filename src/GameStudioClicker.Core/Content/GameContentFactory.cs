@@ -363,12 +363,30 @@ namespace GameStudioClicker.Core.Content
                 prerequisite: seniorDeveloper,
                 requiredPrerequisiteCount: 1);
 
+            WorkerUpgrade engineeringManager = new WorkerUpgrade(
+                id: "engineering_manager",
+                displayName: "Engineering Manager",
+                baseCost: 2_000_000,
+                baseLinesPerSecond: 200_000,
+                prerequisite: leadDeveloper,
+                requiredPrerequisiteCount: 1);
+
+            WorkerUpgrade studioDirector = new WorkerUpgrade(
+                id: "studio_director",
+                displayName: "Studio Director",
+                baseCost: 20_000_000,
+                baseLinesPerSecond: 2_000_000,
+                prerequisite: engineeringManager,
+                requiredPrerequisiteCount: 1);
+
             return new List<WorkerUpgrade>
             {
                 intern,
                 juniorDeveloper,
                 seniorDeveloper,
-                leadDeveloper
+                leadDeveloper,
+                engineeringManager,
+                studioDirector
             };
         }
 

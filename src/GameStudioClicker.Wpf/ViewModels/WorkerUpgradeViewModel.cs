@@ -21,10 +21,12 @@ public class WorkerUpgradeViewModel : ViewModelBase
         $"Produces {CompactNumberFormatter.Format(LinesPerSecondPerEmployee)} lines of code / second";
     public string? PortraitPath => Id switch
     {
-        "intern" => "/Assets/Workers/Intern/worker_intern.png",
-        "junior_developer" => "/Assets/Workers/JuniorDeveloper/worker_junior_developer.png",
-        "senior_developer" => "/Assets/Workers/SeniorDeveloper/worker_senior_developer.png",
-        "lead_developer" => "/Assets/Workers/LeadDeveloper/worker_lead_developer.png",
+        "intern" => "/Assets/Workers/worker_intern.png",
+        "junior_developer" => "/Assets/Workers/worker_junior_developer.png",
+        "senior_developer" => "/Assets/Workers/worker_senior_developer.png",
+        "lead_developer" => "/Assets/Workers/worker_lead_developer.png",
+        "engineering_manager" => "/Assets/Workers/worker_engineering_manager.png",
+        "studio_director" => "/Assets/Workers/worker_studio_director.png",
         _ => null
     };
     public long CurrentCost => _workerUpgrade.CurrentCost;
