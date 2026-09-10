@@ -21,10 +21,10 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
-        InitializeComponent();
-
         _audioService =
             ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
+
+        InitializeComponent();
 
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

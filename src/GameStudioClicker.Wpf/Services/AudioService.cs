@@ -1,11 +1,17 @@
-﻿using System.IO;
+﻿using NAudio.Wave;
+using System.IO;
 using System.Windows.Media;
 
 namespace GameStudioClicker.Wpf.Services
 {
     public sealed class AudioService
     {
-        private readonly MediaPlayer _soundtrackPlayer = new();
+        private SmoothedVolumeSampleProvider? _musicVolumeProvider; // controls the volume of the music        
+        private double _musicVolume = 1.0;
+        private double _sfxVolume = 1.0;
+
+        private AudioFileReader? _soundtrackReader;
+        private WaveOutEvent? _soundtrackOutput;
         private readonly string[] _soundtrackPaths;
         private int _currentSoundtrackIndex;
         private bool _isSoundtrackOpen;
@@ -43,43 +49,23 @@ namespace GameStudioClicker.Wpf.Services
                 Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2.wav")
                 ];
 
-            _soundtrackPlayer.Volume = 0.2;
-            _soundtrackPlayer.MediaEnded += SoundtrackPlayer_MediaEnded;
-
             _writeCodePressSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound2.wav");
-            _writeCodePressPlayer.Volume = 0.2;
             _writeCodeReleaseSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound3.wav");
-            _writeCodeReleasePlayer.Volume = 0.2;
+
 
             _menuClickSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound1.wav");
-            _menuClickPlayer.Volume = 0.2;
 
             _achievementEarnedSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "achievement_unlock.wav");
-            _achievementEarnedPlayer.Volume = 0.2;
 
             _activeUpgradeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blip3.wav");
-            _activeUpgradePlayer.Volume = 0.2;
 
             _hireEmployeeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
-            _hireEmployeePlayer.Volume = 0.2;
-        }
-
-        private void SoundtrackPlayer_MediaEnded(object? sender, EventArgs e)
-        {
-            _currentSoundtrackIndex++;
-
-            if (_currentSoundtrackIndex >= _soundtrackPaths.Length)
-            {
-                _currentSoundtrackIndex = 0;
-            }
-
-            PlayCurrentSoundtrack();
         }
 
         public void StartSoundtrack()
@@ -90,18 +76,71 @@ namespace GameStudioClicker.Wpf.Services
             }
 
             _isSoundtrackOpen = true;
-            PlayCurrentSoundtrack();
+            PlayCurrentSoundTrack();
         }
 
-        private void PlayCurrentSoundtrack()
+        private void PlayCurrentSoundTrack()
         {
-            string currentPath =
-                _soundtrackPaths[_currentSoundtrackIndex];
+            _soundtrackReader = new AudioFileReader(
+                _soundtrackPaths[_currentSoundtrackIndex]);
 
-            _soundtrackPlayer.Open(new Uri(currentPath, UriKind.Absolute));
+            _musicVolumeProvider = new SmoothedVolumeSampleProvider(
+                _soundtrackReader, (float)(0.5 * _musicVolume));
 
-            _soundtrackPlayer.Play();
+            _soundtrackOutput = new WaveOutEvent();
+
+            _soundtrackOutput.PlaybackStopped += SoundtrackOutput_PlaybackStopped;
+
+            _soundtrackOutput.Init(_musicVolumeProvider);
+
+            _soundtrackOutput.Play();
         }
+
+        private void SoundtrackOutput_PlaybackStopped(
+            object? sender,
+            StoppedEventArgs e)
+        {
+            if (!_isSoundtrackOpen || e.Exception is not null)
+            {
+                return;
+            }
+
+            if (_soundtrackOutput is not null)
+            {
+                _soundtrackOutput.PlaybackStopped -=
+                    SoundtrackOutput_PlaybackStopped;
+
+                _soundtrackOutput.Dispose();
+            }
+
+            _soundtrackReader?.Dispose();
+
+            _soundtrackOutput = null;
+            _soundtrackReader = null;
+            _musicVolumeProvider = null;
+
+            // Move to the next soundtrack in the list, wrapping around if necessary
+            _currentSoundtrackIndex =
+                (_currentSoundtrackIndex + 1) % _soundtrackPaths.Length;
+
+            PlayCurrentSoundTrack();
+        }
+
+        public void SetMusicVolume(double musicVolume)
+        {
+            _musicVolume = Math.Clamp(musicVolume, 0, 1);
+            if (_musicVolumeProvider is not null)
+            {
+                _musicVolumeProvider.Volume =
+                    (float)(0.5 * _musicVolume);
+            }
+        }
+
+        public void SetSfxVolume(double sfxVolume)
+        {
+            _sfxVolume = Math.Clamp(sfxVolume, 0, 1);
+        }
+
 
         public void PlayWriteCodePressSound()
         {
@@ -113,6 +152,9 @@ namespace GameStudioClicker.Wpf.Services
 
                 _isWriteCodePressSoundOpen = true;
             }
+
+            _writeCodePressPlayer.Volume = 0.4 * _sfxVolume;
+
             // Resets file to play from the beginning, so that the sound can be played multiple times in a row
             _writeCodePressPlayer.Position = TimeSpan.Zero;
             _writeCodePressPlayer.Play();
@@ -126,6 +168,9 @@ namespace GameStudioClicker.Wpf.Services
                     new Uri(_writeCodeReleaseSoundPath, UriKind.Absolute));
                 _isWriteCodeReleaseSoundOpen = true;
             }
+
+            _writeCodeReleasePlayer.Volume = 0.4 * _sfxVolume;
+
             _writeCodeReleasePlayer.Position = TimeSpan.Zero;
             _writeCodeReleasePlayer.Play();
         }
@@ -139,6 +184,9 @@ namespace GameStudioClicker.Wpf.Services
 
                 _isMenuClickSoundOpen = true;
             }
+
+            _menuClickPlayer.Volume = _sfxVolume;
+
             _menuClickPlayer.Position = TimeSpan.Zero;
             _menuClickPlayer.Play();
         }
@@ -149,8 +197,12 @@ namespace GameStudioClicker.Wpf.Services
             {
                 _achievementEarnedPlayer.Open(
                     new Uri(_achievementEarnedSoundPath, UriKind.Absolute));
+
                 _isAchievementEarnedSoundOpen = true;
             }
+
+            _achievementEarnedPlayer.Volume = _sfxVolume; // Apply the SFX volume to the achievement sound
+
             _achievementEarnedPlayer.Position = TimeSpan.Zero;
             _achievementEarnedPlayer.Play();
         }
@@ -163,6 +215,9 @@ namespace GameStudioClicker.Wpf.Services
                     new Uri(_activeUpgradeSoundPath, UriKind.Absolute));
                 _isActiveUpgradeSoundOpen = true;
             }
+
+            _activeUpgradePlayer.Volume = _sfxVolume;
+
             _activeUpgradePlayer.Position = TimeSpan.Zero;
             _activeUpgradePlayer.Play();
         }
@@ -175,15 +230,31 @@ namespace GameStudioClicker.Wpf.Services
                     new Uri(_hireEmployeeSoundPath, UriKind.Absolute));
                 _isHireEmployeeSoundOpen = true;
             }
+
+            _hireEmployeePlayer.Volume = _sfxVolume;
+
             _hireEmployeePlayer.Position = TimeSpan.Zero;
             _hireEmployeePlayer.Play();
         }
 
         public void Close()
         {
-            _soundtrackPlayer.MediaEnded -= SoundtrackPlayer_MediaEnded;
-            _soundtrackPlayer.Close();
-            _currentSoundtrackIndex = 0;
+            _isSoundtrackOpen = false;
+
+            if (_soundtrackOutput is not null)
+            {
+                _soundtrackOutput.PlaybackStopped -=
+                    SoundtrackOutput_PlaybackStopped;
+
+                _soundtrackOutput.Stop();
+                _soundtrackOutput.Dispose();
+            }
+
+            _soundtrackReader?.Dispose();
+
+            _soundtrackOutput = null;
+            _soundtrackReader = null;
+            _musicVolumeProvider = null;
 
             _writeCodePressPlayer.Close();
             _writeCodeReleasePlayer.Close();
@@ -192,7 +263,6 @@ namespace GameStudioClicker.Wpf.Services
             _activeUpgradePlayer.Close();
             _hireEmployeePlayer.Close();
 
-            _isSoundtrackOpen = false;
             _isWriteCodePressSoundOpen = false;
             _isWriteCodeReleaseSoundOpen = false;
             _isMenuClickSoundOpen = false;

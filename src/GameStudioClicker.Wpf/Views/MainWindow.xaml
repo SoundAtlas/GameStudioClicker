@@ -386,6 +386,42 @@
                                RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
                     </Button>
+
+                    <!-- Settings navigation -->
+                    <Button Command="{Binding ToggleSettingsCommand}"
+                            ToolTip="Show or hide settings"
+                            Click="MenuButton_Click">
+
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource SettingsButtonStyle}">
+                                <Setter Property="Margin"
+                                        Value="4" />
+                                <Setter Property="Width"
+                                        Value="52" />
+                                <Setter Property="Height"
+                                        Value="52" />
+                                <Setter Property="Padding"
+                                        Value="6" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSettingsViewVisible}"
+                                                 Value="True">
+                                        <Setter Property="Background"
+                                                Value="{StaticResource BorderBrush}" />
+                                        <Setter Property="BorderBrush"
+                                                Value="{StaticResource SecondaryTextBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <Image Source="/Assets/Icons/Navigation/icon_settings.png"
+                               Width="40"
+                               Height="40"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+                    </Button>
                 </StackPanel>
 
                 <!-- All navigation views occupy this same region. -->
@@ -484,6 +520,50 @@
                             </Style>
                         </views:AchievementsView.Style>
                     </views:AchievementsView>
+
+                    <!-- Settings page -->
+                    <views:SettingsView Panel.ZIndex="3">
+                        <views:SettingsView.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,-0.01"
+                                                 EndPoint="0,1">
+
+                                <!-- Visible area above the moving boundary -->
+                                <GradientStop Color="White"
+                                              Offset="0" />
+                                <GradientStop Color="White"
+                                              Offset="0" />
+
+                                <!-- Hidden area below the moving boundary -->
+                                <GradientStop Color="Transparent"
+                                              Offset="0" />
+                                <GradientStop Color="Transparent"
+                                              Offset="1" />
+                            </LinearGradientBrush>
+                        </views:SettingsView.OpacityMask>
+
+                        <views:SettingsView.Style>
+                            <Style TargetType="{x:Type views:SettingsView}">
+                                <Setter Property="IsHitTestVisible"
+                                        Value="False" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSettingsViewVisible}"
+                                                 Value="True">
+                                        <Setter Property="IsHitTestVisible"
+                                                Value="True" />
+
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealStoryboard}" />
+                                        </DataTrigger.EnterActions>
+
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard Storyboard="{StaticResource PageRevealOutStoryboard}" />
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:SettingsView.Style>
+                    </views:SettingsView>
 
                 </Grid>
                 <!-- Shared content region -->

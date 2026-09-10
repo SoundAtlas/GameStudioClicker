@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="GameStudioClicker.Wpf.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GameStudioClicker.Wpf.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <Border Margin="1"
+                Padding="1"
+                CornerRadius="8"
+                Background="{StaticResource GameBackgroundBrush}"
+                SnapsToDevicePixels="True">
+
+
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="12">
+
+                    <TextBlock Text="Settings"
+                               Style="{StaticResource SectionHeadingTextStyle}"
+                               Margin="0,0,0,16" />
+
+                    <!-- Settings list -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                        <Grid Margin="6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- Music volume -->
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="0"
+                                       Text="Music Volume"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+
+                            <Slider x:Name="MusicVolumeSlider"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Value="100"
+                                    Margin="16,0,16,16"
+                                    VerticalAlignment="Center"
+                                    ValueChanged="MusicVolumeSlider_ValueChanged"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    IsMoveToPointEnabled="True"/>
+
+                            <TextBlock x:Name="MusicVolumeValueText"
+                                       Grid.Row="0"
+                                       Grid.Column="2"
+                                       Text="{Binding ElementName=MusicVolumeSlider,
+                                       Path=Value, StringFormat={}{0:0}%}"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{StaticResource PrimaryCyanBrush}"
+                                       FontWeight="SemiBold"/>
+
+
+                            <!-- SFX volume -->
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                       Text="SFX Volume"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+
+                            <Slider x:Name="SFXVolumeSlider"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Value="100"
+                                    Margin="16,0,16,16"
+                                    VerticalAlignment="Center"
+                                    ValueChanged="SFXVolumeSlider_ValueChanged"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    IsMoveToPointEnabled="True"/>
+
+                            <TextBlock x:Name="SFXVolumeValueText"
+                                       Grid.Row="1"
+                                       Grid.Column="2"
+                                       Text="{Binding ElementName=SFXVolumeSlider,
+                                       Path=Value, StringFormat={}{0:0}%}"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{StaticResource PrimaryCyanBrush}"
+                                       FontWeight="SemiBold" />
+
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

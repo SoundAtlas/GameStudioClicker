@@ -4,6 +4,7 @@
     {
         Workers,
         Statistics,
-        Achievements
+        Achievements,
+        Settings
     }
 }
