@@ -34,6 +34,7 @@
                             ToolTipService.ShowDuration="30000"
                             ToolTipService.ShowOnDisabled="True"
                             RenderTransformOrigin="0.5,0.5"
+                            Click="ActiveUpgradeButton_Click"
                             Command="{Binding DataContext.PurchaseActiveUpgradeCommand,
                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                             CommandParameter="{Binding}">
@@ -204,8 +205,8 @@
                                                RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
                                         <TextBlock Text="{Binding Cost,
-                                                  Mode=OneWay,
-                                                  Converter={StaticResource CompactNumberConverter}}"
+                                                   Mode=OneWay,
+                                                   Converter={StaticResource CompactNumberConverter}}"
                                                    VerticalAlignment="Center"
                                                    FontWeight="Bold"
                                                    Foreground="{StaticResource PrimaryTextBrush}" />

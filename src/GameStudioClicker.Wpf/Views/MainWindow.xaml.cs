@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
@@ -16,10 +17,14 @@ public partial class MainWindow : Window
 {
     private readonly MainViewModel _mainViewModel;
     private readonly GameSessionService _gameSessionService;
+    private readonly AudioService _audioService;
 
     public MainWindow()
     {
         InitializeComponent();
+
+        _audioService =
+            ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
 
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -36,10 +41,16 @@ public partial class MainWindow : Window
             _gameSessionService.GameState,
             _gameSessionService.OfflineLinesEarned);
         _mainViewModel.SaveRequested += SaveRequested;
+        _mainViewModel.AchievementNotificationShown += AchievementNotificationShow;
 
 
         Closing += MainWindowClosing;
         DataContext = _mainViewModel;
+    }
+
+    private void AchievementNotificationShow(object? sender, EventArgs e)
+    {
+        _audioService.PlayAchievementEarnedSound();
     }
 
     private void SaveRequested(object? sender, EventArgs e)
@@ -50,8 +61,16 @@ public partial class MainWindow : Window
     private void MainWindowClosing(object? sender, CancelEventArgs e)
     {
         _mainViewModel.SaveRequested -= SaveRequested;
+        _mainViewModel.AchievementNotificationShown -= AchievementNotificationShow;
         _mainViewModel.Dispose();
         _gameSessionService.Dispose();
+    }
+
+    // WriteCodeButton pressed sound
+    private void WriteCodeButton_PreviewMouseLeftButtonDown(
+        object sender, MouseButtonEventArgs e)
+    {
+        _audioService.PlayWriteCodePressSound();
     }
 
     private bool _nextFeedbackMovesRight = true;
@@ -62,6 +81,8 @@ public partial class MainWindow : Window
         {
             return;
         }
+
+        _audioService.PlayWriteCodeReleaseSound();
 
         var feedbackText = new TextBlock
         {
@@ -117,4 +138,9 @@ public partial class MainWindow : Window
         movement.BeginAnimation(TranslateTransform.XProperty, horizontalAnimation);
         movement.BeginAnimation(TranslateTransform.YProperty, verticalAnimation);
     }
+    private void MenuButton_Click(object sender, RoutedEventArgs e)
+    {
+        _audioService.PlayMenuClickSound();
+    }
+
 }

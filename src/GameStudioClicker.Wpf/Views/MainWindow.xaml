@@ -83,7 +83,7 @@
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource AchievementNotificationStoryboard}"/>
                             </DataTrigger.EnterActions>
-                            
+
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -210,6 +210,7 @@
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     Command="{Binding WriteCodeCommand}"
+                                    PreviewMouseLeftButtonDown="WriteCodeButton_PreviewMouseLeftButtonDown"
                                     Click="WriteCodeButton_Click"
                                     Style="{StaticResource PrimaryActionButtonStyle}" />
                         </Grid>
@@ -315,7 +316,8 @@
 
                     <!-- Statistics navigation -->
                     <Button Command="{Binding ToggleStatisticsCommand}"
-                            ToolTip="Show or hide statistics">
+                            ToolTip="Show or hide statistics"
+                            Click="MenuButton_Click">
 
                         <Button.Style>
                             <Style TargetType="Button"
@@ -351,7 +353,8 @@
 
                     <!-- Achievements navigation -->
                     <Button Command="{Binding ToggleAchievementsCommand}"
-                            ToolTip="Show or hide achievements">
+                            ToolTip="Show or hide achievements"
+                            Click="MenuButton_Click">
 
                         <Button.Style>
                             <Style TargetType="Button"
