@@ -21,6 +21,10 @@
     <Folder Include="Assets\Fonts\PressStart2P\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.3.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>

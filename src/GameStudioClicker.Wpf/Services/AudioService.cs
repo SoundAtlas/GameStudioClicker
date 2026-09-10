@@ -1,14 +1,24 @@
-﻿using System.IO;
+﻿using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using System.IO;
 using System.Windows.Media;
 
 namespace GameStudioClicker.Wpf.Services
 {
     public sealed class AudioService
     {
-        private readonly MediaPlayer _soundtrackPlayer = new();
+        private MixingSampleProvider? _mixer; // combine music and sound effects
+        private VolumeSampleProvider? _musicVolumeProvider; // controls the volume of the music
+        private SmoothedVolumeSampleProvider? _masterVolumeProvider; // smooths out volume changes to avoid static noise
+
+        // MediaPlayer instances for different audio tracks and sound effects
+        private AudioFileReader? _soundtrackReader;
+        private WaveOutEvent? _soundtrackOutput;
         private readonly string[] _soundtrackPaths;
         private int _currentSoundtrackIndex;
         private bool _isSoundtrackOpen;
+
+        private double _masterVolume = 1.0;
 
         private readonly MediaPlayer _writeCodePressPlayer = new();
         private readonly string _writeCodePressSoundPath;
@@ -43,8 +53,6 @@ namespace GameStudioClicker.Wpf.Services
                 Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2.wav")
                 ];
 
-            _soundtrackPlayer.MediaEnded += SoundtrackPlayer_MediaEnded;
-
             _writeCodePressSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound2.wav");
             _writeCodeReleaseSoundPath = Path.Combine(
@@ -63,18 +71,7 @@ namespace GameStudioClicker.Wpf.Services
             _hireEmployeeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
 
-        }
 
-        private void SoundtrackPlayer_MediaEnded(object? sender, EventArgs e)
-        {
-            _currentSoundtrackIndex++;
-
-            if (_currentSoundtrackIndex >= _soundtrackPaths.Length)
-            {
-                _currentSoundtrackIndex = 0;
-            }
-
-            PlayCurrentSoundtrack();
         }
 
         public void StartSoundtrack()
@@ -84,29 +81,52 @@ namespace GameStudioClicker.Wpf.Services
                 return;
             }
 
+            WaveFormat mixerFormat =
+                WaveFormat.CreateIeeeFloatWaveFormat(48000, 2); // Stereo, 48kHz
+
+            _mixer = new MixingSampleProvider(mixerFormat)
+            {
+                ReadFully = true
+            };
+
+            _masterVolumeProvider = new SmoothedVolumeSampleProvider(
+                _mixer,
+                (float)_masterVolume);
+
+            _soundtrackReader =
+                new AudioFileReader(
+                    _soundtrackPaths[_currentSoundtrackIndex]);
+
+            _musicVolumeProvider =
+                new VolumeSampleProvider(_soundtrackReader)
+                {
+                    Volume = 0.2f
+                }; // controls the volume of the music
+
+            _mixer.AddMixerInput(_musicVolumeProvider);
+
+            _soundtrackOutput = new WaveOutEvent();
+            _soundtrackOutput.Init(_masterVolumeProvider);
+
             _isSoundtrackOpen = true;
-            PlayCurrentSoundtrack();
-        }
+            _soundtrackOutput.Play();
 
-        private void PlayCurrentSoundtrack()
-        {
-            string currentPath =
-                _soundtrackPaths[_currentSoundtrackIndex];
 
-            _soundtrackPlayer.Open(new Uri(currentPath, UriKind.Absolute));
-
-            _soundtrackPlayer.Play();
         }
 
         public void SetMasterVolume(double masterVolume)
         {
-            _soundtrackPlayer.Volume = 0.2 * masterVolume;
-            _writeCodePressPlayer.Volume = 0.2 * masterVolume;
-            _writeCodeReleasePlayer.Volume = 0.2 * masterVolume;
-            _menuClickPlayer.Volume = 0.2 * masterVolume;
-            _achievementEarnedPlayer.Volume = 0.2 * masterVolume;
-            _activeUpgradePlayer.Volume = 0.2 * masterVolume;
-            _hireEmployeePlayer.Volume = 0.2 * masterVolume;
+            _masterVolume = Math.Clamp(masterVolume, 0, 1);
+            ApplyMasterVolume(_masterVolume);
+        }
+
+        private void ApplyMasterVolume(double masterVolume)
+        {
+            if (_masterVolumeProvider is not null)
+            {
+                _masterVolumeProvider.Volume =
+                    (float)masterVolume;
+            }
         }
 
         public void PlayWriteCodePressSound()
@@ -187,9 +207,15 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Close()
         {
-            _soundtrackPlayer.MediaEnded -= SoundtrackPlayer_MediaEnded;
-            _soundtrackPlayer.Close();
-            _currentSoundtrackIndex = 0;
+            _soundtrackOutput?.Stop();
+            _soundtrackOutput?.Dispose();
+            _soundtrackReader?.Dispose();
+
+            _soundtrackOutput = null;
+            _soundtrackReader = null;
+            _musicVolumeProvider = null;
+            _masterVolumeProvider = null;
+            _mixer = null;
 
             _writeCodePressPlayer.Close();
             _writeCodeReleasePlayer.Close();
