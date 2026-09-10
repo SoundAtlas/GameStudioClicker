@@ -181,8 +181,9 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
   mood of the modern dark pixel interface.
 - Prevent rapid clicks from producing harsh or excessively loud overlapping audio.
 - Add separate sound-effect and music volume controls, including mute options.
-- Persist audio preferences without making sound playback part of the core game
-  save state.
+- Add lightweight settings persistence, separate from the core game save, starting
+  with music and sound-effect volume. Restore saved values on startup and persist
+  later settings through the same preferences system.
 - Use original, commissioned, generated, or properly licensed audio and record its
   source and license alongside the assets.
 
