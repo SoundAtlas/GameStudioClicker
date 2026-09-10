@@ -33,7 +33,6 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150" />
@@ -41,44 +40,9 @@
                                 <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Master volume -->
-                            <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       Text="Master Volume"
-                                       Margin="0,0,0,16"
-                                       VerticalAlignment="Center"
-                                       FontSize="15"
-                                       FontWeight="SemiBold" />
-
-                            <Slider x:Name="MasterVolumeSlider"
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    Value="100"
-                                    Margin="16,0,16,16"
-                                    VerticalAlignment="Center"
-                                    ValueChanged="MasterVolumeSlider_ValueChanged"
-                                    TickFrequency="1"
-                                    IsSnapToTickEnabled="True"
-                                    SmallChange="1"
-                                    LargeChange="10"
-                                    IsMoveToPointEnabled="True"/>
-
-                            <TextBlock x:Name="MasterVolumeValueText"
-                                       Grid.Row="0"
-                                       Grid.Column="2"
-                                       Text="{Binding ElementName=MasterVolumeSlider,
-                                       Path=Value, StringFormat={}{0:0}%}"
-                                       Margin="0,0,0,16"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Foreground="{StaticResource PrimaryCyanBrush}"
-                                       FontWeight="SemiBold" />
-
 
                             <!-- Music volume -->
-                            <TextBlock Grid.Row="1"
+                            <TextBlock Grid.Row="0"
                                        Grid.Column="0"
                                        Text="Music Volume"
                                        Margin="0,0,0,16"
@@ -87,16 +51,22 @@
                                        FontWeight="SemiBold" />
 
                             <Slider x:Name="MusicVolumeSlider"
-                                    Grid.Row="1"
+                                    Grid.Row="0"
                                     Grid.Column="1"
                                     Minimum="0"
                                     Maximum="100"
                                     Value="100"
                                     Margin="16,0,16,16"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    ValueChanged="MusicVolumeSlider_ValueChanged"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    IsMoveToPointEnabled="True"/>
 
                             <TextBlock x:Name="MusicVolumeValueText"
-                                       Grid.Row="1"
+                                       Grid.Row="0"
                                        Grid.Column="2"
                                        Text="{Binding ElementName=MusicVolumeSlider,
                                        Path=Value, StringFormat={}{0:0}%}"
@@ -108,7 +78,7 @@
 
 
                             <!-- SFX volume -->
-                            <TextBlock Grid.Row="2"
+                            <TextBlock Grid.Row="1"
                                        Grid.Column="0"
                                        Text="SFX Volume"
                                        Margin="0,0,0,16"
@@ -117,16 +87,22 @@
                                        FontWeight="SemiBold" />
 
                             <Slider x:Name="SFXVolumeSlider"
-                                    Grid.Row="2"
+                                    Grid.Row="1"
                                     Grid.Column="1"
                                     Minimum="0"
                                     Maximum="100"
                                     Value="100"
                                     Margin="16,0,16,16"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    ValueChanged="SFXVolumeSlider_ValueChanged"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    IsMoveToPointEnabled="True"/>
 
                             <TextBlock x:Name="SFXVolumeValueText"
-                                       Grid.Row="2"
+                                       Grid.Row="1"
                                        Grid.Column="2"
                                        Text="{Binding ElementName=SFXVolumeSlider,
                                        Path=Value, StringFormat={}{0:0}%}"

@@ -19,24 +19,38 @@ namespace GameStudioClicker.Wpf.Views
             InitializeComponent();
         }
 
-        private void MasterVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void MusicVolumeSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e)
         {
-            double normalizedVolume = e.NewValue / 100;
+            _audioService.SetMusicVolume
+                    (ConvertSliderValueToVolume(e.NewValue));
+        }
+        private void SFXVolumeSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e)
+        {
+            _audioService.SetSfxVolume
+                    (ConvertSliderValueToVolume(e.NewValue));
+        }
 
-            if (normalizedVolume <= 0)
+
+        private static double ConvertSliderValueToVolume(double sliderValue)
+        {
+            double normalizedValue = sliderValue / 100.0; // Convert slider value (0-100) to a normalized value (0.0-1.0)
+
+            if (normalizedValue <= 0)
             {
-                _audioService.SetMasterVolume(0);
-                return;
+                return 0;
             }
 
             const double minDecibles = -30;
-
+            // Convert the normalized value to a volume level in decibels
             double decibles =
-                minDecibles + (normalizedVolume * -minDecibles);
+                minDecibles + (normalizedValue * -minDecibles);
 
-            double volume = Math.Pow(10, decibles / 20);
-
-            _audioService.SetMasterVolume(volume);
+            // Convert decibels to a linear volume scale (0.0-1.0)
+            return Math.Pow(10, decibles / 20);
         }
     }
 }
