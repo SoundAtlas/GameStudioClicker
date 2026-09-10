@@ -62,11 +62,11 @@ namespace GameStudioClicker.Wpf.Services
             _achievementEarnedPlayer.Volume = 0.2;
 
             _activeUpgradeSoundPath = Path.Combine(
-                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "ding.wav");
-            _activeUpgradePlayer.Volume = 0.1;
+                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blip3.wav");
+            _activeUpgradePlayer.Volume = 0.2;
 
             _hireEmployeeSoundPath = Path.Combine(
-                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blop.wav");
+                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
             _hireEmployeePlayer.Volume = 0.2;
         }
 
