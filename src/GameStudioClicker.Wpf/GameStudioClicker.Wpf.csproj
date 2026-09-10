@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Audio\Soundtrack\" />
+    <Folder Include="Assets\Audio\Music\" />
     <Folder Include="Assets\Audio\SFX\" />
     <Folder Include="Assets\Fonts\Inter\" />
     <Folder Include="Assets\Fonts\PressStart2P\" />

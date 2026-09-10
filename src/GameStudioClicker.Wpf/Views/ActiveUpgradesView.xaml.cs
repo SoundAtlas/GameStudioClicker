@@ -14,7 +14,8 @@ namespace GameStudioClicker.Wpf.Views
         public ActiveUpgradesView()
         {
             InitializeComponent();
-            _audioService = new AudioService();
+            _audioService =
+                ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
         }
 
         private void ActiveUpgradeButton_Click(object sender, RoutedEventArgs e)

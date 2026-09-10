@@ -13,7 +13,8 @@ namespace GameStudioClicker.Wpf.Views
         public WorkerUpgradesView()
         {
             InitializeComponent();
-            _audioService = new AudioService();
+            _audioService =
+                ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
         }
 
         private void HireEmployee_Click(object sender, RoutedEventArgs e)

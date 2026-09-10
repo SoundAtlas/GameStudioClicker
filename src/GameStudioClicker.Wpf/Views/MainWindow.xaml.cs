@@ -23,7 +23,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        _audioService = new AudioService();
+        _audioService =
+            ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
 
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -63,7 +64,6 @@ public partial class MainWindow : Window
         _mainViewModel.AchievementNotificationShown -= AchievementNotificationShow;
         _mainViewModel.Dispose();
         _gameSessionService.Dispose();
-        _audioService.Close();
     }
 
     // WriteCodeButton pressed sound
