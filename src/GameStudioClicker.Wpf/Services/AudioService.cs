@@ -43,31 +43,26 @@ namespace GameStudioClicker.Wpf.Services
                 Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2.wav")
                 ];
 
-            _soundtrackPlayer.Volume = 0.2;
             _soundtrackPlayer.MediaEnded += SoundtrackPlayer_MediaEnded;
 
             _writeCodePressSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound2.wav");
-            _writeCodePressPlayer.Volume = 0.2;
             _writeCodeReleaseSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound3.wav");
-            _writeCodeReleasePlayer.Volume = 0.2;
+
 
             _menuClickSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound1.wav");
-            _menuClickPlayer.Volume = 0.2;
 
             _achievementEarnedSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "achievement_unlock.wav");
-            _achievementEarnedPlayer.Volume = 0.2;
 
             _activeUpgradeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blip3.wav");
-            _activeUpgradePlayer.Volume = 0.2;
 
             _hireEmployeeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
-            _hireEmployeePlayer.Volume = 0.2;
+
         }
 
         private void SoundtrackPlayer_MediaEnded(object? sender, EventArgs e)

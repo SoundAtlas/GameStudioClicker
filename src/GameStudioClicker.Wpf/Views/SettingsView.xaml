@@ -57,7 +57,13 @@
                                     Maximum="100"
                                     Value="100"
                                     Margin="16,0,16,16"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    ValueChanged="MasterVolumeSlider_ValueChanged"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    SmallChange="1"
+                                    LargeChange="10"
+                                    IsMoveToPointEnabled="True"/>
 
                             <TextBlock x:Name="MasterVolumeValueText"
                                        Grid.Row="0"

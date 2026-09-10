@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameStudioClicker.Wpf.Services;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GameStudioClicker.Wpf.Views
 {
@@ -20,9 +9,34 @@ namespace GameStudioClicker.Wpf.Views
     /// </summary>
     public partial class SettingsView : UserControl
     {
+        private readonly AudioService _audioService;
+
         public SettingsView()
         {
+            _audioService =
+                ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
+
             InitializeComponent();
+        }
+
+        private void MasterVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double normalizedVolume = e.NewValue / 100;
+
+            if (normalizedVolume <= 0)
+            {
+                _audioService.SetMasterVolume(0);
+                return;
+            }
+
+            const double minDecibles = -30;
+
+            double decibles =
+                minDecibles + (normalizedVolume * -minDecibles);
+
+            double volume = Math.Pow(10, decibles / 20);
+
+            _audioService.SetMasterVolume(volume);
         }
     }
 }
