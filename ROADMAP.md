@@ -171,12 +171,26 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
 - Introduce migration rules once preserving development saves becomes worthwhile.
 - Consider atomic or backup-based saving if the persistence system grows.
 
+### 4. Add sound effects and a soundtrack
+
+- Introduce a small WPF audio service so playback details stay out of the game
+  rules and ViewModels remain straightforward to test.
+- Package an initial set of sound effects for manual coding, successful purchases,
+  unavailable actions, navigation, and achievement unlocks.
+- Add one seamless looping soundtrack that supports the focused late-night studio
+  mood of the modern dark pixel interface.
+- Prevent rapid clicks from producing harsh or excessively loud overlapping audio.
+- Add separate sound-effect and music volume controls, including mute options.
+- Persist audio preferences without making sound playback part of the core game
+  save state.
+- Use original, commissioned, generated, or properly licensed audio and record its
+  source and license alongside the assets.
+
 ## Later possibilities
 
 - Expand achievements beyond the initial recognition-only set and decide whether
   later achievements should grant rewards.
 - More worker and active-upgrade types.
 - Additional artwork consistent with the modern dark pixel visual direction.
-- Sound effects and music controls.
 - Broader studio progression building on the future Studio Level system.
 - Prestige or new-game-plus after the main progression loop is established.
