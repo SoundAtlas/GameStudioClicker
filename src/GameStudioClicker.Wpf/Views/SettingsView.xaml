@@ -23,9 +23,116 @@
                                Style="{StaticResource SectionHeadingTextStyle}"
                                Margin="0,0,0,16" />
 
+                    <!-- Settings list -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                        <Grid Margin="6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
 
+                            <!-- Master volume -->
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="0"
+                                       Text="Master Volume"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+
+                            <Slider x:Name="MasterVolumeSlider"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Value="100"
+                                    Margin="16,0,16,16"
+                                    VerticalAlignment="Center"/>
+
+                            <TextBlock x:Name="MasterVolumeValueText"
+                                       Grid.Row="0"
+                                       Grid.Column="2"
+                                       Text="{Binding ElementName=MasterVolumeSlider,
+                                       Path=Value, StringFormat={}{0:0}%}"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{StaticResource PrimaryCyanBrush}"
+                                       FontWeight="SemiBold" />
+
+
+                            <!-- Music volume -->
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                       Text="Music Volume"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+
+                            <Slider x:Name="MusicVolumeSlider"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Value="100"
+                                    Margin="16,0,16,16"
+                                    VerticalAlignment="Center"/>
+
+                            <TextBlock x:Name="MusicVolumeValueText"
+                                       Grid.Row="1"
+                                       Grid.Column="2"
+                                       Text="{Binding ElementName=MusicVolumeSlider,
+                                       Path=Value, StringFormat={}{0:0}%}"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{StaticResource PrimaryCyanBrush}"
+                                       FontWeight="SemiBold"/>
+
+
+                            <!-- SFX volume -->
+                            <TextBlock Grid.Row="2"
+                                       Grid.Column="0"
+                                       Text="SFX Volume"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+
+                            <Slider x:Name="SFXVolumeSlider"
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Value="100"
+                                    Margin="16,0,16,16"
+                                    VerticalAlignment="Center"/>
+
+                            <TextBlock x:Name="SFXVolumeValueText"
+                                       Grid.Row="2"
+                                       Grid.Column="2"
+                                       Text="{Binding ElementName=SFXVolumeSlider,
+                                       Path=Value, StringFormat={}{0:0}%}"
+                                       Margin="0,0,0,16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{StaticResource PrimaryCyanBrush}"
+                                       FontWeight="SemiBold" />
+
+                        </Grid>
+                    </Border>
                 </StackPanel>
-
             </ScrollViewer>
         </Border>
     </Grid>

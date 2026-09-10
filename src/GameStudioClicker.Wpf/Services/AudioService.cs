@@ -103,6 +103,17 @@ namespace GameStudioClicker.Wpf.Services
             _soundtrackPlayer.Play();
         }
 
+        public void SetMasterVolume(double masterVolume)
+        {
+            _soundtrackPlayer.Volume = 0.2 * masterVolume;
+            _writeCodePressPlayer.Volume = 0.2 * masterVolume;
+            _writeCodeReleasePlayer.Volume = 0.2 * masterVolume;
+            _menuClickPlayer.Volume = 0.2 * masterVolume;
+            _achievementEarnedPlayer.Volume = 0.2 * masterVolume;
+            _activeUpgradePlayer.Volume = 0.2 * masterVolume;
+            _hireEmployeePlayer.Volume = 0.2 * masterVolume;
+        }
+
         public void PlayWriteCodePressSound()
         {
             // Avoids audio click when opening the game
