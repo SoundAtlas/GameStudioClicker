@@ -153,6 +153,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     public RelayCommand ToggleAchievementsCommand { get; }
 
     public event EventHandler? SaveRequested;
+    public event EventHandler? AchievementNotificationShown;
 
     public void ShowSaveConfirmation()
     {
@@ -314,6 +315,7 @@ public class MainViewModel : ViewModelBase, IDisposable
         if (_currentAchievementNotification is not null)
         {
             _achievementNotificationTimer.Start();
+            AchievementNotificationShown?.Invoke(this, EventArgs.Empty);
         }
     }
 

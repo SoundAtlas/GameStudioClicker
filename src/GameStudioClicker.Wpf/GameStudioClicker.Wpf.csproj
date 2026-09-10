@@ -6,12 +6,17 @@
 	  
     <None Remove="Assets\Fonts\**\*.ttf" />
     <Resource Include="Assets\Fonts\**\*.ttf" />
-    
+
+	  <None Update="Assets\Audio\**\*.wav">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  
     <ProjectReference Include="..\GameStudioClicker.Core\GameStudioClicker.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\Audio\Soundtrack\" />
+    <Folder Include="Assets\Audio\SFX\" />
     <Folder Include="Assets\Fonts\Inter\" />
     <Folder Include="Assets\Fonts\PressStart2P\" />
   </ItemGroup>
