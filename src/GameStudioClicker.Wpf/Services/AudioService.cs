@@ -21,8 +21,13 @@ namespace GameStudioClicker.Wpf.Services
         private readonly string _achievementEarnedSoundPath;
         private bool _isAchievementEarnedSoundOpen;
 
+        private readonly MediaPlayer _activeUpgradePlayer = new();
+        private readonly string _activeUpgradeSoundPath;
+        private bool _isActiveUpgradeSoundOpen;
 
-
+        private readonly MediaPlayer _hireEmployeePlayer = new();
+        private readonly string _hireEmployeeSoundPath;
+        private bool _isHireEmployeeSoundOpen;
 
 
         public AudioService()
@@ -39,6 +44,16 @@ namespace GameStudioClicker.Wpf.Services
             _achievementEarnedSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "achievement_unlock.wav");
             _achievementEarnedPlayer.Volume = 0.2;
+
+            _activeUpgradeSoundPath = Path.Combine(
+                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "ding.wav");
+            _activeUpgradePlayer.Volume = 0.2;
+
+            _hireEmployeeSoundPath = Path.Combine(
+                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blop.wav");
+            _hireEmployeePlayer.Volume = 0.3;
+
+
         }
 
         public void PlayWriteCodePressSound()
@@ -64,7 +79,6 @@ namespace GameStudioClicker.Wpf.Services
                     new Uri(_writeCodeReleaseSoundPath, UriKind.Absolute));
                 _isWriteCodeReleaseSoundOpen = true;
             }
-
             _writeCodeReleasePlayer.Position = TimeSpan.Zero;
             _writeCodeReleasePlayer.Play();
         }
@@ -78,7 +92,6 @@ namespace GameStudioClicker.Wpf.Services
 
                 _isMenuClickSoundOpen = true;
             }
-
             _menuClickPlayer.Position = TimeSpan.Zero;
             _menuClickPlayer.Play();
         }
@@ -91,9 +104,32 @@ namespace GameStudioClicker.Wpf.Services
                     new Uri(_achievementEarnedSoundPath, UriKind.Absolute));
                 _isAchievementEarnedSoundOpen = true;
             }
-
             _achievementEarnedPlayer.Position = TimeSpan.Zero;
             _achievementEarnedPlayer.Play();
+        }
+
+        public void PlayActiveUpgradeSound()
+        {
+            if (!_isActiveUpgradeSoundOpen)
+            {
+                _activeUpgradePlayer.Open(
+                    new Uri(_activeUpgradeSoundPath, UriKind.Absolute));
+                _isActiveUpgradeSoundOpen = true;
+            }
+            _activeUpgradePlayer.Position = TimeSpan.Zero;
+            _activeUpgradePlayer.Play();
+        }
+
+        public void PlayHireEmployeeSound()
+        {
+            if (!_isHireEmployeeSoundOpen)
+            {
+                _hireEmployeePlayer.Open(
+                    new Uri(_hireEmployeeSoundPath, UriKind.Absolute));
+                _isHireEmployeeSoundOpen = true;
+            }
+            _hireEmployeePlayer.Position = TimeSpan.Zero;
+            _hireEmployeePlayer.Play();
         }
 
         public void Close()
@@ -102,12 +138,16 @@ namespace GameStudioClicker.Wpf.Services
             _writeCodeReleasePlayer.Close();
             _menuClickPlayer.Close();
             _achievementEarnedPlayer.Close();
+            _activeUpgradePlayer.Close();
+            _hireEmployeePlayer.Close();
 
 
             _isWriteCodePressSoundOpen = false;
             _isWriteCodeReleaseSoundOpen = false;
             _isMenuClickSoundOpen = false;
             _isAchievementEarnedSoundOpen = false;
+            _isActiveUpgradeSoundOpen = false;
+            _isHireEmployeeSoundOpen = false;
         }
     }
 }
