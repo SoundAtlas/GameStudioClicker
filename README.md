@@ -100,8 +100,12 @@ On Windows, the save file is stored at:
 - Animate worker hover, press, and purchase feedback using independent visual
   layers so repeated affordable purchases remain visible.
 - Animate offline earnings without shifting the dashboard.
-- Navigate independently between the worker roster, lifetime statistics, and
-  achievements.
+- Play a two-track soundtrack in sequence and provide sound effects for coding,
+  navigation, purchases, and achievement unlocks.
+- Provide separate music and sound-effect volume controls on a settings page,
+  with smooth real-time soundtrack volume changes.
+- Navigate independently between the worker roster, lifetime statistics,
+  achievements, and settings.
 - Keep theme resources, control styles, and reusable Storyboards in separate WPF
   resource dictionaries.
 
@@ -122,9 +126,11 @@ under [`src/GameStudioClicker.Wpf/Assets/`](src/GameStudioClicker.Wpf/Assets/).
   later.
 - `Styles/Theme.xaml`, `Styles/Animations.xaml`, and `Styles/Controls.xaml` separate
   shared visual resources from individual views.
-- `ActiveUpgradesView`, `WorkerUpgradesView`, `StatisticsView`, and
-  `AchievementsView` own their respective interface sections, leaving `MainWindow`
+- `ActiveUpgradesView`, `WorkerUpgradesView`, `StatisticsView`, `AchievementsView`,
+  and `SettingsView` own their respective interface sections, leaving `MainWindow`
   responsible for the overall shell, page navigation, and global notifications.
+- `AudioService` owns soundtrack and sound-effect playback, while
+  `SmoothedVolumeSampleProvider` prevents noise during live music-volume changes.
 
 The Model owns economy rules and derived production. ViewModels adapt that state for
 binding and commands. The View owns layout and purely visual animation behavior.
