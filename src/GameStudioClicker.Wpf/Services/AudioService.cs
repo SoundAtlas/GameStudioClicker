@@ -10,13 +10,11 @@ namespace GameStudioClicker.Wpf.Services
         private double _musicVolume = 1.0;
         private double _sfxVolume = 1.0;
 
-
         private AudioFileReader? _soundtrackReader;
         private WaveOutEvent? _soundtrackOutput;
         private readonly string[] _soundtrackPaths;
         private int _currentSoundtrackIndex;
         private bool _isSoundtrackOpen;
-
 
         private readonly MediaPlayer _writeCodePressPlayer = new();
         private readonly string _writeCodePressSoundPath;
@@ -68,8 +66,6 @@ namespace GameStudioClicker.Wpf.Services
 
             _hireEmployeeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
-
-
         }
 
         public void StartSoundtrack()
@@ -92,9 +88,42 @@ namespace GameStudioClicker.Wpf.Services
                 _soundtrackReader, (float)(0.5 * _musicVolume));
 
             _soundtrackOutput = new WaveOutEvent();
+
+            _soundtrackOutput.PlaybackStopped += SoundtrackOutput_PlaybackStopped;
+
             _soundtrackOutput.Init(_musicVolumeProvider);
 
             _soundtrackOutput.Play();
+        }
+
+        private void SoundtrackOutput_PlaybackStopped(
+            object? sender,
+            StoppedEventArgs e)
+        {
+            if (!_isSoundtrackOpen || e.Exception is not null)
+            {
+                return;
+            }
+
+            if (_soundtrackOutput is not null)
+            {
+                _soundtrackOutput.PlaybackStopped -=
+                    SoundtrackOutput_PlaybackStopped;
+
+                _soundtrackOutput.Dispose();
+            }
+
+            _soundtrackReader?.Dispose();
+
+            _soundtrackOutput = null;
+            _soundtrackReader = null;
+            _musicVolumeProvider = null;
+
+            // Move to the next soundtrack in the list, wrapping around if necessary
+            _currentSoundtrackIndex =
+                (_currentSoundtrackIndex + 1) % _soundtrackPaths.Length;
+
+            PlayCurrentSoundTrack();
         }
 
         public void SetMusicVolume(double musicVolume)
@@ -124,7 +153,7 @@ namespace GameStudioClicker.Wpf.Services
                 _isWriteCodePressSoundOpen = true;
             }
 
-            _writeCodePressPlayer.Volume = 0.3 * _sfxVolume;
+            _writeCodePressPlayer.Volume = 0.4 * _sfxVolume;
 
             // Resets file to play from the beginning, so that the sound can be played multiple times in a row
             _writeCodePressPlayer.Position = TimeSpan.Zero;
@@ -140,7 +169,7 @@ namespace GameStudioClicker.Wpf.Services
                 _isWriteCodeReleaseSoundOpen = true;
             }
 
-            _writeCodeReleasePlayer.Volume = 0.3 * _sfxVolume;
+            _writeCodeReleasePlayer.Volume = 0.4 * _sfxVolume;
 
             _writeCodeReleasePlayer.Position = TimeSpan.Zero;
             _writeCodeReleasePlayer.Play();
@@ -210,8 +239,17 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Close()
         {
-            _soundtrackOutput?.Stop();
-            _soundtrackOutput?.Dispose();
+            _isSoundtrackOpen = false;
+
+            if (_soundtrackOutput is not null)
+            {
+                _soundtrackOutput.PlaybackStopped -=
+                    SoundtrackOutput_PlaybackStopped;
+
+                _soundtrackOutput.Stop();
+                _soundtrackOutput.Dispose();
+            }
+
             _soundtrackReader?.Dispose();
 
             _soundtrackOutput = null;
@@ -225,7 +263,6 @@ namespace GameStudioClicker.Wpf.Services
             _activeUpgradePlayer.Close();
             _hireEmployeePlayer.Close();
 
-            _isSoundtrackOpen = false;
             _isWriteCodePressSoundOpen = false;
             _isWriteCodeReleaseSoundOpen = false;
             _isMenuClickSoundOpen = false;
