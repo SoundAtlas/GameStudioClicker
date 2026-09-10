@@ -91,6 +91,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             CanExecutePurchaseWorkerUpgrade);
         ToggleStatisticsCommand = new RelayCommand(ExecuteToggleStatistics);
         ToggleAchievementsCommand = new RelayCommand(ExecuteToggleAchievements);
+        ToggleSettingsCommand = new RelayCommand(ExecuteToggleSettings);
 
         if (_showOfflineEarnings)
         {
@@ -127,6 +128,8 @@ public class MainViewModel : ViewModelBase, IDisposable
         _selectedPage == GamePage.Statistics;
     public bool IsAchievementsViewVisible =>
         _selectedPage == GamePage.Achievements;
+    public bool IsSettingsViewVisible =>
+        _selectedPage == GamePage.Settings;
 
     // One-time notifications.
     public long OfflineLinesEarned { get; }
@@ -151,6 +154,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     public RelayCommand PurchaseWorkerUpgradeCommand { get; }
     public RelayCommand ToggleStatisticsCommand { get; }
     public RelayCommand ToggleAchievementsCommand { get; }
+    public RelayCommand ToggleSettingsCommand { get; }
 
     public event EventHandler? SaveRequested;
     public event EventHandler? AchievementNotificationShown;
@@ -246,6 +250,11 @@ public class MainViewModel : ViewModelBase, IDisposable
     private void ExecuteToggleAchievements(object? parameter)
     {
         TogglePage(GamePage.Achievements);
+    }
+
+    private void ExecuteToggleSettings(object? obj)
+    {
+        TogglePage(GamePage.Settings);
     }
 
     private void PassiveTimer_Tick(object? sender, EventArgs e)
@@ -369,6 +378,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     {
         OnPropertyChanged(nameof(IsStatisticsViewVisible));
         OnPropertyChanged(nameof(IsAchievementsViewVisible));
+        OnPropertyChanged(nameof(IsSettingsViewVisible));
     }
 
     private void RefreshStatistics()
