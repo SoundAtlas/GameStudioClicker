@@ -11,25 +11,53 @@ namespace GameStudioClicker.Wpf.Views
     {
         private readonly AudioService _audioService;
 
+        private readonly App _app;
+        private bool isInitializing = true;
+
         public SettingsView()
         {
-            _audioService =
-                ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
+            _app = (App)Application.Current;
+            _audioService = _app.AudioService;
 
             InitializeComponent();
+
+            MusicVolumeSlider.Value = _app.ApplicationSettings.MusicVolumePercent;
+            SFXVolumeSlider.Value = _app.ApplicationSettings.SfxVolumePercent;
+
+            isInitializing = false;
         }
 
         private void MusicVolumeSlider_ValueChanged(
             object sender,
             RoutedPropertyChangedEventArgs<double> e)
         {
+            if (isInitializing)
+            {
+                return;
+            }
+
             _audioService.SetMusicVolume(e.NewValue);
+
+            _app.ApplicationSettings.MusicVolumePercent =
+                Convert.ToInt32(e.NewValue);
+
+            _app.SaveSettings();
         }
         private void SFXVolumeSlider_ValueChanged(
             object sender,
             RoutedPropertyChangedEventArgs<double> e)
         {
+            if (isInitializing)
+            {
+                return;
+            }
+
             _audioService.SetSfxVolume(e.NewValue);
+
+            _app.ApplicationSettings.SfxVolumePercent =
+                Convert.ToInt32(e.NewValue);
+
+            _app.SaveSettings();
         }
     }
 }
