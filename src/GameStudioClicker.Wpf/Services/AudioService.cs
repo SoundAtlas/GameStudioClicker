@@ -26,6 +26,7 @@ namespace GameStudioClicker.Wpf.Services
             _soundtracksTitles[_currentSoundtrackIndex];
         private bool _isSoundtrackOpen;
         public event Action<string>? SoundtrackChanged;
+        private readonly List<int> _soundtrackShuffle = new();
 
 
 
@@ -94,6 +95,8 @@ namespace GameStudioClicker.Wpf.Services
             }
 
             _isSoundtrackOpen = true;
+            RefillSoundtrackShuffle();
+            SelectRandomSoundtrack();
             PlayCurrentSoundTrack();
         }
 
@@ -138,10 +141,37 @@ namespace GameStudioClicker.Wpf.Services
             _musicVolumeProvider = null;
 
             // Move to the next soundtrack in the list, wrapping around if necessary
-            _currentSoundtrackIndex =
-                (_currentSoundtrackIndex + 1) % _soundtrackPaths.Length;
-
+            SelectRandomSoundtrack();
             PlayCurrentSoundTrack();
+        }
+
+        private void SelectRandomSoundtrack()
+        {
+            if (_soundtrackShuffle.Count == 0)
+            {
+                RefillSoundtrackShuffle();
+            }
+
+            // Ensure that the new random index is different from the current one
+            int randomIndex;
+            do
+            {
+                randomIndex = Random.Shared.Next(_soundtrackShuffle.Count);
+
+            } while (_soundtrackShuffle.Count > 1 &&
+                     _soundtrackShuffle[randomIndex] == _currentSoundtrackIndex); // Avoids repeating the same soundtrack if there are multiple options
+
+            _currentSoundtrackIndex = _soundtrackShuffle[randomIndex];
+            _soundtrackShuffle.RemoveAt(randomIndex);
+        }
+
+        private void RefillSoundtrackShuffle()
+        {
+            _soundtrackShuffle.Clear();
+            for (int i = 0; i < _soundtrackPaths.Length; i++)
+            {
+                _soundtrackShuffle.Add(i);
+            }
         }
 
         public void SetMusicVolume(double musicVolume)
