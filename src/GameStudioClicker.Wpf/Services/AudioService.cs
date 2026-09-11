@@ -87,7 +87,7 @@ namespace GameStudioClicker.Wpf.Services
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
         }
 
-        public event Action<float> MusicVolumeChanged;
+        public event Action<float>? MusicLevelChanged;
 
         public void StartSoundtrack()
         {
@@ -136,7 +136,7 @@ namespace GameStudioClicker.Wpf.Services
 
             }
 
-            MusicVolumeChanged?.Invoke(level);
+            MusicLevelChanged?.Invoke(level);
         }
 
         private void SoundtrackOutput_PlaybackStopped(object? sender, StoppedEventArgs e)
@@ -285,7 +285,7 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Close()
         {
-            // Stop and dispose of the soundtrack output and reader
+            // NAudio resources cleanup
             _isSoundtrackOpen = false;
 
             if (_soundtrackOutput is not null)
@@ -310,7 +310,7 @@ namespace GameStudioClicker.Wpf.Services
             _musicMeteringProvider = null;
 
 
-            // Close MediaPlayers to release resources
+            // MediaPlayer resources cleanup
             _writeCodePressPlayer.Close();
             _writeCodeReleasePlayer.Close();
             _menuClickPlayer.Close();

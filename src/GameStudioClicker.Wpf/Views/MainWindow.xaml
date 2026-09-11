@@ -32,7 +32,7 @@
                     HorizontalAlignment="Right">
 
             <Border x:Name="NowPlayingPanel"
-                    Width="180"
+                    Width="220"
                     Height="42"
                     Margin="0,0,4,0"
                     Background="{StaticResource SurfaceBrush}"
@@ -41,23 +41,114 @@
                     CornerRadius="6"
                     Padding="10,7">
 
-                <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="NOW PLAYING "
-                               FontFamily="{StaticResource DisplayFontFamily}"
-                               FontSize="8"
-                               Foreground="{StaticResource PrimaryCyanBrush}" />
+                    <StackPanel Orientation="Vertical"
+                                Grid.Column="0">
 
-                    <TextBlock Text="{Binding CurrentSoundtrackTitle}"
-                               FontSize="10"
-                               FontFamily="{StaticResource DisplayFontFamily}"
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource PrimaryTextBrush}"
-                               Margin="0,5,0,0"
-                               TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="NOW PLAYING "
+                                   FontFamily="{StaticResource DisplayFontFamily}"
+                                   FontSize="8"
+                                   Foreground="{StaticResource PrimaryCyanBrush}" />
 
-                </StackPanel>
+                        <TextBlock Text="{Binding CurrentSoundtrackTitle}"
+                                   FontSize="10"
+                                   FontFamily="{StaticResource DisplayFontFamily}"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,5,0,0"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Height="22"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+
+                        <Border Width="4"
+                                Height="20"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PrimaryCyanBrush}"
+                                CornerRadius="1"
+                                RenderTransformOrigin="0.5,1">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="VisualizerBar1Scale"
+                                                ScaleY="0.15"/>
+                            </Border.RenderTransform>
+
+                        </Border>
+
+                        <Border Width="4"
+                                Height="20"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PrimaryCyanBrush}"
+                                CornerRadius="1"
+                                RenderTransformOrigin="0.5,1">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="VisualizerBar2Scale"
+                                                ScaleY="0.25"/>
+                            </Border.RenderTransform>
+
+                        </Border>
+
+                        <Border Width="4"
+                                Height="20"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PrimaryCyanBrush}"
+                                CornerRadius="1"
+                                RenderTransformOrigin="0.5,1">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="VisualizerBar3Scale"
+                                                ScaleY="0.35"/>
+                            </Border.RenderTransform>
+
+                        </Border>
+
+                        <Border Width="4"
+                                Height="20"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PrimaryCyanBrush}"
+                                CornerRadius="1"
+                                RenderTransformOrigin="0.5,1">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="VisualizerBar4Scale"
+                                                ScaleY="0.45"/>
+                            </Border.RenderTransform>
+
+                        </Border>
+
+                        <Border Width="4"
+                                Height="20"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PrimaryCyanBrush}"
+                                CornerRadius="1"
+                                RenderTransformOrigin="0.5,1">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="VisualizerBar5Scale"
+                                                ScaleY="0.55"/>
+                            </Border.RenderTransform>
+
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </Border>
+
 
             <!-- Optional save confirmation overlay; currently kept hidden by ViewModel usage. -->
             <Border Grid.Row="0"
