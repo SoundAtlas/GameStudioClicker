@@ -2,6 +2,10 @@ using GameStudioClicker.Wpf.Services;
 using GameStudioClicker.Wpf.Settings;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+
 
 namespace GameStudioClicker.Wpf;
 
@@ -13,6 +17,11 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        EventManager.RegisterClassHandler(
+            typeof(Button),
+            Button.MouseEnterEvent,
+            new MouseEventHandler(Button_MouseEnter));
+
         base.OnStartup(e);
 
         string directoryPath = Path.Combine(
@@ -29,6 +38,14 @@ public partial class App : Application
         AudioService.SetMusicVolume(ApplicationSettings.MusicVolumePercent);
         AudioService.SetSfxVolume(ApplicationSettings.SfxVolumePercent);
         AudioService.StartSoundtrack();
+    }
+
+    private void Button_MouseEnter(object? sender, MouseEventArgs e)
+    {
+        if (sender is Button { IsEnabled: true })
+        {
+            AudioService.PlayButtonHoverSound();
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)

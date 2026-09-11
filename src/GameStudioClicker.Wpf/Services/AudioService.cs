@@ -54,6 +54,9 @@ namespace GameStudioClicker.Wpf.Services
         private readonly string _hireEmployeeSoundPath;
         private bool _isHireEmployeeSoundOpen;
 
+        private readonly MediaPlayer _buttonHoverPlayer = new();
+        private readonly string _buttonHoverSoundPath;
+        private bool _isButtonHoverSoundOpen;
 
         public AudioService()
         {
@@ -83,6 +86,9 @@ namespace GameStudioClicker.Wpf.Services
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blip3.wav");
 
             _hireEmployeeSoundPath = Path.Combine(
+                AppContext.BaseDirectory, "Assets", "Audio", "SFX", "blip3.wav");
+
+            _buttonHoverSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
         }
 
@@ -117,7 +123,6 @@ namespace GameStudioClicker.Wpf.Services
             _soundtrackOutput.Play();
             SoundtrackChanged?.Invoke(CurrentSoundtrackTitle);
         }
-
 
         private void SoundtrackOutput_PlaybackStopped(object? sender, StoppedEventArgs e)
         {
@@ -206,7 +211,6 @@ namespace GameStudioClicker.Wpf.Services
             // Convert decibels to a linear volume scale (0.0-1.0)
             return Math.Pow(10, decibles / 20);
         }
-
         public void PlayWriteCodePressSound()
         {
             // Avoids audio click when opening the game
@@ -302,6 +306,19 @@ namespace GameStudioClicker.Wpf.Services
             _hireEmployeePlayer.Play();
         }
 
+        public void PlayButtonHoverSound()
+        {
+            if (!_isButtonHoverSoundOpen)
+            {
+                _buttonHoverPlayer.Open(
+                    new Uri(_buttonHoverSoundPath, UriKind.Absolute));
+                _isButtonHoverSoundOpen = true;
+            }
+            _buttonHoverPlayer.Volume = 0.3 * _sfxVolume;
+            _buttonHoverPlayer.Position = TimeSpan.Zero;
+            _buttonHoverPlayer.Play();
+        }
+
         public void Close()
         {
             // NAudio resources cleanup
@@ -330,6 +347,7 @@ namespace GameStudioClicker.Wpf.Services
             _achievementEarnedPlayer.Close();
             _activeUpgradePlayer.Close();
             _hireEmployeePlayer.Close();
+            _buttonHoverPlayer.Close();
 
             _isWriteCodePressSoundOpen = false;
             _isWriteCodeReleaseSoundOpen = false;
@@ -337,6 +355,7 @@ namespace GameStudioClicker.Wpf.Services
             _isAchievementEarnedSoundOpen = false;
             _isActiveUpgradeSoundOpen = false;
             _isHireEmployeeSoundOpen = false;
+            _isActiveUpgradeSoundOpen = false;
         }
     }
 }
