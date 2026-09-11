@@ -1,5 +1,4 @@
 ﻿using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using System.IO;
 using System.Windows.Media;
 
@@ -8,7 +7,6 @@ namespace GameStudioClicker.Wpf.Services
     public sealed class AudioService
     {
         private SmoothedVolumeSampleProvider? _musicVolumeProvider;
-        private MeteringSampleProvider? _musicMeteringProvider;
         private double _musicVolume = 1.0;
         private double _sfxVolume = 1.0;
 
@@ -87,7 +85,6 @@ namespace GameStudioClicker.Wpf.Services
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
         }
 
-        public event Action<float>? MusicLevelChanged;
 
         public void StartSoundtrack()
         {
@@ -108,36 +105,16 @@ namespace GameStudioClicker.Wpf.Services
             _musicVolumeProvider = new SmoothedVolumeSampleProvider(
                 _soundtrackReader, (float)(0.5 * _musicVolume));
 
-            _musicMeteringProvider = new MeteringSampleProvider(
-                _musicVolumeProvider);
-            _musicMeteringProvider.SamplesPerNotification =
-                _musicMeteringProvider.WaveFormat.SampleRate / 30; // 30 times per second
-
-            _musicMeteringProvider.StreamVolume += MusicMeteringProvider_StreamVolume;
-
             _soundtrackOutput = new WaveOutEvent();
 
             _soundtrackOutput.PlaybackStopped += SoundtrackOutput_PlaybackStopped;
 
-            _soundtrackOutput.Init(_musicMeteringProvider);
+            _soundtrackOutput.Init(_musicVolumeProvider);
 
             _soundtrackOutput.Play();
             SoundtrackChanged?.Invoke(CurrentSoundtrackTitle);
         }
 
-        private void MusicMeteringProvider_StreamVolume(object? sender, StreamVolumeEventArgs e)
-        {
-            float level = 0f;
-
-            foreach (float sample in e.MaxSampleValues)
-            {
-                // keep largest channel value
-                level = Math.Max(level, sample);
-
-            }
-
-            MusicLevelChanged?.Invoke(level);
-        }
 
         private void SoundtrackOutput_PlaybackStopped(object? sender, StoppedEventArgs e)
         {
@@ -154,17 +131,11 @@ namespace GameStudioClicker.Wpf.Services
                 _soundtrackOutput.Dispose();
             }
 
-            if (_musicMeteringProvider is not null)
-            {
-                _musicMeteringProvider.StreamVolume -= MusicMeteringProvider_StreamVolume;
-            }
-
             _soundtrackReader?.Dispose();
 
             _soundtrackOutput = null;
             _soundtrackReader = null;
             _musicVolumeProvider = null;
-            _musicMeteringProvider = null;
 
             // Move to the next soundtrack in the list, wrapping around if necessary
             _currentSoundtrackIndex =
@@ -297,17 +268,11 @@ namespace GameStudioClicker.Wpf.Services
                 _soundtrackOutput.Dispose();
             }
 
-            if (_musicMeteringProvider is not null)
-            {
-                _musicMeteringProvider.StreamVolume -= MusicMeteringProvider_StreamVolume;
-            }
-
             _soundtrackReader?.Dispose();
 
             _soundtrackOutput = null;
             _soundtrackReader = null;
             _musicVolumeProvider = null;
-            _musicMeteringProvider = null;
 
 
             // MediaPlayer resources cleanup

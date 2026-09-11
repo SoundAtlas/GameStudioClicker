@@ -85,6 +85,20 @@
             Duration="0:0:0.5"
             BeginTime="0:0:6.4" />
     </Storyboard>
+
+    <!-- Animates the appearance and disappearance of the visualizer. -->
+    <Storyboard x:Key="VisualizerFadeInStoryboard">
+        <DoubleAnimation
+            Storyboard.TargetProperty="Opacity"
+            From="0"
+            To="1"
+            Duration="0:0:0.3" />
+        <DoubleAnimation
+            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+            From="16"
+            To="0"
+            Duration="0:0:0.5" />
+    </Storyboard>
     <!--
     A transparent highlight band used by PassingHighlightSweepStoryboard.
     x:Shared=False gives each control its own independently animated brush.
@@ -177,5 +191,43 @@
                          BeginTime="0:0:3.6"
                          Duration="0:0:0.3"
                          AccelerationRatio="0.4"/>
+    </Storyboard>
+
+    <Storyboard x:Key="VisualizerJumpStoryboard">
+        <DoubleAnimation Storyboard.TargetName="VisualizerBar1Scale"
+                         Storyboard.TargetProperty="ScaleY"
+                         From="0.15"
+                         To="0.60"
+                         Duration="0:0:0.38"
+                         AutoReverse="True"
+                         RepeatBehavior="Forever"/>
+        <DoubleAnimation Storyboard.TargetName="VisualizerBar2Scale"
+                         Storyboard.TargetProperty="ScaleY"
+                         From="0.35"
+                         To="0.95"
+                         Duration="0:0:0.58"
+                         AutoReverse="True"
+                         RepeatBehavior="Forever"/>
+        <DoubleAnimation Storyboard.TargetName="VisualizerBar3Scale"
+                         Storyboard.TargetProperty="ScaleY"
+                         From="0.25"
+                         To="0.80"
+                         Duration="0:0:0.31"
+                         AutoReverse="True"
+                         RepeatBehavior="Forever"/>
+        <DoubleAnimation Storyboard.TargetName="VisualizerBar4Scale"
+                         Storyboard.TargetProperty="ScaleY"
+                         From="0.35"
+                         To="1"
+                         Duration="0:0:0.47"
+                         AutoReverse="True"
+                         RepeatBehavior="Forever"/>
+        <DoubleAnimation Storyboard.TargetName="VisualizerBar5Scale"
+                         Storyboard.TargetProperty="ScaleY"
+                         From="0.15"
+                         To="0.60"
+                         Duration="0:0:0.42"
+                         AutoReverse="True"
+                         RepeatBehavior="Forever"/>
     </Storyboard>
 </ResourceDictionary>
