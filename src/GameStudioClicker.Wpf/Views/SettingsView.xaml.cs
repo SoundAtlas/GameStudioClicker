@@ -11,46 +11,53 @@ namespace GameStudioClicker.Wpf.Views
     {
         private readonly AudioService _audioService;
 
+        private readonly App _app;
+        private bool isInitializing = true;
+
         public SettingsView()
         {
-            _audioService =
-                ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
+            _app = (App)Application.Current;
+            _audioService = _app.AudioService;
 
             InitializeComponent();
+
+            MusicVolumeSlider.Value = _app.ApplicationSettings.MusicVolumePercent;
+            SFXVolumeSlider.Value = _app.ApplicationSettings.SfxVolumePercent;
+
+            isInitializing = false;
         }
 
         private void MusicVolumeSlider_ValueChanged(
             object sender,
             RoutedPropertyChangedEventArgs<double> e)
         {
-            _audioService.SetMusicVolume
-                    (ConvertSliderValueToVolume(e.NewValue));
+            if (isInitializing)
+            {
+                return;
+            }
+
+            _audioService.SetMusicVolume(e.NewValue);
+
+            _app.ApplicationSettings.MusicVolumePercent =
+                Convert.ToInt32(e.NewValue);
+
+            _app.SaveSettings();
         }
         private void SFXVolumeSlider_ValueChanged(
             object sender,
             RoutedPropertyChangedEventArgs<double> e)
         {
-            _audioService.SetSfxVolume
-                    (ConvertSliderValueToVolume(e.NewValue));
-        }
-
-
-        private static double ConvertSliderValueToVolume(double sliderValue)
-        {
-            double normalizedValue = sliderValue / 100.0; // Convert slider value (0-100) to a normalized value (0.0-1.0)
-
-            if (normalizedValue <= 0)
+            if (isInitializing)
             {
-                return 0;
+                return;
             }
 
-            const double minDecibles = -30;
-            // Convert the normalized value to a volume level in decibels
-            double decibles =
-                minDecibles + (normalizedValue * -minDecibles);
+            _audioService.SetSfxVolume(e.NewValue);
 
-            // Convert decibels to a linear volume scale (0.0-1.0)
-            return Math.Pow(10, decibles / 20);
+            _app.ApplicationSettings.SfxVolumePercent =
+                Convert.ToInt32(e.NewValue);
+
+            _app.SaveSettings();
         }
     }
 }

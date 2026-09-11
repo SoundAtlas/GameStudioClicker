@@ -174,9 +174,9 @@ namespace GameStudioClicker.Wpf.Services
             }
         }
 
-        public void SetMusicVolume(double musicVolume)
+        public void SetMusicVolume(double musicVolumePercent)
         {
-            _musicVolume = Math.Clamp(musicVolume, 0, 1);
+            _musicVolume = ConvertPercentageToVolume(musicVolumePercent);
             if (_musicVolumeProvider is not null)
             {
                 _musicVolumeProvider.Volume =
@@ -184,9 +184,27 @@ namespace GameStudioClicker.Wpf.Services
             }
         }
 
-        public void SetSfxVolume(double sfxVolume)
+        public void SetSfxVolume(double sfxVolumePercent)
         {
-            _sfxVolume = Math.Clamp(sfxVolume, 0, 1);
+            _sfxVolume = ConvertPercentageToVolume(sfxVolumePercent);
+        }
+
+        private static double ConvertPercentageToVolume(double volumePercent)
+        {
+            double normalizedValue = Math.Clamp(volumePercent, 0, 100) / 100.0; // Convert percentage (0-100) to a normalized value (0.0-1.0)
+
+            if (normalizedValue <= 0)
+            {
+                return 0;
+            }
+
+            const double minDecibles = -30;
+            // Convert the normalized value to a volume level in decibels
+            double decibles =
+                minDecibles + (normalizedValue * -minDecibles);
+
+            // Convert decibels to a linear volume scale (0.0-1.0)
+            return Math.Pow(10, decibles / 20);
         }
 
         public void PlayWriteCodePressSound()
