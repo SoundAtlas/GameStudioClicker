@@ -7,7 +7,7 @@
     <None Remove="Assets\Fonts\**\*.ttf" />
     <Resource Include="Assets\Fonts\**\*.ttf" />
 
-	  <None Update="Assets\Audio\**\*.wav">
+	  <None Update="Assets\Audio\**\*.*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  

@@ -6,7 +6,7 @@ namespace GameStudioClicker.Wpf.Services
 {
     public sealed class AudioService
     {
-        private SmoothedVolumeSampleProvider? _musicVolumeProvider; // controls the volume of the music        
+        private SmoothedVolumeSampleProvider? _musicVolumeProvider;
         private double _musicVolume = 1.0;
         private double _sfxVolume = 1.0;
 
@@ -45,8 +45,11 @@ namespace GameStudioClicker.Wpf.Services
         {
             _soundtrackPaths =
                 [
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1.wav"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2.wav")
+                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1_first_commit.mp3"),
+                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2_after_hours.mp3"),
+                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack3_build_pipeline.mp3"),
+                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack4_going_gold.mp3"),
+                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack5_studio_empire.mp3")
                 ];
 
             _writeCodePressSoundPath = Path.Combine(
