@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using System.Windows.Threading;
 
 namespace GameStudioClicker.Wpf.Views;
 
@@ -19,12 +20,14 @@ public partial class MainWindow : Window
     private readonly GameSessionService _gameSessionService;
     private readonly AudioService _audioService;
 
+
     public MainWindow()
     {
         _audioService =
             ((GameStudioClicker.Wpf.App)Application.Current).AudioService;
 
         InitializeComponent();
+
 
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -40,12 +43,28 @@ public partial class MainWindow : Window
         _mainViewModel = new MainViewModel(
             _gameSessionService.GameState,
             _gameSessionService.OfflineLinesEarned);
+
+        _mainViewModel.CurrentSoundtrackTitle =
+            _audioService.CurrentSoundtrackTitle;
+
+        _audioService.SoundtrackChanged += AudioService_SoundtrackChanged;
+
         _mainViewModel.SaveRequested += SaveRequested;
         _mainViewModel.AchievementNotificationShown += AchievementNotificationShow;
 
 
         Closing += MainWindowClosing;
         DataContext = _mainViewModel;
+    }
+
+    private void AudioService_SoundtrackChanged(string title)
+    {
+        // Dispatcher is used to ensure that the UI update occurs on the main thread.
+        // This is necessary because the SoundtrackChanged event may be raised from a different thread.
+        Dispatcher.Invoke(() =>
+        {
+            _mainViewModel.CurrentSoundtrackTitle = title;
+        });
     }
 
     private void AchievementNotificationShow(object? sender, EventArgs e)
@@ -58,17 +77,8 @@ public partial class MainWindow : Window
         _gameSessionService.Save();
     }
 
-    private void MainWindowClosing(object? sender, CancelEventArgs e)
-    {
-        _mainViewModel.SaveRequested -= SaveRequested;
-        _mainViewModel.AchievementNotificationShown -= AchievementNotificationShow;
-        _mainViewModel.Dispose();
-        _gameSessionService.Dispose();
-    }
-
     // WriteCodeButton pressed sound
-    private void WriteCodeButton_PreviewMouseLeftButtonDown(
-        object sender, MouseButtonEventArgs e)
+    private void WriteCodeButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         _audioService.PlayWriteCodePressSound();
     }
@@ -141,6 +151,16 @@ public partial class MainWindow : Window
     private void MenuButton_Click(object sender, RoutedEventArgs e)
     {
         _audioService.PlayMenuClickSound();
+    }
+
+    private void MainWindowClosing(object? sender, CancelEventArgs e)
+    {
+        _mainViewModel.SaveRequested -= SaveRequested;
+        _mainViewModel.AchievementNotificationShown -= AchievementNotificationShow;
+        _audioService.SoundtrackChanged -= AudioService_SoundtrackChanged;
+
+        _mainViewModel.Dispose();
+        _gameSessionService.Dispose();
     }
 
 }

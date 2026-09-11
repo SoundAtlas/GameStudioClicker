@@ -13,8 +13,21 @@ namespace GameStudioClicker.Wpf.Services
         private AudioFileReader? _soundtrackReader;
         private WaveOutEvent? _soundtrackOutput;
         private readonly string[] _soundtrackPaths;
+        private readonly string[] _soundtracksTitles =
+            [
+                "First Commit",
+                "After Hours",
+                "Build Pipeline",
+                "Going Gold",
+                "Studio Empire"
+            ];
         private int _currentSoundtrackIndex;
+        public string CurrentSoundtrackTitle =>
+            _soundtracksTitles[_currentSoundtrackIndex];
         private bool _isSoundtrackOpen;
+        public event Action<string>? SoundtrackChanged;
+
+
 
         private readonly MediaPlayer _writeCodePressPlayer = new();
         private readonly string _writeCodePressSoundPath;
@@ -45,12 +58,13 @@ namespace GameStudioClicker.Wpf.Services
         {
             _soundtrackPaths =
                 [
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1_first_commit.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2_after_hours.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack3_build_pipeline.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack4_going_gold.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack5_studio_empire.mp3")
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1_first_commit.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2_after_hours.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack3_build_pipeline.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack4_going_gold.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack5_studio_empire.mp3")
                 ];
+
 
             _writeCodePressSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound2.wav");
@@ -70,6 +84,7 @@ namespace GameStudioClicker.Wpf.Services
             _hireEmployeeSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
         }
+
 
         public void StartSoundtrack()
         {
@@ -97,11 +112,11 @@ namespace GameStudioClicker.Wpf.Services
             _soundtrackOutput.Init(_musicVolumeProvider);
 
             _soundtrackOutput.Play();
+            SoundtrackChanged?.Invoke(CurrentSoundtrackTitle);
         }
 
-        private void SoundtrackOutput_PlaybackStopped(
-            object? sender,
-            StoppedEventArgs e)
+
+        private void SoundtrackOutput_PlaybackStopped(object? sender, StoppedEventArgs e)
         {
             if (!_isSoundtrackOpen || e.Exception is not null)
             {
@@ -143,7 +158,6 @@ namespace GameStudioClicker.Wpf.Services
         {
             _sfxVolume = Math.Clamp(sfxVolume, 0, 1);
         }
-
 
         public void PlayWriteCodePressSound()
         {
@@ -242,6 +256,7 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Close()
         {
+            // NAudio resources cleanup
             _isSoundtrackOpen = false;
 
             if (_soundtrackOutput is not null)
@@ -259,6 +274,8 @@ namespace GameStudioClicker.Wpf.Services
             _soundtrackReader = null;
             _musicVolumeProvider = null;
 
+
+            // MediaPlayer resources cleanup
             _writeCodePressPlayer.Close();
             _writeCodeReleasePlayer.Close();
             _menuClickPlayer.Close();
