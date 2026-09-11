@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using System.IO;
 using System.Windows.Media;
 
@@ -7,14 +8,28 @@ namespace GameStudioClicker.Wpf.Services
     public sealed class AudioService
     {
         private SmoothedVolumeSampleProvider? _musicVolumeProvider;
+        private MeteringSampleProvider? _musicMeteringProvider;
         private double _musicVolume = 1.0;
         private double _sfxVolume = 1.0;
 
         private AudioFileReader? _soundtrackReader;
         private WaveOutEvent? _soundtrackOutput;
         private readonly string[] _soundtrackPaths;
+        private readonly string[] _soundtracksTitles =
+            [
+                "First Commit",
+                "After Hours",
+                "Build Pipeline",
+                "Going Gold",
+                "Studio Empire"
+            ];
         private int _currentSoundtrackIndex;
+        public string CurrentSoundtrackTitle =>
+            _soundtracksTitles[_currentSoundtrackIndex];
         private bool _isSoundtrackOpen;
+        public event Action<string>? SoundtrackChanged;
+
+
 
         private readonly MediaPlayer _writeCodePressPlayer = new();
         private readonly string _writeCodePressSoundPath;
@@ -45,12 +60,13 @@ namespace GameStudioClicker.Wpf.Services
         {
             _soundtrackPaths =
                 [
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1_first_commit.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2_after_hours.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack3_build_pipeline.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack4_going_gold.mp3"),
-                Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack5_studio_empire.mp3")
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack1_first_commit.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack2_after_hours.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack3_build_pipeline.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack4_going_gold.mp3"),
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "Audio", "Music", "soundtrack5_studio_empire.mp3")
                 ];
+
 
             _writeCodePressSoundPath = Path.Combine(
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "menu_click_sound2.wav");
@@ -71,6 +87,8 @@ namespace GameStudioClicker.Wpf.Services
                 AppContext.BaseDirectory, "Assets", "Audio", "SFX", "click.wav");
         }
 
+        public event Action<float> MusicVolumeChanged;
+
         public void StartSoundtrack()
         {
             if (_isSoundtrackOpen)
@@ -90,18 +108,38 @@ namespace GameStudioClicker.Wpf.Services
             _musicVolumeProvider = new SmoothedVolumeSampleProvider(
                 _soundtrackReader, (float)(0.5 * _musicVolume));
 
+            _musicMeteringProvider = new MeteringSampleProvider(
+                _musicVolumeProvider);
+            _musicMeteringProvider.SamplesPerNotification =
+                _musicMeteringProvider.WaveFormat.SampleRate / 30; // 30 times per second
+
+            _musicMeteringProvider.StreamVolume += MusicMeteringProvider_StreamVolume;
+
             _soundtrackOutput = new WaveOutEvent();
 
             _soundtrackOutput.PlaybackStopped += SoundtrackOutput_PlaybackStopped;
 
-            _soundtrackOutput.Init(_musicVolumeProvider);
+            _soundtrackOutput.Init(_musicMeteringProvider);
 
             _soundtrackOutput.Play();
+            SoundtrackChanged?.Invoke(CurrentSoundtrackTitle);
         }
 
-        private void SoundtrackOutput_PlaybackStopped(
-            object? sender,
-            StoppedEventArgs e)
+        private void MusicMeteringProvider_StreamVolume(object? sender, StreamVolumeEventArgs e)
+        {
+            float level = 0f;
+
+            foreach (float sample in e.MaxSampleValues)
+            {
+                // keep largest channel value
+                level = Math.Max(level, sample);
+
+            }
+
+            MusicVolumeChanged?.Invoke(level);
+        }
+
+        private void SoundtrackOutput_PlaybackStopped(object? sender, StoppedEventArgs e)
         {
             if (!_isSoundtrackOpen || e.Exception is not null)
             {
@@ -116,11 +154,17 @@ namespace GameStudioClicker.Wpf.Services
                 _soundtrackOutput.Dispose();
             }
 
+            if (_musicMeteringProvider is not null)
+            {
+                _musicMeteringProvider.StreamVolume -= MusicMeteringProvider_StreamVolume;
+            }
+
             _soundtrackReader?.Dispose();
 
             _soundtrackOutput = null;
             _soundtrackReader = null;
             _musicVolumeProvider = null;
+            _musicMeteringProvider = null;
 
             // Move to the next soundtrack in the list, wrapping around if necessary
             _currentSoundtrackIndex =
@@ -143,7 +187,6 @@ namespace GameStudioClicker.Wpf.Services
         {
             _sfxVolume = Math.Clamp(sfxVolume, 0, 1);
         }
-
 
         public void PlayWriteCodePressSound()
         {
@@ -242,6 +285,7 @@ namespace GameStudioClicker.Wpf.Services
 
         public void Close()
         {
+            // Stop and dispose of the soundtrack output and reader
             _isSoundtrackOpen = false;
 
             if (_soundtrackOutput is not null)
@@ -253,12 +297,20 @@ namespace GameStudioClicker.Wpf.Services
                 _soundtrackOutput.Dispose();
             }
 
+            if (_musicMeteringProvider is not null)
+            {
+                _musicMeteringProvider.StreamVolume -= MusicMeteringProvider_StreamVolume;
+            }
+
             _soundtrackReader?.Dispose();
 
             _soundtrackOutput = null;
             _soundtrackReader = null;
             _musicVolumeProvider = null;
+            _musicMeteringProvider = null;
 
+
+            // Close MediaPlayers to release resources
             _writeCodePressPlayer.Close();
             _writeCodeReleasePlayer.Close();
             _menuClickPlayer.Close();

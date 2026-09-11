@@ -22,6 +22,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     private bool _showOfflineEarnings;
     private bool _showSaveConfirmation;
     private bool _isDisposed;
+    private string _currentSoundtrackTitle = string.Empty;
 
     public MainViewModel(GameState gameState, long offlineLinesEarned = 0)
     {
@@ -143,6 +144,20 @@ public class MainViewModel : ViewModelBase, IDisposable
         _currentAchievementNotification?.DisplayName ?? string.Empty;
     public string AchievementNotificationDescription =>
         _currentAchievementNotification?.Description ?? string.Empty;
+    public string CurrentSoundtrackTitle
+    {
+        get => _currentSoundtrackTitle;
+        set
+        {
+            if (_currentSoundtrackTitle == value)
+            {
+                return;
+            }
+
+            _currentSoundtrackTitle = value;
+            OnPropertyChanged();
+        }
+    }
 
     // Collections and commands consumed by the view.
     public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }

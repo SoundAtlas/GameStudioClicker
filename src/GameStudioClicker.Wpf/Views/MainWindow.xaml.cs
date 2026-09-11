@@ -26,6 +26,7 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
+
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "GameStudioClicker");
@@ -40,12 +41,28 @@ public partial class MainWindow : Window
         _mainViewModel = new MainViewModel(
             _gameSessionService.GameState,
             _gameSessionService.OfflineLinesEarned);
+
+        _mainViewModel.CurrentSoundtrackTitle =
+            _audioService.CurrentSoundtrackTitle;
+
+        _audioService.SoundtrackChanged += AudioService_SoundtrackChanged;
+
         _mainViewModel.SaveRequested += SaveRequested;
         _mainViewModel.AchievementNotificationShown += AchievementNotificationShow;
 
 
         Closing += MainWindowClosing;
         DataContext = _mainViewModel;
+    }
+
+    private void AudioService_SoundtrackChanged(string title)
+    {
+        // Dispatcher is used to ensure that the UI update occurs on the main thread.
+        // This is necessary because the SoundtrackChanged event may be raised from a different thread.
+        Dispatcher.Invoke(() =>
+        {
+            _mainViewModel.CurrentSoundtrackTitle = title;
+        });
     }
 
     private void AchievementNotificationShow(object? sender, EventArgs e)
@@ -62,6 +79,7 @@ public partial class MainWindow : Window
     {
         _mainViewModel.SaveRequested -= SaveRequested;
         _mainViewModel.AchievementNotificationShown -= AchievementNotificationShow;
+        _audioService.SoundtrackChanged -= AudioService_SoundtrackChanged;
         _mainViewModel.Dispose();
         _gameSessionService.Dispose();
     }
