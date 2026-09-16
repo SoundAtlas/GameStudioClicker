@@ -141,6 +141,15 @@ Each milestone should be broken into learning-sized tasks before implementation.
 - Restore settings before soundtrack playback, save changes immediately, clamp
   loaded percentages, and recover safely from missing or malformed settings files.
 
+### 15. Shared control styling and interaction polish
+
+- Share a rounded progress-bar template between Studio XP and achievements,
+  retaining the green earned-achievement appearance.
+- Match settings sliders and their hover/drag feedback to the game theme.
+- Use `ClickDragSlider` to support clicking the track and immediately dragging
+  without releasing the mouse button.
+- Apply a shared slim vertical scrollbar style to the existing ScrollViewers.
+
 ## Current priorities
 
 ### Short term
@@ -222,39 +231,50 @@ Recommended XP rewards:
 
 ### Phase 2 — core leveling model
 
-- [ ] Create `Models/StudioProgression.cs` in Core, responsible only for XP and
+- [x] Create `Models/StudioProgression.cs` in Core, responsible only for XP and
   level calculations.
-- [ ] Add `TotalExperience`, derived `Level`, `ExperienceIntoCurrentLevel`, and
+- [x] Add `TotalExperience`, derived `Level`, `ExperienceIntoCurrentLevel`, and
   `ExperienceNeededForNextLevel`, using explicit cumulative thresholds.
-- [ ] Add `AddExperience(long amount)` and `RestoreExperience(long amount)`.
-- [ ] Handle negative values, multiple-level gains, and the prototype maximum
+- [x] Add `AddExperience(long amount)` and `RestoreExperience(long amount)`.
+- [x] Handle negative values, multiple-level gains, and the prototype maximum
   level. Retain total XP beyond Level 5 so later threshold additions can use it.
 - [ ] Assistant adds a few focused leveling-rule regression tests after the model
   is implemented; the user is not assigned test-writing.
 
 ### Phase 3 — connect one XP source
 
-- [ ] Let `GameState` own a `StudioProgression` instance.
-- [ ] Award one XP per successful `WriteCode()` action, independent of click power.
-- [ ] Expose level and XP progress through `MainViewModel`, refreshing them after
+- [x] Let `GameState` own a `StudioProgression` instance.
+- [x] Award one XP per successful `WriteCode()` action, independent of click power.
+- [x] Expose level and XP progress through `MainViewModel`, refreshing them after
   relevant actions.
-- [ ] Verify threshold crossings using the debugger before adding other sources.
+- [x] Verify manual-click XP through the in-game level/XP display (user-reported).
+  A debugger is optional; boundary checks remain listed in Phase 5.
 
 ### Phase 4 — persist XP
 
-- [ ] Add `StudioExperience` to `GameSaveData`.
-- [ ] Update `CreateSaveData()` and `RestoreFromSaveData()`; save XP, not a separate
+- [x] Add `StudioExperience` to `GameSaveData`.
+- [x] Update `CreateSaveData()` and `RestoreFromSaveData()`; save XP, not a separate
   level value.
-- [ ] Default missing XP in older saves to zero and clamp invalid negative XP.
-- [ ] Verify XP and derived level survive closing and restarting the game.
+- [x] Default missing XP in older saves to zero and clamp invalid negative XP.
+- [x] Verify XP and derived level survive closing and restarting the game
+  (user-reported).
 
 ### Phase 5 — compact level display
 
-- [ ] Review `Design/style/` and WPF `Assets/` before changing the visual design.
-- [ ] Add a compact dashboard level label, XP text, and progress bar; defer a full
+- [x] Review `Design/style/` and WPF `Assets/` before changing the visual design.
+- [x] Add a compact dashboard level label, XP text, and progress bar; defer a full
   location screen.
-- [ ] Verify the initial level, partial progress, level transition, and maximum
+- [x] Implement maximum-level text and a full progress bar, using style triggers.
+- [ ] Finish explicit boundary checks for the initial level, partial progress, level transition, and maximum
   level presentation.
+
+### Control styling follow-up
+
+- [x] Move rounded XP and achievement progress-bar styles into `Styles/Controls.xaml`.
+- [x] Style settings sliders and verify click-and-drag interaction (user-reported).
+- [x] Style vertical scrollbars through the shared control resources.
+- [x] Confirm mouse-wheel scrolling, thumb dragging, and track/page clicks in each
+  scrollable view.
 
 ### Phase 6 — remaining XP sources
 
@@ -319,8 +339,10 @@ Recommended XP rewards:
 
 ### 1. Studio Level and location progression
 
-- Follow the checkbox plan above, starting with confirming Phase 1 values and
-  implementing the core model; do not build the whole system at once.
+- Core leveling, manual-click XP, XP persistence, and the dashboard display are
+  implemented. Continue with Phase 6, starting with successful worker-hire XP.
+- Keep focused regression coverage and remaining manual boundary checks visible
+  as follow-ups; locations and relocation are not implemented yet.
 
 ### 2. Remaining achievement and interface follow-ups
 

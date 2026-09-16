@@ -130,6 +130,7 @@ namespace GameStudioClicker.Core.Models
                 activeUpgrade.MarkAsPurchased();
                 RecalculateLinesPerSecond();
                 LifetimeActiveUpgradesPurchased++;
+                StudioProgression.AddExperience(activeUpgrade.ExperienceReward);
 
                 CheckForNewAchievements();
 
@@ -159,6 +160,7 @@ namespace GameStudioClicker.Core.Models
                 workerUpgrade.AddWorker();
                 RecalculateLinesPerSecond();
                 LifetimeEmployeesHired++;
+                StudioProgression.AddExperience(workerUpgrade.ExperienceReward);
 
                 CheckForNewAchievements();
 
