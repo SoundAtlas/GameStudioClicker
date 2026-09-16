@@ -37,8 +37,7 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="Background"
                                     Value="{StaticResource PrimaryCyanBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -48,10 +47,8 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="BorderBrush"
                                     Value="{StaticResource BorderBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource SecondaryTextBrush}" />
-                            <Setter Property="Cursor"
-                                    Value="Arrow" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -88,16 +85,14 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="BorderBrush"
                                     Value="{StaticResource PrimaryTextBrush}" />
-                            <Setter Property="Background"
-                                    Value="{StaticResource GlowBlueBrush}" />
+                            <Setter Property="Background" Value="{StaticResource GlowBlueBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="ButtonBorder"
                                     Property="Background"
                                     Value="{StaticResource PressedPrimaryBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -107,10 +102,8 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="BorderBrush"
                                     Value="{StaticResource BorderBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource SecondaryTextBrush}" />
-                            <Setter Property="Cursor"
-                                    Value="Arrow" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -154,8 +147,7 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="Background"
                                     Value="{StaticResource SecondaryTextBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -165,10 +157,8 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="BorderBrush"
                                     Value="{StaticResource BorderBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource SecondaryTextBrush}" />
-                            <Setter Property="Cursor"
-                                    Value="Arrow" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -210,8 +200,7 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="Background"
                                     Value="{StaticResource WarningBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource GameBackgroundBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource GameBackgroundBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -221,10 +210,8 @@
                             <Setter TargetName="ButtonBorder"
                                     Property="BorderBrush"
                                     Value="{StaticResource BorderBrush}" />
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource SecondaryTextBrush}" />
-                            <Setter Property="Cursor"
-                                    Value="Arrow" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -268,12 +255,9 @@
     <!-- XP Progress Bar Style -->
     <Style x:Key="RoundedProgressBarStyle"
            TargetType="{x:Type ProgressBar}">
-        <Setter Property="Height"
-                Value="8" />
-        <Setter Property="Background"
-                Value="{StaticResource GameBackgroundBrush}" />
-        <Setter Property="Foreground"
-                Value="{StaticResource PrimaryCyanBrush}" />
+        <Setter Property="Height" Value="8" />
+        <Setter Property="Background" Value="{StaticResource GameBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryCyanBrush}" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -299,31 +283,21 @@
            BasedOn="{StaticResource RoundedProgressBarStyle}">
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsEarned}" Value="True">
-                <Setter Property="Foreground"
-                        Value="{StaticResource SuccessBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
-
     <!-- Global tooltip appearance used by active-upgrade details. -->
     <Style TargetType="{x:Type ToolTip}">
-        <Setter Property="FontFamily"
-                Value="{StaticResource BodyFontFamily}" />
-        <Setter Property="Background"
-                Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="Foreground"
-                Value="{StaticResource PrimaryTextBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="Padding"
-                Value="12" />
-        <Setter Property="Placement"
-                Value="Bottom" />
-        <Setter Property="HasDropShadow"
-                Value="True" />
+        <Setter Property="FontFamily" Value="{StaticResource BodyFontFamily}" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Placement" Value="Bottom" />
+        <Setter Property="HasDropShadow" Value="True" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -339,4 +313,90 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- Slider Style -->
+    <Style x:Key="GameSliderThumbStyle"
+           TargetType="{x:Type Thumb}">
+        <Setter Property="Width" Value="14" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Background" Value="{StaticResource PrimaryCyanBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GlowBlueBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="3" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource GlowBlueBrush}" />
+            </Trigger>
+
+            <Trigger Property="IsDragging" Value="True">
+                <Setter Property="Background" Value="{StaticResource PrimaryTextBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="GameSliderTrackButtonStyle"
+           TargetType="{x:Type RepeatButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Border Background="{TemplateBinding Background}"
+                            Height="6"
+                            VerticalAlignment="Center"
+                            CornerRadius="3" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameSliderTrackStyle"
+           TargetType="{x:Type Slider}">
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track"
+                               Orientation="Horizontal"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{Binding Value,
+                               RelativeSource={RelativeSource TemplatedParent},
+                               Mode=TwoWay}"
+                               IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource GameSliderTrackButtonStyle}"
+                                              Background="{StaticResource PrimaryCyanBrush}"
+                                              Command="{x:Static Slider.DecreaseLarge}" />
+                            </Track.DecreaseRepeatButton>
+
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource GameSliderThumbStyle}" />
+                            </Track.Thumb>
+
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource GameSliderTrackButtonStyle}"
+                                              Background="{StaticResource GameBackgroundBrush}"
+                                              Command="{x:Static Slider.IncreaseLarge}" />
+                            </Track.IncreaseRepeatButton>
+
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
