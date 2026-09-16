@@ -150,6 +150,20 @@ Each milestone should be broken into learning-sized tasks before implementation.
   without releasing the mouse button.
 - Apply a shared slim vertical scrollbar style to the existing ScrollViewers.
 
+### 16. Studio XP and expanded achievement rewards
+
+- Add cumulative Studio XP and derived Levels 1–5 through `StudioProgression`.
+- Award XP for manual coding, successful worker hires, successful active-upgrade
+  purchases, and first-time achievement unlocks using explicit content rewards.
+- Persist total XP and restore purchases and earned achievements without repeating
+  their rewards; passive and offline production award no direct XP.
+- Show the Studio Level and XP progress in the dashboard, including maximum-level
+  presentation, and add Lifetime Experience to the reusable statistics collection.
+- Add Hello, Game Dev for reaching Studio Level 5, bringing the achievement set to
+  five with individual XP rewards.
+- Keep focused automated coverage and specific manual boundary checks pending as
+  tracked below; locations and relocation remain unimplemented.
+
 ## Current priorities
 
 ### Short term
@@ -160,6 +174,9 @@ Each milestone should be broken into learning-sized tasks before implementation.
   persistence (assistant-owned follow-up, not a prerequisite for Studio Level).
 - Achievement behavior, notification order/save restoration, and expanded-worker
   progression have been manually verified by the user.
+- XP sources have been reported working by the user. The solution also includes
+  Lifetime Experience in Statistics and the Studio Level 5 achievement; their
+  specific manual verification remains a follow-up.
 - Keep the temporary elevated click power as a development aid while separating it
   from the intended starting balance before release.
 - Defer responsive, minimum-window-size, and high-DPI layout fixes until the new
@@ -218,6 +235,7 @@ Recommended XP rewards:
 | Lead / Engineering Manager / Studio Director hire | 100 / 200 / 400 |
 | Active upgrade in content Era 1 / 2 / 3 / 4 | 25 / 50 / 100 / 150 |
 | First-time Hello World / First Hire / First Upgrade / Shipping Code unlock | 5 / 10 / 10 / 25 |
+| First-time Hello, Game Dev unlock (Studio Level 5) | 50 |
 | Passive production, offline production, failed purchase, UI navigation | 0 |
 
 - [ ] Start in `bedroom` at Level 1, with Interns available.
@@ -265,8 +283,12 @@ Recommended XP rewards:
 - [x] Add a compact dashboard level label, XP text, and progress bar; defer a full
   location screen.
 - [x] Implement maximum-level text and a full progress bar, using style triggers.
-- [ ] Finish explicit boundary checks for the initial level, partial progress, level transition, and maximum
-  level presentation.
+- [ ] Finish explicit boundary checks for the initial level, partial progress,
+  level transition, and maximum-level presentation.
+- [x] Add Lifetime Experience to the existing statistics collection, reading
+  `StudioProgression.TotalExperience` rather than maintaining another counter.
+- [ ] Verify the Lifetime Experience row updates after rewards, survives restarting,
+  and continues increasing at maximum level.
 
 ### Control styling follow-up
 
@@ -282,11 +304,14 @@ Recommended XP rewards:
   only after a successful purchase.
 - [x] Add explicit active-upgrade rewards and award XP only on successful purchase.
 - [x] Add first-time achievement rewards without awarding XP again on restoration.
+- [x] Add the Hello, Game Dev achievement for Studio Level 5 with a 50 XP reward.
 - Worker-hire, active-upgrade, and achievement XP behavior reported working by the
   user. Achievement rewards intentionally vary as listed above (confirmed 2026-09-16).
 - [ ] Verify each source separately, including failed purchases and simultaneous
   achievement/other rewards. Passive and offline code generation award no direct
   XP; a newly earned achievement may still grant its one-time bonus.
+- [ ] Verify Hello, Game Dev unlocks once at Level 5 and is restored without
+  repeating its 50 XP reward.
 - [ ] Assistant adds focused action-reward and duplicate-award regression tests.
 
 ### Phase 7 — location model and rules
@@ -341,8 +366,9 @@ Recommended XP rewards:
 
 ### 1. Studio Level and location progression
 
-- Core leveling, all planned XP sources, XP persistence, and the dashboard display
-  are implemented. Continue with Phase 7, starting with the location model.
+- Core leveling, all planned XP sources, XP persistence, the dashboard display,
+  Lifetime Experience statistics, and the Level 5 achievement are implemented.
+  Continue with Phase 7, starting with the location model.
 - Keep focused regression coverage and remaining manual boundary checks visible
   as follow-ups; locations and relocation are not implemented yet.
 
@@ -375,9 +401,8 @@ Use `BALANCING_NOTES.md` as the starting point for a fresh-save playthrough and 
 
 ## Later possibilities
 
-- Expand achievements beyond the initial recognition-only set and decide whether
-  later achievements should grant rewards.
+- Expand the current five achievements and tune their individual Studio XP rewards.
 - More worker and active-upgrade types.
 - Additional artwork consistent with the modern dark pixel visual direction.
-- Broader studio progression building on the future Studio Level system.
+- Broader studio progression building on the existing Studio Level system.
 - Prestige or new-game-plus after the main progression loop is established.
