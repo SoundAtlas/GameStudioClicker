@@ -435,28 +435,40 @@ namespace GameStudioClicker.Core.Content
                 displayName: "Hello World",
                 description: "Write your first line of code.",
                 requirementType: AchievementRequirementType.ManualClicks,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 5);
 
             Achievement firstHire = new Achievement(
                 id: "first_hire",
                 displayName: "First Hire",
                 description: "Hire your first employee.",
                 requirementType: AchievementRequirementType.EmployeesHired,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 10);
 
             Achievement firstUpgrade = new Achievement(
                 id: "first_upgrade",
                 displayName: "First Upgrade",
                 description: "Purchase your first active upgrade.",
                 requirementType: AchievementRequirementType.ActiveUpgradesPurchased,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 10);
 
             Achievement shippingCode = new Achievement(
                 id: "shipping_code",
                 displayName: "Shipping Code",
                 description: "Generate 1,000 lines of code.",
                 requirementType: AchievementRequirementType.LifetimeLinesOfCode,
-                requirementValue: 1_000);
+                requirementValue: 1_000,
+                experienceReward: 25);
+
+            Achievement helloGameDev = new Achievement(
+                id: "hello_game_dev",
+                displayName: "Hello, Game Dev",
+                description: "Reach Studio Level 5.",
+                requirementType: AchievementRequirementType.StudioLevel,
+                requirementValue: 5,
+                experienceReward: 50);
 
             return new List<Achievement>
             {
@@ -464,6 +476,7 @@ namespace GameStudioClicker.Core.Content
                 firstHire,
                 firstUpgrade,
                 shippingCode,
+                helloGameDev
             };
         }
     }

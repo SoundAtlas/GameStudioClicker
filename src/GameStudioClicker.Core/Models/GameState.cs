@@ -208,6 +208,7 @@ namespace GameStudioClicker.Core.Models
                 if (progress >= achievement.RequirementValue)
                 {
                     achievement.MarkAsEarned();
+                    StudioProgression.AddExperience(achievement.ExperienceReward);
                     newlyEarnedAchievements.Add(achievement);
                     AchievementEarned?.Invoke(achievement);
                 }
@@ -229,6 +230,7 @@ namespace GameStudioClicker.Core.Models
                 AchievementRequirementType.LifetimeLinesOfCode => LifetimeLinesOfCode,
                 AchievementRequirementType.EmployeesHired => LifetimeEmployeesHired,
                 AchievementRequirementType.ActiveUpgradesPurchased => LifetimeActiveUpgradesPurchased,
+                AchievementRequirementType.StudioLevel => StudioProgression.Level,
                 _ => throw new ArgumentOutOfRangeException(nameof(achievement.RequirementType)),
             };
         }

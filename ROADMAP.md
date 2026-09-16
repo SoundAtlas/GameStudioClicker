@@ -217,7 +217,7 @@ Recommended XP rewards:
 | Intern / Junior / Senior hire | 10 / 25 / 50 |
 | Lead / Engineering Manager / Studio Director hire | 100 / 200 / 400 |
 | Active upgrade in content Era 1 / 2 / 3 / 4 | 25 / 50 / 100 / 150 |
-| First-time achievement unlock | 25 |
+| First-time Hello World / First Hire / First Upgrade / Shipping Code unlock | 5 / 10 / 10 / 25 |
 | Passive production, offline production, failed purchase, UI navigation | 0 |
 
 - [ ] Start in `bedroom` at Level 1, with Interns available.
@@ -278,10 +278,12 @@ Recommended XP rewards:
 
 ### Phase 6 — remaining XP sources
 
-- [ ] Add explicit `ExperienceReward` values to worker content and award hire XP
+- [x] Add explicit `ExperienceReward` values to worker content and award hire XP
   only after a successful purchase.
-- [ ] Add explicit active-upgrade rewards and award XP only on successful purchase.
-- [ ] Add first-time achievement rewards without awarding XP again on restoration.
+- [x] Add explicit active-upgrade rewards and award XP only on successful purchase.
+- [x] Add first-time achievement rewards without awarding XP again on restoration.
+- Worker-hire, active-upgrade, and achievement XP behavior reported working by the
+  user. Achievement rewards intentionally vary as listed above (confirmed 2026-09-16).
 - [ ] Verify each source separately, including failed purchases and simultaneous
   achievement/other rewards. Passive and offline code generation award no direct
   XP; a newly earned achievement may still grant its one-time bonus.
@@ -339,8 +341,8 @@ Recommended XP rewards:
 
 ### 1. Studio Level and location progression
 
-- Core leveling, manual-click XP, XP persistence, and the dashboard display are
-  implemented. Continue with Phase 6, starting with successful worker-hire XP.
+- Core leveling, all planned XP sources, XP persistence, and the dashboard display
+  are implemented. Continue with Phase 7, starting with the location model.
 - Keep focused regression coverage and remaining manual boundary checks visible
   as follow-ups; locations and relocation are not implemented yet.
 

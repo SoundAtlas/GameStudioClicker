@@ -6,6 +6,7 @@
         LifetimeLinesOfCode,
         ActiveUpgradesPurchased,
         EmployeesHired,
+        StudioLevel
 
     }
 }
