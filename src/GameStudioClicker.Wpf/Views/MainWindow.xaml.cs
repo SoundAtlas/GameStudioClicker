@@ -1,3 +1,4 @@
+using GameStudioClicker.Core.Models;
 using GameStudioClicker.Core.Persistence;
 using GameStudioClicker.Wpf.Formatting;
 using GameStudioClicker.Wpf.Services;
@@ -28,6 +29,8 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
+        StudioProgression studioProgression = new StudioProgression();
+        studioProgression.AddExperience(499);
 
         string saveDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

@@ -13,6 +13,7 @@ namespace GameStudioClicker.Core.Models
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
         public IReadOnlyList<Achievement> Achievements { get; }
+        public StudioProgression StudioProgression { get; }
 
         public event Action<Achievement>? AchievementEarned;
 
@@ -32,6 +33,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrades = GameContentFactory.CreateActiveUpgrades();
             WorkerUpgrades = GameContentFactory.CreateWorkerUpgrades();
             Achievements = GameContentFactory.CreateAchievements();
+            StudioProgression = new();
         }
 
         // Resource generation
@@ -41,6 +43,7 @@ namespace GameStudioClicker.Core.Models
             LinesGeneratedManually += LinesPerClick;
             LinesGeneratedWhileOnline += LinesPerClick;
             LifetimeManualClicks++;
+            StudioProgression.AddExperience(1);
 
             CheckForNewAchievements();
         }
