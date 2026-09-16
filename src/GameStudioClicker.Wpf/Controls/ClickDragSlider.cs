@@ -25,7 +25,7 @@ namespace GameStudioClicker.Wpf.Controls
                 UpdateLayout();
 
                 MouseButtonEventArgs thumbMouseEvent =
-                    new MouseButtonEventArgs(
+                    new(
                         e.MouseDevice,
                         e.Timestamp,
                         MouseButton.Left)

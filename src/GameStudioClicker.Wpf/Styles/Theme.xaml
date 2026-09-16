@@ -16,32 +16,19 @@
     <Color x:Key="TransparentSuccessFlashColor">#0016382E</Color>
 
 
-    <SolidColorBrush x:Key="GameBackgroundBrush"
-                     Color="#0B1220"/>
-    <SolidColorBrush x:Key="SurfaceBrush"
-                     Color="{StaticResource SurfaceColor}" />
-    <SolidColorBrush x:Key="PrimaryCyanBrush"
-                     Color="#00E5FF"/>
-    <SolidColorBrush x:Key="SecondaryPurpleBrush"
-                     Color="#7C3AED"/>
-    <SolidColorBrush x:Key="PinkAccentBrush"
-                     Color="#FF6EC7"/>
-    <SolidColorBrush x:Key="SuccessBrush"
-                     Color="#22C55E"/>
-    <SolidColorBrush x:Key="WarningBrush"
-                     Color="#F59E0B"/>
-    <SolidColorBrush x:Key="ErrorBrush"
-                     Color="#EF4444"/>
-    <SolidColorBrush x:Key="PrimaryTextBrush"
-                     Color="#F8FAFC"/>
-    <SolidColorBrush x:Key="SecondaryTextBrush"
-                     Color="#94A3B8"/>
-    <SolidColorBrush x:Key="BorderBrush"
-                     Color="#1E293B"/>
-    <SolidColorBrush x:Key="GlowBlueBrush"
-                     Color="#36BDF8"/>
-    <SolidColorBrush x:Key="PressedPrimaryBrush"
-                     Color="#0097A8" />
+    <SolidColorBrush x:Key="GameBackgroundBrush" Color="#0B1220"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="PrimaryCyanBrush" Color="#00E5FF"/>
+    <SolidColorBrush x:Key="SecondaryPurpleBrush" Color="#7C3AED"/>
+    <SolidColorBrush x:Key="PinkAccentBrush" Color="#FF6EC7"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="#22C55E"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="#F59E0B"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="#EF4444"/>
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8FAFC"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#94A3B8"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#1E293B"/>
+    <SolidColorBrush x:Key="GlowBlueBrush" Color="#36BDF8"/>
+    <SolidColorBrush x:Key="PressedPrimaryBrush" Color="#0097A8" />
 
 
     <Style x:Key="SectionHeadingTextStyle"
