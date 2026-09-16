@@ -237,6 +237,7 @@ namespace GameStudioClicker.Core.Models
             var saveData = new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
+                StudioExperience = StudioProgression.TotalExperience,
                 LifetimeLinesOfCode = this.LifetimeLinesOfCode,
                 LifetimeManualClicks = this.LifetimeManualClicks,
                 LifetimeEmployeesHired = this.LifetimeEmployeesHired,
@@ -287,6 +288,7 @@ namespace GameStudioClicker.Core.Models
                 saveData.EarnedAchievementIds ?? [];
 
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
+            StudioProgression.RestoreExperience(saveData.StudioExperience);
 
             // Statistics
             LifetimeLinesOfCode = Math.Max(0L, saveData.LifetimeLinesOfCode);

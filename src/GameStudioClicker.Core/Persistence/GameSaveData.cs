@@ -4,6 +4,7 @@ namespace GameStudioClicker.Core.Persistence
     {
         // Only persistent values belong here; production rates and costs are recalculated when loading.
         public long LinesOfCode { get; set; }
+        public long StudioExperience { get; set; } = 0;
         public long LifetimeLinesOfCode { get; set; }
         public long LifetimeManualClicks { get; set; }
         public long LifetimeEmployeesHired { get; set; }
@@ -15,7 +16,6 @@ namespace GameStudioClicker.Core.Persistence
         public List<string> PurchasedActiveUpgradeIds { get; set; } = new List<string>();
         public Dictionary<string, int> WorkerUpgradeCounts { get; set; } = new Dictionary<string, int>();
         public List<string> EarnedAchievementIds { get; set; } = new List<string>();
-
         // UTC avoids timezone and daylight-saving changes in offline progress calculations.
         public DateTime SavedAtUtc { get; set; }
     }

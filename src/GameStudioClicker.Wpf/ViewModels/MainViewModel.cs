@@ -124,6 +124,14 @@ public class MainViewModel : ViewModelBase, IDisposable
     public long LinesPerClick => _gameState.LinesPerClick;
     public long LinesPerSecond => _gameState.LinesPerSecond;
 
+    // Studio progression 
+    public int StudioLevel => _gameState.StudioProgression.Level;
+    public long StudioExperience => _gameState.StudioProgression.TotalExperience;
+    public long ExperienceIntoCurrentLevel =>
+        _gameState.StudioProgression.ExperienceIntoCurrentLevel;
+    public long ExperienceNeededForNextLevel =>
+        _gameState.StudioProgression.ExperienceNeededForNextLevel;
+
     // Navigation and view state
     public bool IsStatisticsViewVisible =>
         _selectedPage == GamePage.Statistics;
@@ -158,6 +166,8 @@ public class MainViewModel : ViewModelBase, IDisposable
             OnPropertyChanged();
         }
     }
+
+
 
     // Collections and commands consumed by the view.
     public IReadOnlyList<ActiveUpgradeViewModel> ActiveUpgrades { get; }
@@ -348,6 +358,10 @@ public class MainViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(LinesOfCode));
         OnPropertyChanged(nameof(LinesPerClick));
         OnPropertyChanged(nameof(LinesPerSecond));
+        OnPropertyChanged(nameof(StudioLevel));
+        OnPropertyChanged(nameof(StudioExperience));
+        OnPropertyChanged(nameof(ExperienceIntoCurrentLevel));
+        OnPropertyChanged(nameof(ExperienceNeededForNextLevel));
     }
 
     private void RefreshPurchaseCommands()
