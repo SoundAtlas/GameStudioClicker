@@ -7,6 +7,7 @@ namespace GameStudioClicker.Core.Persistence
         public long StudioExperience { get; set; } = 0;
         public long LifetimeLinesOfCode { get; set; }
         public long LifetimeManualClicks { get; set; }
+        public long LifetimeExperience { get; set; }
         public long LifetimeEmployeesHired { get; set; }
         public long LifetimeActiveUpgradesPurchased { get; set; }
         public long LinesGeneratedManually { get; set; }
