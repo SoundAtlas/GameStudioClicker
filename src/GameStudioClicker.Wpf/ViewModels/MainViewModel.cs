@@ -132,6 +132,14 @@ public class MainViewModel : ViewModelBase, IDisposable
     public long ExperienceNeededForNextLevel =>
         _gameState.StudioProgression.ExperienceNeededForNextLevel;
 
+    public bool IsStudioLevelMax =>
+        ExperienceNeededForNextLevel == 0;
+    public string StudioExperienceText =>
+        IsStudioLevelMax
+            ? "MAX LEVEL"
+            : $"{CompactNumberFormatter.Format(ExperienceIntoCurrentLevel)} / " +
+              $"{CompactNumberFormatter.Format(ExperienceNeededForNextLevel)} XP";
+
     // Navigation and view state
     public bool IsStatisticsViewVisible =>
         _selectedPage == GamePage.Statistics;
@@ -362,6 +370,8 @@ public class MainViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(StudioExperience));
         OnPropertyChanged(nameof(ExperienceIntoCurrentLevel));
         OnPropertyChanged(nameof(ExperienceNeededForNextLevel));
+        OnPropertyChanged(nameof(IsStudioLevelMax));
+        OnPropertyChanged(nameof(StudioExperienceText));
     }
 
     private void RefreshPurchaseCommands()

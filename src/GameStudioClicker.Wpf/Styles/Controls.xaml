@@ -265,6 +265,47 @@
         </Setter>
     </Style>
 
+    <!-- XP Progress Bar Style -->
+    <Style x:Key="RoundedProgressBarStyle"
+           TargetType="{x:Type ProgressBar}">
+        <Setter Property="Height"
+                Value="8" />
+        <Setter Property="Background"
+                Value="{StaticResource GameBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{StaticResource PrimaryCyanBrush}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ProgressBar}">
+                    <Grid ClipToBounds="True">
+                        <Border x:Name="PART_Track"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4" />
+
+                        <Border x:Name="PART_Indicator"
+                                HorizontalAlignment="Left"
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="4" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Achievement progress bar style -->
+    <Style x:Key="AchievementProgressBarStyle"
+           TargetType="{x:Type ProgressBar}"
+           BasedOn="{StaticResource RoundedProgressBarStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsEarned}" Value="True">
+                <Setter Property="Foreground"
+                        Value="{StaticResource SuccessBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+
     <!-- Global tooltip appearance used by active-upgrade details. -->
     <Style TargetType="{x:Type ToolTip}">
         <Setter Property="FontFamily"

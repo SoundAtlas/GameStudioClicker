@@ -165,18 +165,84 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Image Grid.Column="0"
-                       Source="/Assets/Branding/Logo/logo_game_studio_clicker.png"
+                <StackPanel Orientation="Vertical"
+                            Grid.Column="0">
 
-                       MaxWidth="450"
-                       MaxHeight="250"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Margin="0,0,0,4"
-                       Stretch="Uniform"
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       SnapsToDevicePixels="True" />
+                    <Image Source="/Assets/Branding/Logo/logo_game_studio_clicker.png"
+                           MaxWidth="320"
+                           MaxHeight="160"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,4"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           SnapsToDevicePixels="True" />
 
+                    <Border Width="300"
+                            Padding="12"
+                            Margin="0,8,0,0"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8">
+
+                        <StackPanel Orientation="Vertical">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <TextBlock Grid.Column="0"
+                                           Text="Studio Level"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource SecondaryTextBrush}" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding StudioLevel}"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryTextBrush}" />
+
+                            </Grid>
+
+                            <ProgressBar Minimum="0"
+                                         Margin="0,8,0,6"
+                                         IsIndeterminate="False">
+
+                                <ProgressBar.Style>
+                                    <Style TargetType="{x:Type ProgressBar}"
+                                           BasedOn="{StaticResource RoundedProgressBarStyle}">
+                                        <!-- Normal XP Progress -->
+                                        <Setter Property="Maximum"
+                                                Value="{Binding ExperienceNeededForNextLevel}" />
+                                        <Setter Property="Value"
+                                                Value="{Binding ExperienceIntoCurrentLevel, Mode=OneWay}" />
+
+                                        <Style.Triggers>
+                                            <!-- Full bar at max level -->
+                                            <DataTrigger Binding="{Binding IsStudioLevelMax}"
+                                                         Value="True">
+                                                <Setter Property="Maximum"
+                                                        Value="1" />
+                                                <Setter Property="Value"
+                                                        Value="1" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+
+                            <TextBlock Text="{Binding StudioExperienceText}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+
+                        </StackPanel>
+
+                    </Border>
+                </StackPanel>
                 <!-- Manual coding and current production. -->
                 <Border Grid.Column="1"
                         Width="350"
