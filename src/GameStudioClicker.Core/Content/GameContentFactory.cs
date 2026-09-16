@@ -12,7 +12,8 @@ namespace GameStudioClicker.Core.Content
                 displayName: "Mouse Pad",
                 description: "Doubles Lines of Code / Click",
                 cost: 100,
-                clickMultiplier: 2);
+                clickMultiplier: 2,
+                experienceReward: 25);
 
             ActiveUpgrade gamingMouse = new ActiveUpgrade(
                 id: "gaming_mouse",
@@ -20,7 +21,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 400,
                 clickMultiplier: 2,
-                prerequisite: mousePad);
+                prerequisite: mousePad,
+                experienceReward: 25);
 
             ActiveUpgrade mechanicalKeyboard = new ActiveUpgrade(
                 id: "mechanical_keyboard",
@@ -28,7 +30,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 750,
                 clickMultiplier: 2,
-                prerequisite: gamingMouse);
+                prerequisite: gamingMouse,
+                experienceReward: 25);
 
             ActiveUpgrade noiseCancellingHeadset = new ActiveUpgrade(
                 id: "noise_cancelling_headset",
@@ -36,7 +39,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 900,
                 clickMultiplier: 2,
-                prerequisite: mechanicalKeyboard);
+                prerequisite: mechanicalKeyboard,
+                experienceReward: 25);
 
             ActiveUpgrade onboardingHandbook = new ActiveUpgrade(
                 id: "onboarding_handbook",
@@ -46,7 +50,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "intern",
-                prerequisite: noiseCancellingHeadset);
+                prerequisite: noiseCancellingHeadset,
+                experienceReward: 25);
 
             ActiveUpgrade graphicsCard = new ActiveUpgrade(
                 id: "graphics_card",
@@ -54,7 +59,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 1500,
                 clickMultiplier: 2,
-                prerequisite: noiseCancellingHeadset);
+                prerequisite: noiseCancellingHeadset,
+                experienceReward: 25);
 
             ActiveUpgrade secondMonitor = new ActiveUpgrade(
                 id: "second_monitor",
@@ -62,7 +68,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 2250,
                 clickMultiplier: 2,
-                prerequisite: graphicsCard);
+                prerequisite: graphicsCard,
+                experienceReward: 25);
 
             ActiveUpgrade ergonomicDeskSetup = new ActiveUpgrade(
                 id: "ergonomic_desk_setup",
@@ -70,7 +77,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Triples Lines of Code / Click",
                 cost: 3500,
                 clickMultiplier: 3,
-                prerequisite: secondMonitor);
+                prerequisite: secondMonitor,
+                experienceReward: 25);
 
 
             // Era 2: Tiny Indie Studio
@@ -80,7 +88,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 6000,
                 clickMultiplier: 2,
-                prerequisite: ergonomicDeskSetup);
+                prerequisite: ergonomicDeskSetup,
+                experienceReward: 50);
 
             ActiveUpgrade codeReviewChecklist = new ActiveUpgrade(
                 id: "code_review_checklist",
@@ -90,7 +99,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "junior_developer",
-                prerequisite: developerLaptop);
+                prerequisite: developerLaptop,
+                experienceReward: 50);
 
             ActiveUpgrade professionalIdeLicense = new ActiveUpgrade(
                 id: "professional_ide_license",
@@ -98,7 +108,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 25_000,
                 clickMultiplier: 2,
-                prerequisite: developerLaptop);
+                prerequisite: developerLaptop,
+                experienceReward: 50);
 
             ActiveUpgrade highEndWorkstation = new ActiveUpgrade(
                 id: "high_end_workstation",
@@ -106,7 +117,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 50_000,
                 clickMultiplier: 2,
-                prerequisite: professionalIdeLicense);
+                prerequisite: professionalIdeLicense,
+                experienceReward: 50);
 
             ActiveUpgrade internMentorshipProgram = new ActiveUpgrade(
                 id: "intern_mentorship_program",
@@ -116,7 +128,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "intern",
-                prerequisite: highEndWorkstation);
+                prerequisite: highEndWorkstation,
+                experienceReward: 50);
 
             ActiveUpgrade buildServer = new ActiveUpgrade(
                 id: "build_server",
@@ -124,7 +137,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 150_000,
                 clickMultiplier: 2,
-                prerequisite: highEndWorkstation);
+                prerequisite: highEndWorkstation,
+                experienceReward: 50);
 
             ActiveUpgrade automatedTestingSuite = new ActiveUpgrade(
                 id: "automated_testing_suite",
@@ -132,7 +146,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Triples Lines of Code / Click",
                 cost: 200_000,
                 clickMultiplier: 3,
-                prerequisite: buildServer);
+                prerequisite: buildServer,
+                experienceReward: 50);
 
             ActiveUpgrade architectureWorkshop = new ActiveUpgrade(
                 id: "architecture_workshop",
@@ -142,7 +157,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "senior_developer",
-                prerequisite: automatedTestingSuite);
+                prerequisite: automatedTestingSuite,
+                experienceReward: 50);
 
 
 
@@ -155,7 +171,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 4,
                 targetAllWorkers: true,
-                prerequisite: automatedTestingSuite);
+                prerequisite: automatedTestingSuite,
+                experienceReward: 100);
 
             ActiveUpgrade captureStudio = new ActiveUpgrade(
                 id: "capture_studio",
@@ -163,7 +180,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 400_000,
                 clickMultiplier: 2,
-                prerequisite: automatedDevelopmentPipeline);
+                prerequisite: automatedDevelopmentPipeline,
+                experienceReward: 100);
 
             ActiveUpgrade pairProgrammingSessions = new ActiveUpgrade(
                 id: "pair_programming_sessions",
@@ -173,7 +191,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "junior_developer",
-                prerequisite: captureStudio);
+                prerequisite: captureStudio,
+                experienceReward: 100);
 
             ActiveUpgrade studioServerRack = new ActiveUpgrade(
                 id: "studio_server_rack",
@@ -181,7 +200,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 1_000_000,
                 clickMultiplier: 2,
-                prerequisite: captureStudio);
+                prerequisite: captureStudio,
+                experienceReward: 100);
 
             ActiveUpgrade proprietaryGameEngine = new ActiveUpgrade(
                 id: "proprietary_game_engine",
@@ -189,7 +209,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 1_500_000,
                 clickMultiplier: 2,
-                prerequisite: studioServerRack);
+                prerequisite: studioServerRack,
+                experienceReward: 100);
 
             ActiveUpgrade technicalLeadershipTraining = new ActiveUpgrade(
                 id: "technical_leadership_training",
@@ -199,7 +220,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "lead_developer",
-                prerequisite: proprietaryGameEngine);
+                prerequisite: proprietaryGameEngine,
+                experienceReward: 100);
 
             ActiveUpgrade renderFarm = new ActiveUpgrade(
                 id: "render_farm",
@@ -207,7 +229,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 2_500_000,
                 clickMultiplier: 2,
-                prerequisite: proprietaryGameEngine);
+                prerequisite: proprietaryGameEngine,
+                experienceReward: 100);
 
             ActiveUpgrade globalCloudInfrastructure = new ActiveUpgrade(
                 id: "global_cloud_infrastructure",
@@ -215,7 +238,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Triples Lines of Code / Click",
                 cost: 3_000_000,
                 clickMultiplier: 3,
-                prerequisite: renderFarm);
+                prerequisite: renderFarm,
+                experienceReward: 100);
 
 
             // Era 4 Cutting-Edge Megastudio
@@ -226,7 +250,8 @@ namespace GameStudioClicker.Core.Content
                 description: "4x Lines of Code / Click",
                 cost: 3_500_000,
                 clickMultiplier: 4,
-                prerequisite: globalCloudInfrastructure);
+                prerequisite: globalCloudInfrastructure,
+                experienceReward: 150);
 
             ActiveUpgrade developerToolkit = new ActiveUpgrade(
                 id: "developer_toolkit",
@@ -236,7 +261,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "senior_developer",
-                prerequisite: aiWorkstations);
+                prerequisite: aiWorkstations,
+                experienceReward: 150);
 
             ActiveUpgrade neuralMotionCaptureSystem = new ActiveUpgrade(
                 id: "neural_motion_capture_system",
@@ -244,7 +270,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 7_500_000,
                 clickMultiplier: 2,
-                prerequisite: aiWorkstations);
+                prerequisite: aiWorkstations,
+                experienceReward: 150);
 
             ActiveUpgrade autonomousQaSwarm = new ActiveUpgrade(
                 id: "autonomous_qa_swarm",
@@ -252,7 +279,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 10_000_000,
                 clickMultiplier: 2,
-                prerequisite: neuralMotionCaptureSystem);
+                prerequisite: neuralMotionCaptureSystem,
+                experienceReward: 150);
 
             ActiveUpgrade selfOrganizingDevTeams = new ActiveUpgrade(
                 id: "self_organizing_dev_teams",
@@ -262,7 +290,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 2,
                 targetWorkerId: "lead_developer",
-                prerequisite: autonomousQaSwarm);
+                prerequisite: autonomousQaSwarm,
+                experienceReward: 150);
 
             ActiveUpgrade quantumBuildServer = new ActiveUpgrade(
                 id: "quantum_build_server",
@@ -270,7 +299,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Doubles Lines of Code / Click",
                 cost: 15_000_000,
                 clickMultiplier: 2,
-                prerequisite: autonomousQaSwarm);
+                prerequisite: autonomousQaSwarm,
+                experienceReward: 150);
 
             ActiveUpgrade predictiveGameEngine = new ActiveUpgrade(
                 id: "predictive_game_engine",
@@ -278,7 +308,8 @@ namespace GameStudioClicker.Core.Content
                 description: "Triples Lines of Code / Click",
                 cost: 20_000_000,
                 clickMultiplier: 3,
-                prerequisite: quantumBuildServer);
+                prerequisite: quantumBuildServer,
+                experienceReward: 150);
 
             ActiveUpgrade adaptiveLearningProgram = new ActiveUpgrade(
                 id: "adaptive_learning_program",
@@ -288,7 +319,8 @@ namespace GameStudioClicker.Core.Content
                 clickMultiplier: 1,
                 workerProductionMultiplier: 3,
                 targetWorkerId: "intern",
-                prerequisite: predictiveGameEngine);
+                prerequisite: predictiveGameEngine,
+                experienceReward: 150);
 
             // Additional hardware upgrades can extend this ordered progression.
             return new List<ActiveUpgrade>
@@ -337,7 +369,8 @@ namespace GameStudioClicker.Core.Content
                 id: "intern",
                 displayName: "Intern",
                 baseCost: 50,
-                baseLinesPerSecond: 2);
+                baseLinesPerSecond: 2,
+                experienceReward: 10);
 
             WorkerUpgrade juniorDeveloper = new WorkerUpgrade(
                 id: "junior_developer",
@@ -345,7 +378,8 @@ namespace GameStudioClicker.Core.Content
                 baseCost: 2000,
                 baseLinesPerSecond: 20,
                 prerequisite: intern,
-                requiredPrerequisiteCount: 5);
+                requiredPrerequisiteCount: 5,
+                experienceReward: 25);
 
             WorkerUpgrade seniorDeveloper = new WorkerUpgrade(
                 id: "senior_developer",
@@ -353,7 +387,8 @@ namespace GameStudioClicker.Core.Content
                 baseCost: 20000,
                 baseLinesPerSecond: 2000,
                 prerequisite: juniorDeveloper,
-                requiredPrerequisiteCount: 5);
+                requiredPrerequisiteCount: 5,
+                experienceReward: 50);
 
             WorkerUpgrade leadDeveloper = new WorkerUpgrade(
                 id: "lead_developer",
@@ -361,7 +396,8 @@ namespace GameStudioClicker.Core.Content
                 baseCost: 200000,
                 baseLinesPerSecond: 20000,
                 prerequisite: seniorDeveloper,
-                requiredPrerequisiteCount: 1);
+                requiredPrerequisiteCount: 1,
+                experienceReward: 100);
 
             WorkerUpgrade engineeringManager = new WorkerUpgrade(
                 id: "engineering_manager",
@@ -369,7 +405,8 @@ namespace GameStudioClicker.Core.Content
                 baseCost: 2_000_000,
                 baseLinesPerSecond: 200_000,
                 prerequisite: leadDeveloper,
-                requiredPrerequisiteCount: 1);
+                requiredPrerequisiteCount: 1,
+                experienceReward: 200);
 
             WorkerUpgrade studioDirector = new WorkerUpgrade(
                 id: "studio_director",
@@ -377,7 +414,8 @@ namespace GameStudioClicker.Core.Content
                 baseCost: 20_000_000,
                 baseLinesPerSecond: 2_000_000,
                 prerequisite: engineeringManager,
-                requiredPrerequisiteCount: 1);
+                requiredPrerequisiteCount: 1,
+                experienceReward: 400);
 
             return new List<WorkerUpgrade>
             {
@@ -397,28 +435,40 @@ namespace GameStudioClicker.Core.Content
                 displayName: "Hello World",
                 description: "Write your first line of code.",
                 requirementType: AchievementRequirementType.ManualClicks,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 5);
 
             Achievement firstHire = new Achievement(
                 id: "first_hire",
                 displayName: "First Hire",
                 description: "Hire your first employee.",
                 requirementType: AchievementRequirementType.EmployeesHired,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 10);
 
             Achievement firstUpgrade = new Achievement(
                 id: "first_upgrade",
                 displayName: "First Upgrade",
                 description: "Purchase your first active upgrade.",
                 requirementType: AchievementRequirementType.ActiveUpgradesPurchased,
-                requirementValue: 1);
+                requirementValue: 1,
+                experienceReward: 10);
 
             Achievement shippingCode = new Achievement(
                 id: "shipping_code",
                 displayName: "Shipping Code",
                 description: "Generate 1,000 lines of code.",
                 requirementType: AchievementRequirementType.LifetimeLinesOfCode,
-                requirementValue: 1_000);
+                requirementValue: 1_000,
+                experienceReward: 25);
+
+            Achievement helloGameDev = new Achievement(
+                id: "hello_game_dev",
+                displayName: "Hello, Game Dev",
+                description: "Reach Studio Level 5.",
+                requirementType: AchievementRequirementType.StudioLevel,
+                requirementValue: 5,
+                experienceReward: 50);
 
             return new List<Achievement>
             {
@@ -426,6 +476,7 @@ namespace GameStudioClicker.Core.Content
                 firstHire,
                 firstUpgrade,
                 shippingCode,
+                helloGameDev
             };
         }
     }

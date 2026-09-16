@@ -8,7 +8,8 @@ public class WorkerUpgrade
         long baseCost,
         long baseLinesPerSecond,
         WorkerUpgrade? prerequisite = null,
-        int requiredPrerequisiteCount = 0)
+        int requiredPrerequisiteCount = 0,
+        long experienceReward = 0)
     {
         Id = id;
         DisplayName = displayName;
@@ -18,6 +19,7 @@ public class WorkerUpgrade
         WorkerCount = 0;
         Prerequisite = prerequisite;
         RequiredPrerequisiteCount = requiredPrerequisiteCount;
+        ExperienceReward = experienceReward;
     }
 
     // Identity and base economy values
@@ -25,6 +27,7 @@ public class WorkerUpgrade
     public string DisplayName { get; }
     public long BaseCost { get; }
     public long BaseLinesPerSecond { get; }
+    public long ExperienceReward { get; }
 
     // Current ownership and cost
     public long CurrentCost { get; private set; }

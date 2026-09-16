@@ -13,6 +13,7 @@ namespace GameStudioClicker.Core.Models
         public IReadOnlyList<ActiveUpgrade> ActiveUpgrades { get; }
         public IReadOnlyList<WorkerUpgrade> WorkerUpgrades { get; }
         public IReadOnlyList<Achievement> Achievements { get; }
+        public StudioProgression StudioProgression { get; }
 
         public event Action<Achievement>? AchievementEarned;
 
@@ -32,6 +33,7 @@ namespace GameStudioClicker.Core.Models
             ActiveUpgrades = GameContentFactory.CreateActiveUpgrades();
             WorkerUpgrades = GameContentFactory.CreateWorkerUpgrades();
             Achievements = GameContentFactory.CreateAchievements();
+            StudioProgression = new();
         }
 
         // Resource generation
@@ -41,6 +43,7 @@ namespace GameStudioClicker.Core.Models
             LinesGeneratedManually += LinesPerClick;
             LinesGeneratedWhileOnline += LinesPerClick;
             LifetimeManualClicks++;
+            StudioProgression.AddExperience(1);
 
             CheckForNewAchievements();
         }
@@ -127,6 +130,7 @@ namespace GameStudioClicker.Core.Models
                 activeUpgrade.MarkAsPurchased();
                 RecalculateLinesPerSecond();
                 LifetimeActiveUpgradesPurchased++;
+                StudioProgression.AddExperience(activeUpgrade.ExperienceReward);
 
                 CheckForNewAchievements();
 
@@ -156,6 +160,7 @@ namespace GameStudioClicker.Core.Models
                 workerUpgrade.AddWorker();
                 RecalculateLinesPerSecond();
                 LifetimeEmployeesHired++;
+                StudioProgression.AddExperience(workerUpgrade.ExperienceReward);
 
                 CheckForNewAchievements();
 
@@ -203,6 +208,7 @@ namespace GameStudioClicker.Core.Models
                 if (progress >= achievement.RequirementValue)
                 {
                     achievement.MarkAsEarned();
+                    StudioProgression.AddExperience(achievement.ExperienceReward);
                     newlyEarnedAchievements.Add(achievement);
                     AchievementEarned?.Invoke(achievement);
                 }
@@ -224,6 +230,7 @@ namespace GameStudioClicker.Core.Models
                 AchievementRequirementType.LifetimeLinesOfCode => LifetimeLinesOfCode,
                 AchievementRequirementType.EmployeesHired => LifetimeEmployeesHired,
                 AchievementRequirementType.ActiveUpgradesPurchased => LifetimeActiveUpgradesPurchased,
+                AchievementRequirementType.StudioLevel => StudioProgression.Level,
                 _ => throw new ArgumentOutOfRangeException(nameof(achievement.RequirementType)),
             };
         }
@@ -234,6 +241,7 @@ namespace GameStudioClicker.Core.Models
             var saveData = new GameSaveData
             {
                 LinesOfCode = this.LinesOfCode,
+                StudioExperience = StudioProgression.TotalExperience,
                 LifetimeLinesOfCode = this.LifetimeLinesOfCode,
                 LifetimeManualClicks = this.LifetimeManualClicks,
                 LifetimeEmployeesHired = this.LifetimeEmployeesHired,
@@ -284,6 +292,7 @@ namespace GameStudioClicker.Core.Models
                 saveData.EarnedAchievementIds ?? [];
 
             LinesOfCode = Math.Max(0L, saveData.LinesOfCode);
+            StudioProgression.RestoreExperience(saveData.StudioExperience);
 
             // Statistics
             LifetimeLinesOfCode = Math.Max(0L, saveData.LifetimeLinesOfCode);

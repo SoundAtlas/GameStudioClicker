@@ -11,7 +11,8 @@ public class ActiveUpgrade
         int workerProductionMultiplier = 1,
         string? targetWorkerId = null,
         bool targetAllWorkers = false,
-        ActiveUpgrade? prerequisite = null)
+        ActiveUpgrade? prerequisite = null,
+        long experienceReward = 0)
     {
         Id = id;
         DisplayName = displayName;
@@ -23,6 +24,7 @@ public class ActiveUpgrade
         TargetAllWorkers = targetAllWorkers;
         IsPurchased = false;
         Prerequisite = prerequisite;
+        ExperienceReward = experienceReward;
     }
 
     // Identity and purchase cost
@@ -30,6 +32,7 @@ public class ActiveUpgrade
     public string DisplayName { get; }
     public string Description { get; }
     public long Cost { get; }
+    public long ExperienceReward { get; }
 
     // Production effects
     public int ClickMultiplier { get; }

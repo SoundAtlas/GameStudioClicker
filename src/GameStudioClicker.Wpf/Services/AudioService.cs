@@ -211,6 +211,7 @@ namespace GameStudioClicker.Wpf.Services
             // Convert decibels to a linear volume scale (0.0-1.0)
             return Math.Pow(10, decibles / 20);
         }
+
         public void PlayWriteCodePressSound()
         {
             // Avoids audio click when opening the game

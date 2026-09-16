@@ -5,6 +5,7 @@
         public string Id { get; }
         public string DisplayName { get; }
         public string Description { get; }
+        public long ExperienceReward { get; }
         public AchievementRequirementType RequirementType { get; }
         public long RequirementValue { get; }
         public bool IsEarned { get; private set; }
@@ -15,7 +16,8 @@
             string displayName,
             string description,
             AchievementRequirementType requirementType,
-            long requirementValue)
+            long requirementValue,
+            long experienceReward = 0)
         {
             Id = id;
             DisplayName = displayName;
@@ -23,6 +25,7 @@
             RequirementType = requirementType;
             RequirementValue = requirementValue;
             IsEarned = false;
+            ExperienceReward = experienceReward;
         }
 
         public void MarkAsEarned()
